@@ -1,0 +1,35 @@
+{% extends "auth_base.html" %}
+
+{% load i18n crispy_forms_tags %}
+
+{% block head_title %}{% trans "Sign Up" %}{% endblock %}
+
+{% block content %}
+<div class="container oc-screen">
+  <div class="col-md-12">
+    <div class="col-md-6 col-sm-8 col-10 mx-auto">
+      <h1>{% trans "Sign Up" %}</h1>
+      {% if messages %}
+
+          {% for msg in messages %}
+
+          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+
+              {{msg.message}}
+          </div>
+
+          {% endfor %}
+
+      {% endif %}
+      <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <button type="submit" class="btn btn-success">{% trans "Sign Up" %} &raquo;</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

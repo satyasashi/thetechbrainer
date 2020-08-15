@@ -1,0 +1,105 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&family=Yanone+Kaffeesatz&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Arbutus+Slab&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
+        <!-- Font awesome -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta charset="utf-8" />
+        <title>
+            thetechbrainer | {% block title %}{% endblock %}
+        </title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {% block extra_head %}
+
+        {% endblock %}
+
+        {# Global stylesheets #}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/thetechbrainer.css' %}">
+
+        {% block extra_css %}
+            {# Override this in templates to add extra stylesheets #}
+        {% endblock %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}">
+        {% include "snippets/nav.html" %}
+
+        <div class="modal fade" id="blogSearchModal" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Search Blogs</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form class="blog-search" action="{% url 'blog:blog_search' %}" method="post">
+                  {% csrf_token %}
+                  <label for="blogSearch"></label>
+                  <input type="text" name="blogsearch" class="form-control blogSearch" value="" placeholder="Enter Blog name or Keywords" required /><br>
+                  <button type="submit" name="search" class="btn btn-primary btn-md">Search</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if not request.user.is_authenticated %}
+        <div class="container-fluid">
+          {% block home_banner %}
+          <div class="row banner-div">
+            <div class="col-md-6 col-sm-4">
+              <img src="{% static 'img/banner.jpg' %}" alt="coffee-man" class="float-right" height="400px">
+            </div>
+            <div class="col-md-6 col-sm-8">
+              <h1 class="text-center">
+              TechKnowledg-E &lt;/Dose&gt;
+              </h1>
+            </div>
+          </div>
+          {% endblock %}
+        </div>
+        {% endif %}
+
+
+        {% block content %}{% endblock %}
+
+        {# Global javascript #}
+        <!-- Scripts Order matters. Jquery, Bootstrap, next custom scripts -->
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/thetechbrainer.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/notify.min.js' %}"></script>
+        <script type="text/javascript">
+          $(document).ready(function() {
+            // success alerts. fadeaway.
+            if($(".alert alert-success")) {
+              console.log("alert-success found");
+              $(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
+                $(".alert-success").slideUp(500);
+              });
+            } else {
+              console.log("alert-success not found");
+            }
+          });
+        </script>
+
+        {% block extra_js %}
+
+        {% endblock %}
+
+        {% include "snippets/footer.html" %}
+    </body>
+</html>

@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style type="text/css">
+  .written-by {
+      font-transform: uppercase;
+  }
+</style>
+{% endblock %}
+
+{% if request.user.is_anonymous %}
+  {% block home_banner %} {% endblock %}
+{% endif %}
+
+{% block content %}
+  <div class="container blog-detail-container">
+      {% if messages %}
+        <div class="row">
+          <div class="col-md-6 mx-auto">
+
+                {% for msg in messages %}
+
+                <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+
+                    {{msg.message}}
+                </div>
+
+                {% endfor %}
+
+          </div>
+        </div>
+      {% endif %}
+      <div class="detail-blog-banner-and-heading-div">
+          <h3 class="banner-heading"><b>{{blog.blog_title}}</b></h3>
+          <h4 class="banner-subtitle">{{blog.blog_subtitle}}</h4>
+          <div class="author-info">
+              <div class="row">
+                  <div class="col-md-1 col-sm-2 col-2">
+                      <a href="#">
+                          <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="nah" class="author-avatar">
+                      </a>
+                  </div>
+                  <div class="col-md-6 col-sm-5 col-10">
+                      <a href="#">{{blog.blog_author.user.username}}</a> &nbsp;
+                      <a href="#" id="follow-author" data-followa="{{blog.blog_author.id}}">
+                        <!-- Author follow check need to include here. -->
+                        {% if request.user.is_authenticated %}
+                          {% if follows_author %}
+                            <span class="badge badge-following">Following</span>
+                          {% else %}
+                            <span class="badge badge-follow">Follow</span>
+                          {% endif %}
+                        {% endif %}
+                      </a>
+                      <br>
+                      <span class="article-timestamp">{{blog.created_on}}</span>
+                  </div>
+                  <div class="social-icons col-md-5 col-sm-5 col-12">
+                      <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                      <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                      <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                      <i class="fa fa-github" aria-hidden="true"></i>
+                      <a href="#" id="bookmark{{blog.id}}" title="Bookmark" data-pslug="{{blog.blog_slug}}" data-pid="{{blog.id}}" class="blog-bookmark"><i class="{% if request.user.is_authenticated %}{% if bookmark == 0 %}fa fa-bookmark-o{% else %}fa fa-bookmark{% endif %}{% else %}fa fa-bookmark-o{% endif %}" aria-hidden="true"></i></a>
+
+                      <!-- <i class="fa fa-bookmark" aria-hidden="true"></i> -->
+                  </div>
+
+              </div>
+          </div>
+          <div class="jumbotron detail-blog-banner" style="background-image: url({{blog.banner_image.url}}); ">
+              <div class="banner-info">
+
+              </div>
+          </div>
+          <div class="banner-caption">
+              <p>Source: Sashikanth</p>
+          </div>
+          <div class="blog-category col-md-12">
+            Category:
+            {% for category in blog.blog_category.all %}
+              <span class="badge badge-light">{{category}}</span>
+            {% endfor %}
+          </div>
+          <div class="tags col-md-12">
+            Tags:
+            {% for tag in blog.blog_tags.all %}
+              <span class="badge badge-dark">#{{tag.tag_name}}</span>
+            {% endfor %}
+          </div>
+          <div class="reading-time col-md-12">
+            <span class="reading-time__label"></span>
+            <i>
+              <span class="reading-time__duration"></span>
+              <span class="reading-time__word-count"></span>
+            </i>
+          </div>
+      </div>
+      <hr class="hr-50">
+      <div class="blog-detail-div">
+          <div class="blog-body">
+              {% if request.user.is_anonymous %}
+                {{blog.content|truncatewords:100}}
+                <div class="">
+                  <button type="button" id="readFullArticle" class="btn btn-info btn-lg btn-block">Read Full Article</button>
+                </div>
+              {% else %}
+                  <article class="detail-wrapper">
+                    <p>{{blog.content}}</p>
+                  </article>
+              {% endif %}
+          </div>
+      </div>
+
+      <div class="row social-icons-and-likes">
+          <div class="col-md-6 col-sm-3 col-12">
+              {% if request.user.is_anonymous %}
+              {% else %}
+              <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button>
+              {% endif %}
+          </div>
+          <div class="col-md-6 col-sm-9 col-12 social-icons">
+              <i class="fa fa-facebook-official" aria-hidden="true"></i>
+              <i class="fa fa-twitter-square" aria-hidden="true"></i>
+              <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+              <i class="fa fa-github" aria-hidden="true"></i>
+              <a href="#" class="circle-icons">
+                  <span>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                  </span>
+              </a>
+          </div>
+      </div>
+
+      <!-- Blog author bio -->
+      <a href="#" class="author-bio-div-link" style="text-decoration:none;">
+          <div class="author-bio-div mx-auto">
+              <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
+                  <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
+              </div>
+              <div class="col-md-8 col-sm-8 col-12 author-bio">
+                  <span class="written-by">About Author</span>
+                  <h3 class="author-bio-name">{{blog.blog_author.user.username}}</h3>
+                  <!-- Author Introduction should be down in <p> -->
+                  <p class="author-bio-para">  </p>
+              </div>
+          </div>
+      </a>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/read-time-count.js' %}"></script>
+
+  <script type="text/javascript">
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    new ReadingTime(200, 'Read time:', 'min', 'words', 'Less than a minute');
+  })
+
+  // Follow - When user Follows a Author.
+  $("#follow-author").click(function() {
+    var author_id = $(this).attr("data-followa");
+    console.log("Clicked");
+    $.ajax({
+      type: "POST",
+      url: "{% url 'user:follow_author' %}",
+      data: {
+        "author_id": author_id,
+        "csrfmiddlewaretoken": "{{csrf_token}}"
+      },
+      success: function(result) {
+        console.log(result);
+        $("#follow-author").empty();
+        $("#follow-author").append(result);
+      },
+      error: function(error) {
+        // If user not authenticated, then redirect to login.
+        if (error.responseJSON.authenticated == false) {
+          var path = window.location.pathname;
+          console.log(path);
+          window.location.replace("/accounts/login/?next="+path);
+        }
+      }
+    });
+  });
+
+  // Redirect Anonymous User to login,
+  // if they want to read full article.
+  $("#readFullArticle").click(function() {
+    var path = window.location.pathname;
+    window.location.replace("/accounts/login/?next="+path);
+  });
+
+
+  // BookMark - When user Bookmarks a Blogpost
+  $(".blog-bookmark").click(function () {
+    console.log("Clicked");
+    var blog_slug = $(this).attr("data-pslug");
+    var blog_id = $(this).attr("data-pid");
+
+    // bookmark blogpost and sending 0 as param then replacing with slug.
+    var url = "{% url 'blog:bookmark_blogpost' blog_slug=0 %}".replace('0', blog_slug);
+    console.log(url);
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {
+        "post_slug": blog_slug,
+        "csrfmiddlewaretoken": '{{ csrf_token }}'
+      },
+      success: function(result) {
+        console.log(result);
+        $("#bookmark"+blog_id).empty();
+        $("#bookmark"+blog_id).append(result);
+      },
+      error: function(error) {
+        // If user not authenticated, then redirect to login.
+        if (error.responseJSON.authenticated == false) {
+          var path = window.location.pathname;
+          console.log(path);
+          window.location.replace("/accounts/login/?next="+path);
+        }
+      }
+    });
+  });
+  </script>
+{% endblock %}
