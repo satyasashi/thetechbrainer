@@ -1,5 +1,5 @@
 from django.db import models
-from .utils import use_directory_path
+from toolbelt.utils import use_directory_path
 from django.contrib.auth.models import User
 
 
@@ -48,7 +48,10 @@ class PersonalInformation(models.Model):
 
 class UserLikes(models.Model):
     siteuser = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
-    blog = models.ForeignKey('blog.BlogPost', on_delete=models.CASCADE, default=1)
+    blog = models.ForeignKey('blog.BlogPost', on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=False)
 
     class Meta:
         db_table = "user_likes"
@@ -61,6 +64,8 @@ class UserFollowing(models.Model):
     """Stores User(Viewer's) Follower list"""
     siteuser = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
     following = models.ForeignKey(SiteUser, on_delete=models.CASCADE, related_name="following")
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     status = models.BooleanField(default=False)
 
     class Meta:

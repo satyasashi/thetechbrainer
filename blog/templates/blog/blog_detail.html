@@ -1,11 +1,185 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %} {{ blog.blog_title }} {% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
 {% block extra_css %}
 <style type="text/css">
   .written-by {
       font-transform: uppercase;
   }
+
+  .heartBtn{
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  background: none;
+  cursor: pointer;
+  transition: background 0.5s ease;
+  }
+  .heartBtn:hover{
+
+  }
+  .active.heartBtn:before,.active.heartBtn:after{
+  background: red !important;
+  }
+  .heartBtn {
+    width: 49px;
+    height: 37px;
+    transition: background 0.5s ease;
+    display: table;
+    position: relative;
+  }
+  .heartBtn:before,
+  .heartBtn:after {
+    transition: background 0.5s ease;
+    position: absolute;
+    content: "";
+    left: 24px;
+    top: 5px;
+    width: 18px;
+    height: 30px;
+    background: dimgrey;
+    border-radius: 50px 50px 0 0;
+    transform: rotate(-45deg);
+    transform-origin: 0 100%;
+  }
+  .heartBtn:after {
+    left: 6px;
+        transform: rotate(45deg);
+        transform-origin: 100% 100%;
+  }
+
+  /* profile card */
+  .customcard {
+    padding-top: 20px;
+    margin: 10px 0 20px 0;
+    background-color: rgba(214, 224, 226, 0.2);
+    border-top-width: 0;
+    border-bottom-width: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.customcard .card-heading {
+    padding: 0 20px;
+    margin: 0;
+}
+
+.customcard .card-heading.simple {
+    font-size: 20px;
+    font-weight: 300;
+    color: #777;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.customcard .card-heading.image img {
+    display: inline-block;
+    width: 46px;
+    height: 46px;
+    margin-right: 15px;
+    vertical-align: top;
+    border: 0;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.customcard .card-heading.image .card-heading-header {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.customcard .card-heading.image .card-heading-header h3 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 16px;
+    color: #262626;
+}
+
+.customcard .card-heading.image .card-heading-header span {
+    font-size: 12px;
+    color: #999999;
+}
+
+.customcard .card-body {
+    padding: 0 20px;
+    margin-top: 20px;
+}
+
+.customcard.hovercard {
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    text-align: center;
+    background-color: rgba(214, 224, 226, 0.2);
+}
+
+.customcard.hovercard .customcardheader {
+  height: 135px;
+  background-color: #cdecea;
+  background-image: -webkit-linear-gradient(-90deg, #9296ad, yellow);
+  background-image: -o-linear-gradient(-90deg, red, yellow);
+  background-image: -moz-linear-gradient(-90deg, red, yellow);
+  background-image: linear-gradient(-90deg, #539ebb, #808FC8);
+}
+
+.customcard.hovercard .avatar {
+    position: relative;
+    top: -50px;
+    margin-bottom: -50px;
+}
+
+.customcard.hovercard .avatar img {
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    border: 5px solid rgba(255,255,255,0.5);
+}
+
+.customcard.hovercard .info {
+    padding: 4px 8px 10px;
+}
+
+.customcard.hovercard .info .title {
+    margin-bottom: 4px;
+    font-size: 24px;
+    line-height: 1;
+    color: #262626;
+    vertical-align: middle;
+}
+
+.customcard.hovercard .info .desc {
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 20px;
+    color: #737373;
+    text-overflow: ellipsis;
+}
+
+.customcard.hovercard .bottom {
+    padding: 0 20px;
+    margin-bottom: 17px;
+}
+  /* end of profile card */
 </style>
 {% endblock %}
 
@@ -18,52 +192,133 @@
       {% if messages %}
         <div class="row">
           <div class="col-md-6 mx-auto">
-
-                {% for msg in messages %}
-
-                <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
-
-                    {{msg.message}}
-                </div>
-
-                {% endfor %}
-
+          {% for msg in messages %}
+            <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+              {{msg.message}}
+            </div>
+          {% endfor %}
           </div>
         </div>
       {% endif %}
+
+      <!-- The Modal -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog author-modal-dialog">
+          <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">About Author</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body author-modal-body">
+              <div class="col-lg-12 col-sm-12">
+
+                <div class="card hovercard customcard">
+                  <div class="cardheader customcardheader">
+                  </div>
+                  <div class="avatar">
+                      <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="nah" class="author-avatar" />
+                  </div>
+                  <div class="info">
+                      <div class="title">
+                          <a target="_blank" href="https://scripteden.com/">{{blog.blog_author|title}}</a>
+                      </div>
+                      <div class="desc">{{blog.blog_author.personalinformation.introduction}}</div>
+                      <!-- <div class="desc">Curious developer</div>
+                      <div class="desc">Tech geek</div> -->
+                  </div>
+                  <div class="col-lg-12">
+                    <h4>Follow me on:</h4>
+                  </div>
+                  <div class="bottom social-icons-modal">
+                    {% if blog.blog_author.personalinformation.facebook %}
+                    <a href="{{blog.blog_author.personalinformation.facebook}}" target="_blank">
+                      <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    {% if blog.blog_author.personalinformation.twitter %}
+                    <a href="{{blog.blog_author.personalinformation.twitter}}"  target="_blank">
+                      <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if blog.blog_author.personalinformation.linkedin %}
+                    <a href="{{blog.blog_author.personalinformation.linkedin}}"  target="_blank">
+                      <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if blog.blog_author.personalinformation.github %}
+                    <a href="{{blog.blog_author.personalinformation.github}}"  target="_blank">
+                      <i class="fa fa-github" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       <div class="detail-blog-banner-and-heading-div">
           <h3 class="banner-heading"><b>{{blog.blog_title}}</b></h3>
           <h4 class="banner-subtitle">{{blog.blog_subtitle}}</h4>
           <div class="author-info">
               <div class="row">
                   <div class="col-md-1 col-sm-2 col-2">
-                      <a href="#">
+                      <a href="#" data-toggle="modal" data-target="#myModal">
                           <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="nah" class="author-avatar">
                       </a>
                   </div>
                   <div class="col-md-6 col-sm-5 col-10">
-                      <a href="#">{{blog.blog_author.user.username}}</a> &nbsp;
+                      <a href="#" data-toggle="modal" data-target="#myModal">{{blog.blog_author|title}}</a> &nbsp;
                       <a href="#" id="follow-author" data-followa="{{blog.blog_author.id}}">
                         <!-- Author follow check need to include here. -->
-                        {% if request.user.is_authenticated %}
-                          {% if follows_author %}
-                            <span class="badge badge-following">Following</span>
-                          {% else %}
-                            <span class="badge badge-follow">Follow</span>
-                          {% endif %}
+                        {% if follows_author %}
+                          <span class="badge badge-following">Following</span>
+                        {% else %}
+                          <span class="badge badge-follow">Follow</span>
                         {% endif %}
                       </a>
                       <br>
                       <span class="article-timestamp">{{blog.created_on}}</span>
                   </div>
                   <div class="social-icons col-md-5 col-sm-5 col-12">
+                    {% if blog.blog_author.personalinformation.facebook %}
+                    <a href="{{blog.blog_author.personalinformation.facebook}}" target="_blank">
                       <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    {% if blog.blog_author.personalinformation.twitter %}
+                    <a href="{{blog.blog_author.personalinformation.twitter}}"  target="_blank">
                       <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                      <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                      <i class="fa fa-github" aria-hidden="true"></i>
-                      <a href="#" id="bookmark{{blog.id}}" title="Bookmark" data-pslug="{{blog.blog_slug}}" data-pid="{{blog.id}}" class="blog-bookmark"><i class="{% if request.user.is_authenticated %}{% if bookmark == 0 %}fa fa-bookmark-o{% else %}fa fa-bookmark{% endif %}{% else %}fa fa-bookmark-o{% endif %}" aria-hidden="true"></i></a>
+                    </a>
+                    {% endif %}
 
-                      <!-- <i class="fa fa-bookmark" aria-hidden="true"></i> -->
+                    {% if blog.blog_author.personalinformation.linkedin %}
+                    <a href="{{blog.blog_author.personalinformation.linkedin}}"  target="_blank">
+                      <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if blog.blog_author.personalinformation.github %}
+                    <a href="{{blog.blog_author.personalinformation.github}}"  target="_blank">
+                      <i class="fa fa-github" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    <a href="#" id="bookmark{{blog.id}}" title="Bookmark" data-pslug="{{blog.blog_slug}}" data-pid="{{blog.id}}" class="blog-bookmark"><i class="{% if request.user.is_authenticated %}{% if bookmark == 0 %}fa fa-bookmark-o{% else %}fa fa-bookmark{% endif %}{% else %}fa fa-bookmark-o{% endif %}" aria-hidden="true"></i></a>
+
+                    <!-- <i class="fa fa-bookmark" aria-hidden="true"></i> -->
                   </div>
 
               </div>
@@ -74,52 +329,65 @@
               </div>
           </div>
           <div class="banner-caption">
-              <p>Source: Sashikanth</p>
+            {% if blog.banner_image_source %}
+              <p>Image Source: {{blog.banner_image_source}}</p>
+            {% else %}
+            <p></p>
+            {% endif %}
           </div>
           <div class="blog-category col-md-12">
             Category:
-            {% for category in blog.blog_category.all %}
-              <span class="badge badge-light">{{category}}</span>
-            {% endfor %}
+            <a href="{% url 'blog:filter_by_category' category_slug=blog.blog_category.category_slug %}">
+              <span class="badge badge-light blog-badge">{{blog.blog_category}}</span>
+            </a>
           </div>
           <div class="tags col-md-12">
             Tags:
             {% for tag in blog.blog_tags.all %}
-              <span class="badge badge-dark">#{{tag.tag_name}}</span>
+              <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
+                <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
+              </a>
             {% endfor %}
           </div>
+          {% if request.user.is_authenticated %}
           <div class="reading-time col-md-12">
             <span class="reading-time__label"></span>
-            <i>
-              <span class="reading-time__duration"></span>
-              <span class="reading-time__word-count"></span>
-            </i>
+            <span class="reading-time__duration"></span>
+            <span class="reading-time__word-count"></span>
           </div>
+          {% endif %}
       </div>
       <hr class="hr-50">
       <div class="blog-detail-div">
           <div class="blog-body">
               {% if request.user.is_anonymous %}
-                {{blog.content|truncatewords:100}}
-                <div class="">
-                  <button type="button" id="readFullArticle" class="btn btn-info btn-lg btn-block">Read Full Article</button>
+                {{blog.content|safe|truncatewords:100}}
+                <div class="col-md-12 col-sm-10 col-12 mx-auto">
+                  <button type="button" id="readFullArticle" class="btn btn-primary btn-lg btn-block">Read Full Article</button>
                 </div>
               {% else %}
                   <article class="detail-wrapper">
-                    <p>{{blog.content}}</p>
+                    <p>{{blog.content|safe}}</p>
                   </article>
               {% endif %}
           </div>
       </div>
 
       <div class="row social-icons-and-likes">
-          <div class="col-md-6 col-sm-3 col-12">
+          <div class="col-3">
+            <div class="row">
               {% if request.user.is_anonymous %}
               {% else %}
-              <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button>
+              <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
+              {% if like.status is True %}
+              <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
+              {% else %}
+              <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
               {% endif %}
+              {% endif %}
+           </div>
           </div>
-          <div class="col-md-6 col-sm-9 col-12 social-icons">
+          <div class="col-9 social-icons">
               <i class="fa fa-facebook-official" aria-hidden="true"></i>
               <i class="fa fa-twitter-square" aria-hidden="true"></i>
               <i class="fa fa-linkedin-square" aria-hidden="true"></i>
@@ -135,7 +403,7 @@
       </div>
 
       <!-- Blog author bio -->
-      <a href="#" class="author-bio-div-link" style="text-decoration:none;">
+      <a href="#" class="author-bio-div-link" style="text-decoration:none;" data-toggle="modal" data-target="#myModal">
           <div class="author-bio-div mx-auto">
               <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
                   <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
@@ -153,6 +421,9 @@
 
 {% block extra_js %}
   <script src="{% static 'js/read-time-count.js' %}"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js">
+
+  </script>
 
   <script type="text/javascript">
 
@@ -203,7 +474,6 @@
 
     // bookmark blogpost and sending 0 as param then replacing with slug.
     var url = "{% url 'blog:bookmark_blogpost' blog_slug=0 %}".replace('0', blog_slug);
-    console.log(url);
     $.ajax({
       type: "POST",
       url: url,
@@ -220,11 +490,86 @@
         // If user not authenticated, then redirect to login.
         if (error.responseJSON.authenticated == false) {
           var path = window.location.pathname;
-          console.log(path);
           window.location.replace("/accounts/login/?next="+path);
         }
       }
     });
   });
+
+  // LIKE Btn
+
+  var scaleCurve = mojs.easing.path('M0,100 L25,99.9999983 C26.2328835,75.0708847 19.7847843,0 100,0');
+  var el = document.querySelector('.button'),
+  // mo.js timeline obj
+  timeline = new mojs.Timeline(),
+
+  // tweens for the animation:
+
+  // burst animation
+  tween1 = new mojs.Burst({
+    parent: el,
+    radius:   { 0: 100 },
+    angle:    { 0: 45 },
+    y: -10,
+    count:    10,
+    radius:       100,
+    children: {
+      shape:        'circle',
+      radius:       30,
+      fill:         [ 'red', 'blue' ],
+      strokeWidth:  15,
+      duration:     500,
+    }
+  });
+
+
+  tween2 = new mojs.Tween({
+    duration : 900,
+    onUpdate: function(progress) {
+      var scaleProgress = scaleCurve(progress);
+      el.style.WebkitTransform = el.style.transform = 'scale3d(' + scaleProgress + ',' + scaleProgress + ',1)';
+    }
+  });
+
+  tween3 = new mojs.Burst({
+      parent: el,
+      radius:   { 0: 100 },
+      angle:    { 0: -45 },
+      y: -10,
+      count: 10,
+      radius: 125,
+      children: {
+        shape: 'circle',
+        radius: 30,
+        fill: [ 'white', 'red' ],
+        strokeWidth: 15,
+        duration: 400,
+      }
+  });
+
+  // add tweens to timeline:
+  timeline.add(tween1, tween2, tween3);
+
+  // when clicking the button start the timeline/animation:
+  function likeIt(element_id) {
+    var heart = "#"+element_id;
+    console.log(heart);
+    var blog_slug = $(heart).attr("data-pslug");
+    var url = "{% url 'blog:like_blogpost' blog_slug=0 %}".replace('0', blog_slug);
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {"blog_slug": blog_slug, "csrfmiddlewaretoken": "{{csrf_token}}"},
+      success: function(result) {
+        console.log(result);
+        if(result.status == true) {
+          $("#"+element_id).addClass('active');
+          timeline.play();
+        } else {
+          $("#"+element_id).removeClass('active');
+        }
+      }
+    });
+  }
   </script>
 {% endblock %}

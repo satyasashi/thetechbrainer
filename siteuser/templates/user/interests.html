@@ -1,20 +1,11 @@
-{% extends "auth_base.html" %}
+{% extends "base.html" %}
 
 {% load static %}
-
-{% block extra_head %}
-
-{% endblock %}
-
-{% block extra_css %}
-<!-- <style type="text/css">
-
-</style> -->
-{% endblock %}
 
 {% block content %}
   <div class="container oc-screen">
     <h1 class="text-center blog-category-page-heading">Select the Categories you are interested in.</h1>
+    <p class="text-center">This will help us to suggest articles that you are interested in. You can undo this whenever you want.</p>
     {% if messages %}
 
         {% for msg in messages %}
@@ -29,20 +20,20 @@
     {% endif %}
 
     <div class="row" id="checkboxes">
-      <form class="col-md-12 form-inline" action="{% url 'user:user_interests' %}" method="post">
+      <form class="col-md-12 form-inline interests-form" action="{% url 'user:user_interests' %}" method="post">
         {% csrf_token %}
         {% for category in categories %}
-        <div class="col-md-3 col-sm-6 col-6 form-group category-item">
+        <div class="col-md-3 col-sm-6 col-6 form-group interests-item">
           <label class="label">
-            <input type="checkbox" name="rGroup" value="{{category.slug}}" id="{{category.id}}" {% if category in user_interests %}checked="checked"{% endif %}/>
-            <label class="whatever" for="{{category.id}}">{{category.name}}</label>
+            <input type="checkbox" name="rGroup" value="{{category.category_slug}}" id="{{category.id}}" {% if category in user_interests %}checked="checked"{% endif %}/>
+            <label class="whatever" for="{{category.id}}">{{category.category_name}}</label>
           </label>
         </div>
         {% endfor %}
 
-        <div class="col-md-12">
-          <div class="col-md-6 form-group category-item mx-auto">
-            <input type="submit" name="saveCategory" value="Save" class="btn btn-success">
+        <div class="col-md-12 interestsFormSaveDiv mt-2">
+          <div class="col-md-3 form-group mx-auto">
+            <input type="submit" name="saveCategory" value="Save" class="btn btn-primary btn-block">
           </div>
         </div>
       </form>

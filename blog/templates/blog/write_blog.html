@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="container oc-screen newblog-container">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1 class="text-center">New Blog Post</h1>
+      <form method="post" name="newBlogForm" id="newBlogForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{new_blog_form.media}}
+        <fieldset>
+          <!-- <legend>Legend</legend> -->
+          <div class="form-group">
+            {{ new_blog_form.blog_title|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.blog_subtitle|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.banner_image|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.banner_image_source|as_crispy_field }}
+            <small id="banner_image_source_help" class="form-text text-muted">Please mention credits for banner image you are using if it is licensed.</small>
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.content|as_crispy_field }}
+          </div>
+
+          <div class="form-group">
+            {{ new_blog_form.blog_category|as_crispy_field }}
+          </div>
+
+          <div class="form-group">
+            {{ new_blog_form.blog_tags|as_crispy_field }}
+          </div>
+save
+          <div class="col-* write-blog-footer">
+            <a href="#" class="btn btn-warning" id="previewBlog">Preview</a>
+            <button type="button" class="btn btn-primary" id="draftBtn">Save as Draft</button>
+            <button type="submit" class="btn btn-success" id="submitForModeration">Submit For Moderation</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+  $("#newBlogForm #previewBlog").click(function(e) {
+    var blog_slug = $("#id_blog_title").val().replaceAll(" ", "-");
+    var url = "{% url 'blog:preview_blog' blog_slug=0 %}".replace("0", blog_slug);
+    $("#newBlogForm").attr("action", url);
+    $("#newBlogForm").submit();
+
+    var blog_title = $("#id_blog_title").val();
+    var blog_subtitle = $("#id_blog_subtitle").val();
+    var banner_image = $('#newBlogForm #id_banner_image').serialize();
+    var banner_source =  $('#newBlogForm #id_banner_image').serialize();
+    // console.log("Blog SLUG: "+blog_slug);
+
+    // $.ajax({
+    //   url: url,
+    //   data: {"blog_title": blog_title, "blog_slug": blog_slug, ""},
+    //   type: "POST",
+    //   dataType: "html",
+    //   success: function(result) {
+    //
+    //   }
+    // });
+  });
+
+  
+
+</script>
+{% endblock %}

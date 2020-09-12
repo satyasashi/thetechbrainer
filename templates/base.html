@@ -5,6 +5,8 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+
         <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&family=Yanone+Kaffeesatz&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
@@ -93,9 +95,33 @@
             } else {
               console.log("alert-success not found");
             }
-          });
-        </script>
 
+            $.toastDefaults = {
+              // top-left, top-right, bottom-left, bottom-right, top-center, and bottom-center
+              position: 'top-center',
+
+              // is dismissable?
+              dismissible: true,
+
+              // is stackable?
+              stackable: true,
+
+              // pause dely on hover
+              pauseDelayOnHover: true,
+
+              // additional CSS Classes
+              style: {
+                toast: '',
+                info: '',
+                success: '',
+                warning: '',
+                error: '',
+              }
+
+            };
+          });
+
+        </script>
         {% block extra_js %}
 
         {% endblock %}

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from .models import SiteUser, UserFollowing
-from .utils import use_directory_path, banner_directory_path
+from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
 
 
@@ -22,9 +22,8 @@ def index(request):
     return render(request, "index.html", context={'blogs': blogs})
 
 
-@login_required
 def follow(request):
-    if request.user.username and request.is_ajax():
+    if request.user.username and request.is_ajax() and request.user.is_authenticated:
         userProfile = SiteUser.objects.get(user=request.user)
         print(request.POST)
         author = validate_author_exist_or_not(request.POST.get('author_id'))
@@ -73,6 +72,7 @@ def follow(request):
 @login_required
 def user_interests(request):
     if request.method == "POST":
+        print(request.POST)
         categories = request.POST.getlist('rGroup')
         print("categories passed:", categories)
         all_categories = [cat.category_slug for cat in list(Category.objects.all())]
@@ -88,9 +88,16 @@ def user_interests(request):
                 # save_category.save()
             messages.success(request, "Your interests saved.")
             return redirect("user:user_interests")
+        else:
+            return redirect("user:pagenotfound")
     else:
         categories = Category.objects.all()
         # print(categories)
         userProfile = SiteUser.objects.get(user=request.user)
         user_interests = userProfile.interests.all()
+        print(user_interests)
         return render(request, "user/interests.html", context={'categories': categories, 'user_interests': user_interests})
+
+
+def pagenotfound(request):
+    return render(request, "pagenotfound.html")

@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.index, name="index"),
     re_path(r'^ajax/follow-author/$',  views.follow, name="follow_author"),
     path('interests/', views.user_interests, name="user_interests"),
+    path('page-not-found', views.pagenotfound, name="pagenotfound")
 ]

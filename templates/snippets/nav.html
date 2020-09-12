@@ -13,7 +13,7 @@
             <a class="nav-link" href="{% url 'user:index' %}">Home</a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="#">Categories</a>
+        <a class="nav-link" href="{% url 'blog:blog_categories' %}">Categories</a>
         </li>
         <li class="nav-item">
         <a class="nav-link" href="#">About</a>
@@ -29,7 +29,7 @@
           <div class="dropdown-menu">
               {% if request.user.is_authenticated %}
               <a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a>
-              <a class="dropdown-item" href="">Interests</a>
+              <a class="dropdown-item" href="{% url 'user:user_interests' %}">Interests</a>
               <a class="dropdown-item" href="">Profile</a>
               <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
               {% endif %}

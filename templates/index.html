@@ -3,56 +3,57 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    {% if messages %}
-      <div class="row">
-        <div class="col-md-6 mx-auto">
-          {% for msg in messages %}
-          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
-              {{msg.message}}
+<div class="container-fluid allblogs-div">
+  <div class="container oc-screen">
+      {% if messages %}
+        <div class="row">
+          <div class="col-md-6 mx-auto">
+            {% for msg in messages %}
+            <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+                {{msg.message}}
+            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
-      </div>
-    {% endif %}
-    <div class="row blog-main-heading-outer-div">
-        <div class="blog-main-heading-inner-div">
-            <h3 class="text-center">Blogs</h3>
+      {% endif %}
+      <div class="">
+        <div class="row blog-main-heading-outer-div">
+            <div class="blog-main-heading-inner-div">
+                <h3 class="text-center">Blogs</h3>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-9">
-            <div class="row">
-              {% for blog in blogs %}
-              <div class="col-md-4 col-sm-4 col-6 card-div">
-                <div class="card">
-                  <!-- <img class="card-img-top" src="{% static 'img/banner.jpg' %}" alt="Card image cap"> -->
-                    <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
-                        <div class="outer-div">
-                            <div class="layer">{{blog.blog_title}}</div>
-                            <div class="inner-div" style='background-image: url("{{blog.banner_image.url}}");'>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row equal">
+                  {% for blog in blogs %}
+                  <div class="col-md-4 col-sm-4 col-12">
+                    <div class="card card-div">
+                      <!-- <img class="card-img-top" src="{% static 'img/banner.jpg' %}" alt="Card image cap"> -->
+                        <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                            <div class="outer-div">
+                                <div class="layer">{{blog.blog_title}}</div>
+                                <div class="inner-div" style='background-image: url("{{blog.banner_image.url}}");'>
 
+                                </div>
+                            </div>
+                        </a>
+                        <div class="card-body">
+                            <div class="blog-intro">
+                              <span></span>
+                              <small>By: <a href="#">{{blog.blog_author.user.username|upper}}</a> &nbsp; On: <b>{{blog.created_on|date:"M d, Y"}}</b> </small><br><br>
+                              <p>{{blog.blog_subtitle|truncatechars:30}}<a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class="text-primary"> <b>Read Blog</b>
+                              </a></p>
+                              <p><span class="badge badge-light blog-badge">{{blog.blog_category}}</span></p>
                             </div>
                         </div>
-                    </a>
-                    <div class="card-body">
-                        <div class="blog-intro">
-                            {{blog.blog_subtitle|truncatechars:50}}
-                            <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class="text-primary">
-                              <b>Read Blog</b>
-                            </a>
-                        </div>
-                        <!-- <hr>
-                        <div class="blog-category">
-                          Category:
-
-                        </div> -->
-                    </div>
+                      </div>
                   </div>
-              </div>
-              {% endfor %}
-            </div>
-        </div> <!-- End of left side blogs list container -->
-    </div>
+                  {% endfor %}
+                </div>
+            </div> <!-- End of left side blogs list container -->
+        </div>
+      </div>
+
+  </div>
 </div>
 {% endblock %}

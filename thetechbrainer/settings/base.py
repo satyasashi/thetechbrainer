@@ -32,12 +32,15 @@ INSTALLED_APPS = [
     # our apps
     'blog.apps.BlogConfig',
     'siteuser.apps.SiteuserConfig',
+    'toolbelt.apps.ToolbeltConfig',
 
     # third party apps
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
+    'ckeditor',
+    'ckeditor_uploader',
 
     # providers
     'allauth.socialaccount.providers.google',
@@ -121,6 +124,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+IMG_SMALL = (140, 98)
 
 # SOCIALACCOUNT_PROVIDERS = {
 #     'google': {
@@ -137,6 +141,32 @@ AUTHENTICATION_BACKENDS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
+
+CKEDITOR_JQUERY_URL = "https://code.jquery.com/jquery-3.5.1.min.js"
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 800,
+        'extraPlugins': ','.join({'codesnippet', 'image2'}),
+        'stylesSet': [
+            {
+                "name": 'content',
+                "element": 'textarea',
+                "attributes": {'class': 'save'},
+            },
+        ],
+    },
+
+    'awesome_ckeditor': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 1000,
+        'extraPlugins': ','.join({'codesnippet'})
+    },
+}
 
 LANGUAGE_CODE = 'en-us'
 

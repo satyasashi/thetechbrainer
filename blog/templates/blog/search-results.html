@@ -16,19 +16,17 @@
         </div>
       </div>
     {% endif %}
-    {% if blogs %}
-      <div class="row blog-main-heading-outer-div">
-          <div class="blog-searchresults-inner-div">
-              <h3 class="text-center">Search Results</h3>
-          </div>
-      </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row blog-main-heading-outer-div">
+        <div class="blog-searchresults-inner-div">
+            <h3 class="text-center">Search Results</h3>
+        </div>
+    </div>
+    <div class="row equal">
+        <div class="col-md-12 d-flex">
           {% if blogs %}
             {% for blog in blogs %}
-            <div class="col-md-4 col-sm-4 col-6 card-div">
-              <div class="card">
+            <div class="col-md-4 col-sm-12 col-12">
+              <div class="card card-div">
                 <!-- <img class="card-img-top" src="{% static 'img/banner.jpg' %}" alt="Card image cap"> -->
                   <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
                       <div class="outer-div">
