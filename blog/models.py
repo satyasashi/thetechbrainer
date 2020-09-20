@@ -89,6 +89,9 @@ class BlogPost(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     moderator_accepted = models.BooleanField(default=False)
+    draft = models.BooleanField(default=False)
+    preview = models.BooleanField(default=False)
+    published = models.BooleanField(default=False)
 
     class Meta:
         db_table = "blog_post"

@@ -42,7 +42,8 @@ def blog_search(request):
 def blog_detail(request, slug):
     if slug:
         blog = get_object_or_404(BlogPost, blog_slug=slug)
-        if blog:
+
+        if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
             authorProfile = blog.blog_author
             if request.user.is_authenticated:
@@ -71,7 +72,7 @@ def blog_detail(request, slug):
 
                 return render(request, "blog/blog_detail.html", context)
 
-            elif request.user.is_anonymous:
+            else:
                 return render(request, "blog/blog_detail.html", context)
         else:
             return render(request, "pagenotfound.html")
@@ -217,30 +218,36 @@ def write_blog(request):
         pass
     else:
         new_blog_form = BlogPostForm()
-        return render(request, "blog/write_blog.html", context={"new_blog_form": new_blog_form})
+        userProfile = SiteUser.objects.get(user=request.user)
+        context = {
+            "new_blog_form": new_blog_form,
+            "user_profile": userProfile
+        }
+        return render(request, "blog/write_blog.html", context)
 
 
 @login_required
 def preview_blog(request, blog_slug):
-    print(request.FILES)
-    blog_title = request.POST.get("blog_title")
-    blog_subtitle = request.POST.get("blog_subtitle")
-    banner_image = request.FILES['banner_image']
-    banner_image_source = request.POST.get("banner_image_source")
-    content = request.POST.get("content")
-
-    blog_category = request.POST.get("blog_category")
-    catgory = Category.objects.get(id=blog_category)
-
-    tags = request.POST.get("blog_tags")
-    blog_tags = []
-    created_on = datetime.datetime.now().today()
-
-    for tag in tags:
-        t = Tag.objects.get(id=tag)
-        blog_tags.append(t.tag_name)
-    print(blog_tags)
-
-    userProfile = SiteUser.objects.get(user=request.user)
-
-    return render(request, "blog/preview.html", context={"user_profile": userProfile, "blog_title": blog_title, "blog_subtitle": blog_subtitle, "banner_image": banner_image, "banner_image_source": banner_image_source, "content": content, "blog_category": catgory, "blog_tags": blog_tags, "created_on": created_on})
+    print(request.FILES, request.POST)
+    # blog_title = request.POST.get("blog_title")
+    # blog_subtitle = request.POST.get("blog_subtitle")
+    # banner_image = request.FILES['banner_image']
+    # banner_image_source = request.POST.get("banner_image_source")
+    # content = request.POST.get("content")
+    #
+    # blog_category = request.POST.get("blog_category")
+    # catgory = Category.objects.get(id=blog_category)
+    #
+    # tags = request.POST.get("blog_tags")
+    # blog_tags = []
+    # created_on = datetime.datetime.now().today()
+    #
+    # for tag in tags:
+    #     t = Tag.objects.get(id=tag)
+    #     blog_tags.append(t.tag_name)
+    #
+    # print(blog_tags)
+    #
+    # userProfile = SiteUser.objects.get(user=request.user)
+    #
+    # return render(request, "blog/preview.html", context={"user_profile": userProfile, "blog_title": blog_title, "blog_subtitle": blog_subtitle, "banner_image": banner_image, "banner_image_source": banner_image_source, "content": content, "blog_category": catgory, "blog_tags": blog_tags, "created_on": created_on})

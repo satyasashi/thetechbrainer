@@ -18,7 +18,7 @@ def validate_author_exist_or_not(author_id):
 
 
 def index(request):
-    blogs = BlogPost.objects.all()
+    blogs = BlogPost.objects.filter(published=True, moderator_accepted=True, preview=False, draft=False)
     return render(request, "index.html", context={'blogs': blogs})
 
 

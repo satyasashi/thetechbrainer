@@ -16,4 +16,4 @@ class BlogPostForm(forms.ModelForm):
         widgets = {
             'banner_image': forms.ClearableFileInput(attrs={'class': 'save'}),
         }
-        exclude = ('blog_author', 'blog_slug', 'created_on', 'updated_on', 'moderator_accepted')
+        exclude = ('blog_author', 'blog_slug', 'created_on', 'updated_on', 'moderator_accepted', 'published', 'draft', 'preview')
