@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+<link rel="stylesheet"
+href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="container oc-screen newblog-container">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1 class="text-center">Edit Blog Post</h1>
+      <form method="post" name="editPostForm" id="editPostForm" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ edit_blog_form.media }}
+          <fieldset>
+            <!-- <legend>Legend</legend> -->
+            <div class="form-group">
+              {{ edit_blog_form.blog_title|as_crispy_field }}
+            </div>
+            <div class="form-group">
+              {{ edit_blog_form.blog_subtitle|as_crispy_field }}
+            </div>
+            <div class="form-group">
+              {{ edit_blog_form.banner_image }}
+            </div>
+            <div class="form-group">
+              {{ edit_blog_form.banner_image_source|as_crispy_field }}
+              <small id="banner_image_source_help" class="form-text text-muted">Please mention credits for banner image you are using if it is licensed.</small>
+            </div>
+            <div class="form-group">
+              {{ edit_blog_form.content|as_crispy_field }}
+            </div>
+
+            <input type="hidden" name="type" id="type" value="">
+
+            <div class="form-group">
+              {{ edit_blog_form.blog_category|as_crispy_field }}
+            </div>
+
+            <div class="form-group">
+
+              <select class="form-control" name="blog_tags" id="id_blog_tags" multiple>
+
+                  {% for tag in tags %}
+                    <option value="{{tag.id}}" {% if tag in edit_blog_post.blog_tags.all %}selected{% endif %}>{{tag.tag_name}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-* write-blog-footer">
+              <button type="button" class="btn btn-warning" id="editPreviewBlog"><i class="fa fa-eye"></i> Preview</a>
+              <!-- <button type="button" class="btn btn-success" id="submitForModerationEdit"><i class="fa fa-exchange"></i> Submit For Moderation</button> -->
+            </div>
+          </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+
+$("#editPreviewBlog").on("click", function(event) {
+  event.preventDefault();
+
+  $("#editPostForm").attr("action", "{% url 'blog:edit_blog_post' id=edit_blog_post.id blog_slug=edit_blog_post.blog_slug %}");
+  $("#editPostForm #type").val("preview");
+  $("#editPostForm").submit();
+
+});
+
+// $("#draftBtn").on("click", function() {
+//   event.preventDefault();
+//
+//   $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+//   $("#newBlogForm #type").val("draft");
+//   $("#newBlogForm").submit();
+// });
+
+$("#submitForModerationEdit").on("click", function() {
+  event.preventDefault();
+  console.log("submitForModeration clicked");
+  $("#editPostForm").attr("action", "{% url 'blog:write_blog' %}");
+  $("#editPostForm #type").val("submitForModeration");
+  $("#editPostForm").submit();
+});
+</script>
+{% endblock %}

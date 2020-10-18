@@ -14,6 +14,9 @@
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap" rel="stylesheet">
         <!-- Font awesome -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Data Tables -->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+
         <meta charset="utf-8" />
         <title>
             thetechbrainer | {% block title %}{% endblock %}
@@ -84,6 +87,7 @@
         <script type="text/javascript" src="{% static 'js/thetechbrainer.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/notify.min.js' %}"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript">
           $(document).ready(function() {
             // success alerts. fadeaway.
@@ -127,5 +131,8 @@
         {% endblock %}
 
         {% include "snippets/footer.html" %}
+        <div id="stop" class="scrollTop">
+            <span><a href="#">Top</a></span>
+        </div>
     </body>
 </html>

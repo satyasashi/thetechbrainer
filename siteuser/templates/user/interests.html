@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="container oc-screen">
+  <div class="container oc-screen interests-div">
     <h1 class="text-center blog-category-page-heading">Select the Categories you are interested in.</h1>
     <p class="text-center">This will help us to suggest articles that you are interested in. You can undo this whenever you want.</p>
     {% if messages %}
@@ -20,7 +20,7 @@
     {% endif %}
 
     <div class="row" id="checkboxes">
-      <form class="col-md-12 form-inline interests-form" action="{% url 'user:user_interests' %}" method="post">
+      <form class="col-md-8 mx-auto form-inline interests-form" action="{% url 'user:user_interests' %}" method="post">
         {% csrf_token %}
         {% for category in categories %}
         <div class="col-md-3 col-sm-6 col-6 form-group interests-item">

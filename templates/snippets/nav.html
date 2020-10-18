@@ -1,4 +1,4 @@
-{% load static %}
+{% load static customtags %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 <div class="container">
   <a class="navbar-brand" href="{% url 'user:index' %}"><b>Thetechbrainer</b></a>
@@ -28,10 +28,16 @@
           </a>
           <div class="dropdown-menu">
               {% if request.user.is_authenticated %}
+              <a class="dropdown-item" href="{% url 'user:user_dashboard' %}"> <i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
+                {% if request.user|has_group:"author" %}
+                <a class="dropdown-item" href="{% url 'user:user_drafts' %}">My Drafts</a>
+                {% endif %}
+
+              <a class="dropdown-item" href="#"><i class="fa fa-user"></i>&nbsp;&nbsp;My Profile</a>
+              <a class="dropdown-item" href="#"><i class="fa fa-gear"></i> Settings</a>
+              <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i>&nbsp;&nbsp;Logout</a>
               <a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a>
               <a class="dropdown-item" href="{% url 'user:user_interests' %}">Interests</a>
-              <a class="dropdown-item" href="">Profile</a>
-              <a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a>
               {% endif %}
           </div>
         </li>

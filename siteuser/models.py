@@ -43,7 +43,7 @@ class PersonalInformation(models.Model):
         db_table = "personal_information"
 
     def __str__(self):
-        return str(self.siteuser)
+        return self.siteuser.user.username
 
 
 class UserLikes(models.Model):
@@ -57,7 +57,7 @@ class UserLikes(models.Model):
         db_table = "user_likes"
 
     def __str__(self):
-        return self.siteuser
+        return self.siteuser.user.username
 
 
 class UserFollowing(models.Model):
@@ -81,8 +81,11 @@ class UserBookmarks(models.Model):
     blog_post = models.ForeignKey('blog.BlogPost', on_delete=models.CASCADE, default=1)
 
     def __str__(self):
-        return self.user.user.username + ":" + self.blog_post.blog_title
+        return self.user + "-" + self.blog_post
 
     class Meta:
         verbose_name = "UserBookmark"
         verbose_name_plural = "UserBookmarks"
+
+    def __str__(self):
+        return self.user.user.username

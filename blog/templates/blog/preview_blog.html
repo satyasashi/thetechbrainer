@@ -201,7 +201,6 @@
         </div>
       {% endif %}
 
-      <!-- The Modal -->
       <div class="modal fade" id="myModal">
         <div class="modal-dialog author-modal-dialog">
           <div class="modal-content">
@@ -270,8 +269,33 @@
         </div>
       </div>
 
+      <!-- Warn if user leaves before drafting or submitting blog for moderation. -->
+      <div class="modal fade" tabindex="-1" role="dialog" id="warningModal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Are you sure you want to leave?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>You have unsaved changes that will be lost. Draft it to work later.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save as Draft</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- End of warning modal -->
+
       <div class="detail-blog-banner-and-heading-div">
-          <h3 class="banner-heading"><b>{{blog.blog_title}}</b></h3>
+          <div class="col-sm-12">
+              <p class="custom-alert alert-custom-warning"> <strong>Note:</strong> You are previewing your blog. Click <strong>'Submit for Moderation'</strong> at the bottom to process your blog for publishment. </p>
+          </div>
+          <h3 class="banner-heading" data-bid="{{blog.id}}" id="blogHeadingPreview"><b>{{blog.blog_title}}</b></h3>
           <h4 class="banner-subtitle">{{blog.blog_subtitle}}</h4>
           <div class="author-info">
               <div class="row">
@@ -294,29 +318,23 @@
                       <span class="article-timestamp">{{blog.created_on}}</span>
                   </div>
                   <div class="social-icons col-md-5 col-sm-5 col-12">
-                    {% if blog.blog_author.personalinformation.facebook %}
-                    <a href="{{blog.blog_author.personalinformation.facebook}}" target="_blank">
+                    <a href="#" target="_blank">
                       <i class="fa fa-facebook-official" aria-hidden="true"></i>
                     </a>
-                    {% endif %}
-                    {% if blog.blog_author.personalinformation.twitter %}
-                    <a href="{{blog.blog_author.personalinformation.twitter}}"  target="_blank">
+
+                    <a href="#"  target="_blank">
                       <i class="fa fa-twitter-square" aria-hidden="true"></i>
                     </a>
-                    {% endif %}
 
-                    {% if blog.blog_author.personalinformation.linkedin %}
-                    <a href="{{blog.blog_author.personalinformation.linkedin}}"  target="_blank">
+                    <a href="#"  target="_blank">
                       <i class="fa fa-linkedin-square" aria-hidden="true"></i>
                     </a>
-                    {% endif %}
 
-                    {% if blog.blog_author.personalinformation.github %}
-                    <a href="{{blog.blog_author.personalinformation.github}}"  target="_blank">
+                    <a href="#"  target="_blank">
                       <i class="fa fa-github" aria-hidden="true"></i>
                     </a>
-                    {% endif %}
-                    <a href="#" id="bookmark{{blog.id}}" title="Bookmark" data-pslug="{{blog.blog_slug}}" data-pid="{{blog.id}}" class="blog-bookmark"><i class="{% if request.user.is_authenticated %}{% if bookmark == 0 %}fa fa-bookmark-o{% else %}fa fa-bookmark{% endif %}{% else %}fa fa-bookmark-o{% endif %}" aria-hidden="true"></i></a>
+
+                    <a href="#" title="Bookmark" class="blog-bookmark"><i class="fa fa-bookmark-o" aria-hidden="true"></i></a>
 
                     <!-- <i class="fa fa-bookmark" aria-hidden="true"></i> -->
                   </div>
@@ -374,44 +392,31 @@
       </div>
 
       <div class="row social-icons-and-likes">
-          <div class="col-4">
-            {% if request.user.is_anonymous %}
-            {% else %}
-            <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
-            {% if like.status is True %}
-            <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
-            {% else %}
-            <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
-            {% endif %}
-            {% endif %}
+          <div class="col-3">
+            <div class="row">
+              {% if request.user.is_anonymous %}
+              {% else %}
+              <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
+              {% if like.status is True %}
+              <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
+              {% else %}
+              <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
+              {% endif %}
+              {% endif %}
+           </div>
           </div>
-          <div class="col-8">
-              <div class="row">
-                  <div class="social-icons">
-                      {% if blog.blog_author.personalinformation.facebook %}
-                      <a href="{{blog.blog_author.personalinformation.facebook}}" target="_blank">
-                        <i class="fa fa-facebook-official" aria-hidden="true"></i>
-                      </a>
-                      {% endif %}
-                      {% if blog.blog_author.personalinformation.twitter %}
-                      <a href="{{blog.blog_author.personalinformation.twitter}}"  target="_blank">
-                        <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                      </a>
-                      {% endif %}
-
-                      {% if blog.blog_author.personalinformation.linkedin %}
-                      <a href="{{blog.blog_author.personalinformation.linkedin}}"  target="_blank">
-                        <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                      </a>
-                      {% endif %}
-
-                      {% if blog.blog_author.personalinformation.github %}
-                      <a href="{{blog.blog_author.personalinformation.github}}"  target="_blank">
-                        <i class="fa fa-github" aria-hidden="true"></i>
-                      </a>
-                      {% endif %}
-                  </div>
-              </div>
+          <div class="col-9 social-icons">
+              <i class="fa fa-facebook-official" aria-hidden="true"></i>
+              <i class="fa fa-twitter-square" aria-hidden="true"></i>
+              <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+              <i class="fa fa-github" aria-hidden="true"></i>
+              <a href="#" class="circle-icons">
+                  <span>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                      <i class="fa fa-circle-o" aria-hidden="true"></i>
+                  </span>
+              </a>
           </div>
       </div>
 
@@ -429,6 +434,18 @@
               </div>
           </div>
       </a>
+
+      <div class="col-md-8 mx-auto">
+        <div class="alert alert-dark">
+          <h4> <i class="fa fa-gears"></i> Actions</h4>
+          <form class="" id="previewBlogForm" action="" method="post">
+            {% csrf_token %}
+            <!-- <input type="hidden" name="type" id="type" value=""> -->
+            <a href="{% url 'blog:edit_blog_post' id=blog.id blog_slug=blog.blog_slug %}" name="editblog" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+            <button type="button" name="button" class="btn btn-success" id="submitForModerationPreview"><i class="fa fa-exchange"></i> Submit For Moderation</button>
+          </form>
+        </div>
+      </div>
   </div>
 {% endblock %}
 
@@ -440,149 +457,56 @@
 
   <script type="text/javascript">
 
-  document.addEventListener('DOMContentLoaded', (event) => {
-    new ReadingTime(200, 'Read time:', 'min', 'words', 'Less than a minute');
-  })
-
-  // Follow - When user Follows a Author.
-  $("#follow-author").click(function() {
-    var author_id = $(this).attr("data-followa");
-    console.log("Clicked");
-    $.ajax({
-      type: "POST",
-      url: "{% url 'user:follow_author' %}",
-      data: {
-        "author_id": author_id,
-        "csrfmiddlewaretoken": "{{csrf_token}}"
-      },
-      success: function(result) {
-        console.log(result);
-        $("#follow-author").empty();
-        $("#follow-author").append(result);
-      },
-      error: function(error) {
-        // If user not authenticated, then redirect to login.
-        if (error.responseJSON.authenticated == false) {
-          var path = window.location.pathname;
-          console.log(path);
-          window.location.replace("/accounts/login/?next="+path);
-        }
-      }
+    document.addEventListener('DOMContentLoaded', (event) => {
+        new ReadingTime(200, 'Read time:', 'min', 'words', 'Less than a minute');
     });
-  });
 
-  // Redirect Anonymous User to login,
-  // if they want to read full article.
-  $("#readFullArticle").click(function() {
-    var path = window.location.pathname;
-    window.location.replace("/accounts/login/?next="+path);
-  });
+    // $(window).bind('beforeunload', function(event){
+    //     event.preventDefault();
+    //     $("#warningModal").modal("toggle");
+    //     event.confirm();
+    // });
 
+    // window.addEventListener('beforeunload', function (e) {
+    //   // Cancel the event as stated by the standard.
+    //   e.preventDefault();
+    //   // Chrome requires returnValue to be set.
+    //   e.returnValue = '';
+    //   console.log(e.returnValue);
+    // });
 
-  // BookMark - When user Bookmarks a Blogpost
-  $(".blog-bookmark").click(function () {
-    console.log("Clicked");
-    var blog_slug = $(this).attr("data-pslug");
-    var blog_id = $(this).attr("data-pid");
+    $("#submitForModerationPreview").on("click", function() {
+      event.preventDefault();
+      console.log("clicked submitForModeration preview page");
+      var blog_id = $("#blogHeadingPreview").attr("data-bid");
+      $.ajax({
+          url: "{% url 'blog:submit_for_moderation_preview' %}",
+          type: "POST",
+          data: {
+              "csrfmiddlewaretoken": "{{csrf_token}}",
+              "type": "submitForModerationPreview",
+              "blog_id": blog_id
+          },
+          dataType: "json",
+          success: function(result) {
+              if(result && result.redirect_to) {
+                  window.location.href = result.redirect_to;
+              }
+          },
+          error: function(error) {
+              // do something.
+          }
+      }); // end ajax call.
 
-    // bookmark blogpost and sending 0 as param then replacing with slug.
-    var url = "{% url 'blog:bookmark_blogpost' blog_slug=0 %}".replace('0', blog_slug);
-    $.ajax({
-      type: "POST",
-      url: url,
-      data: {
-        "post_slug": blog_slug,
-        "csrfmiddlewaretoken": '{{ csrf_token }}'
-      },
-      success: function(result) {
-        console.log(result);
-        $("#bookmark"+blog_id).empty();
-        $("#bookmark"+blog_id).append(result);
-      },
-      error: function(error) {
-        // If user not authenticated, then redirect to login.
-        if (error.responseJSON.authenticated == false) {
-          var path = window.location.pathname;
-          window.location.replace("/accounts/login/?next="+path);
-        }
-      }
     });
-  });
 
-  // LIKE Btn
+    // $(".submitForModeration").on("click", function() {
+    //   event.preventDefault();
+    //
+    //   $("#previewBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+    //   $("#previewBlogForm #type").val("submitForModeration");
+    //   $("#previewBlogForm").submit();
+    // });
 
-  var scaleCurve = mojs.easing.path('M0,100 L25,99.9999983 C26.2328835,75.0708847 19.7847843,0 100,0');
-  var el = document.querySelector('.button'),
-  // mo.js timeline obj
-  timeline = new mojs.Timeline(),
-
-  // tweens for the animation:
-
-  // burst animation
-  tween1 = new mojs.Burst({
-    parent: el,
-    radius:   { 0: 100 },
-    angle:    { 0: 45 },
-    y: -10,
-    count:    10,
-    radius:       100,
-    children: {
-      shape:        'circle',
-      radius:       30,
-      fill:         [ 'red', 'blue' ],
-      strokeWidth:  15,
-      duration:     500,
-    }
-  });
-
-
-  tween2 = new mojs.Tween({
-    duration : 900,
-    onUpdate: function(progress) {
-      var scaleProgress = scaleCurve(progress);
-      el.style.WebkitTransform = el.style.transform = 'scale3d(' + scaleProgress + ',' + scaleProgress + ',1)';
-    }
-  });
-
-  tween3 = new mojs.Burst({
-      parent: el,
-      radius:   { 0: 100 },
-      angle:    { 0: -45 },
-      y: -10,
-      count: 10,
-      radius: 125,
-      children: {
-        shape: 'circle',
-        radius: 30,
-        fill: [ 'white', 'red' ],
-        strokeWidth: 15,
-        duration: 400,
-      }
-  });
-
-  // add tweens to timeline:
-  timeline.add(tween1, tween2, tween3);
-
-  // when clicking the button start the timeline/animation:
-  function likeIt(element_id) {
-    var heart = "#"+element_id;
-    console.log(heart);
-    var blog_slug = $(heart).attr("data-pslug");
-    var url = "{% url 'blog:like_blogpost' blog_slug=0 %}".replace('0', blog_slug);
-    $.ajax({
-      type: "POST",
-      url: url,
-      data: {"blog_slug": blog_slug, "csrfmiddlewaretoken": "{{csrf_token}}"},
-      success: function(result) {
-        console.log(result);
-        if(result.status == true) {
-          $("#"+element_id).addClass('active');
-          timeline.play();
-        } else {
-          $("#"+element_id).removeClass('active');
-        }
-      }
-    });
-  }
   </script>
 {% endblock %}

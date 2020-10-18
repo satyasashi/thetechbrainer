@@ -10,158 +10,6 @@
 {% block home_banner %} {% endblock %}
 
 {% block content %}
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="container-fluid">
-            {% if messages %}
-              <div class="row">
-                <div class="col-md-6 mx-auto">
-                {% for msg in messages %}
-                  <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
-                    {{msg.message}}
-                  </div>
-                {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-
-
-            <div class="container">
-                <h3 class="banner-heading"><b id="blogTitlePreview"></b></h3>
-                <h4 class="banner-subtitle" id="blogSubTitlePreview"></h4>
-                <div class="author-info">
-                    <div class="row">
-                        <div class="col-md-1 col-sm-2 col-2">
-                            <a href="#" data-toggle="modal" data-target="#myModal">
-                                <img src="{% if user_profile.personalinformation.picture %}{{user_profile.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="nah" class="author-avatar" id="blogImagePreview">
-                            </a>
-                        </div>
-                        <div class="col-md-6 col-sm-5 col-10">
-                            <a href="#" data-toggle="modal" data-target="#myModal" id="usernamePreview">{{user_profile.user.username}}</a> &nbsp;
-                            <a href="#">
-                              <!-- Author follow check need to include here. -->
-                              <span class="badge badge-follow">Follow</span>
-                            </a>
-                            <br>
-                            <span class="article-timestamp" id="createdonPreview">{{created_on}}</span>
-                        </div>
-                        <div class="social-icons col-md-5 col-sm-5 col-12">
-                          <a href="#" target="_blank">
-                            <i class="fa fa-facebook-official" aria-hidden="true"></i>
-                          </a>
-
-                          <a href="#"  target="_blank">
-                            <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                          </a>
-
-                          <a href="#"  target="_blank">
-                            <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                          </a>
-
-                          <a href="#"  target="_blank">
-                            <i class="fa fa-github" aria-hidden="true"></i>
-                          </a>
-
-                          <a href="#" title="Bookmark" data-pslug="" data-pid="" class="blog-bookmark"><i class="fa fa-bookmark-o" aria-hidden="true"></i></a>
-
-                          <!-- <i class="fa fa-bookmark" aria-hidden="true"></i> -->
-                        </div>
-
-                    </div>
-                </div>
-                <div class="jumbotron detail-blog-banner">
-                    <div class="banner-info">
-                      <img src="" alt="" id="bannerImagePreview" style="width: 680px; height: 180px;">
-                    </div>
-                </div>
-                <div class="banner-caption">
-                  <p id="imageSourcePreview"></p>
-                </div>
-                <div class="blog-category col-md-12">
-                  Category:
-                  <a href="#">
-                    <span class="badge badge-light blog-badge"></span>
-                  </a>
-                </div>
-                <div class="tags col-md-12">
-                  Tags:
-                  {% for tag in blog_tags %}
-                    <a href="#">
-                      <span class="badge badge-dark blog-badge">{{tag}}</span>
-                    </a>
-                  {% endfor %}
-                </div>
-                {% if request.user.is_authenticated %}
-                <div class="reading-time col-md-12">
-                  <span class="reading-time__label"></span>
-                  <span class="reading-time__duration"></span>
-                  <span class="reading-time__word-count"></span>
-                </div>
-                {% endif %}
-            </div>
-            <hr class="hr-50">
-            <div class="blog-detail-div">
-                <div class="blog-body">
-                  <article class="detail-wrapper">
-                    <p id="blogContentPreview"></p>
-                  </article>
-                </div>
-            </div>
-
-            <div class="row social-icons-and-likes">
-                <div class="col-3">
-                  <div class="row">
-                    <div id='' class='button heartBtn' name="like_btn"></div>
-                 </div>
-                </div>
-                <div class="col-9 social-icons">
-                    <i class="fa fa-facebook-official" aria-hidden="true"></i>
-                    <i class="fa fa-twitter-square" aria-hidden="true"></i>
-                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                    <i class="fa fa-github" aria-hidden="true"></i>
-                    <a href="#" class="circle-icons">
-                        <span>
-                            <i class="fa fa-circle-o" aria-hidden="true"></i>
-                            <i class="fa fa-circle-o" aria-hidden="true"></i>
-                            <i class="fa fa-circle-o" aria-hidden="true"></i>
-                        </span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Blog author bio -->
-            <a href="#" class="author-bio-div-link" style="text-decoration:none;" data-toggle="modal" data-target="#myModal">
-                <div class="author-bio-div mx-auto">
-                    <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
-                        <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-12 author-bio">
-                        <span class="written-by">About Author</span>
-                        <h3 class="author-bio-name">{{user_profile.user.username}}</h3>
-                        <!-- Author Introduction should be down in <p> -->
-                        <p class="author-bio-para">  </p>
-                    </div>
-                </div>
-            </a>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="container oc-screen newblog-container">
   <div class="row">
     <div class="col-md-8 mx-auto">
@@ -188,6 +36,8 @@
             {{ new_blog_form.content|as_crispy_field }}
           </div>
 
+          <input type="hidden" name="type" id="type" value="">
+
           <div class="form-group">
             {{ new_blog_form.blog_category|as_crispy_field }}
           </div>
@@ -196,9 +46,9 @@
             {{ new_blog_form.blog_tags|as_crispy_field }}
           </div>
           <div class="col-* write-blog-footer">
-            <a href="#" class="btn btn-warning" id="previewBlog" target="_blank" data-toggle="modal" data-target="#exampleModal">Preview</a>
-            <button type="button" class="btn btn-primary" id="draftBtn">Save as Draft</button>
-            <button type="submit" class="btn btn-success" id="submitForModeration">Submit For Moderation</button>
+            <button type="button" class="btn btn-warning" id="previewBlog"><i class="fa fa-eye"></i> Preview</a>
+            <!-- <button type="button" class="btn btn-primary" id="draftBtn">Save as Draft</button> -->
+            <!-- <button type="submit" class="btn btn-success submitForModeration"><i class="fa fa-exchange"></i> Submit For Moderation</button> -->
           </div>
         </fieldset>
       </form>
@@ -210,50 +60,51 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
 <script type="text/javascript">
-  CKEDITOR.config.removePlugins = 'image';
-  var imageName = "";
-  var imgdata = "";
+  var preview = false;
+  var saveAsDraft = false;
+  var submitForModeration = false;
 
-  $("#id_banner_image").change(function() {
-    var reader = new FileReader();
+  function blogSubmit(event) {
+    var data = new FormData(this);
+    console.log(data);
 
-    reader.onload = function (e) {
-        // get loaded data and render thumbnail.
-        // document.getElementById("image").src = e.target.result;
-        imgdata = e.target.result;
-    };
+    $.ajax({
+      url: "{% url 'blog:write_blog' %}",
+      type: "POST",
+      data: data,
+      dataType: "json",
+      success: function(result) {
+        console.log("Success");
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  }
 
-    // read the image file as a data URL.
-    imageName = this.files[0]["name"];
-    reader.readAsDataURL(this.files[0]);
+  $("#previewBlog").on("click", function(event) {
+    event.preventDefault();
+
+    $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+    $("#newBlogForm #type").val("preview");
+    $("#newBlogForm").submit();
   });
 
-  $("#previewBlog").on("click", function(){
-    var blog_title = $("#id_blog_title").val();
-    var blog_slug = $("#id_blog_title").val().replaceAll(" ", "-");
-    var blog_subtitle = $("#id_blog_subtitle").val();
-    var content = CKEDITOR.instances["id_content"].getData();
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
+  // $("#draftBtn").on("click", function() {
+  //   event.preventDefault();
+  //
+  //   $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+  //   $("#newBlogForm #type").val("draft");
+  //   $("#newBlogForm").submit();
+  // });
 
-    let dateObj = new Date();
-    var month = monthNames[dateObj.getMonth()];
-    var year = dateObj.getFullYear();
-    var day = dateObj.getDate();
-    var date = month + " " + date + ", " + year;
-    // var url = "{% url 'blog:preview_blog' blog_slug=0 %}".replace("0", blog_slug);
-    $("#blogTitlePreview").text(blog_title);
-    $("#blogSubTitlePreview").text(blog_subtitle);
-    $("#bannerImagePreview").attr("src", imgdata);
-    $("#blogContentPreview").html(content);
+  $(".submitForModeration").on("click", function() {
+    event.preventDefault();
 
+    $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+    $("#newBlogForm #type").val("submitForModeration");
+    $("#newBlogForm").submit();
   });
-
-
 </script>
 {% endblock %}

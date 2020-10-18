@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from .models import SiteUser, UserFollowing
+from django.contrib.auth.models import User, Group
 from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
+from siteuser.models import UserLikes, UserBookmarks, UserFollowing
 
 
 def validate_author_exist_or_not(author_id):
@@ -22,6 +24,7 @@ def index(request):
     return render(request, "index.html", context={'blogs': blogs})
 
 
+@login_required
 def follow(request):
     if request.user.username and request.is_ajax() and request.user.is_authenticated:
         userProfile = SiteUser.objects.get(user=request.user)
@@ -101,3 +104,58 @@ def user_interests(request):
 
 def pagenotfound(request):
     return render(request, "pagenotfound.html")
+
+
+@login_required
+def user_drafts(request):
+    author_group = Group.objects.get(name='author')
+    if request.user.groups.filter(name=author_group).exists():
+        blogs = BlogPost.objects.filter(blog_author=SiteUser.objects.get(user=request.user), preview=True, draft=True, published=False)
+        return render(request, "user/user_drafts.html", context={"blogs": blogs})
+    else:
+        return redirect("user:pagenotfound")
+
+
+@login_required
+def user_dashboard(request):
+    siteuser = SiteUser.objects.get(user=request.user)
+    author_group = Group.objects.get(name='author')
+    if request.user.groups.filter(name=author_group).exists():
+        pass
+    else:
+        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+        following = UserFollowing.objects.filter(siteuser=siteuser)
+        user_likes = UserLikes.objects.filter(siteuser=siteuser)
+        return render(request, "user/dashboard.html", context={
+            "user_likes": user_likes,
+            "user_bookmarks": user_bookmarks,
+            "following": following
+            })
+
+
+@login_required
+def get_user_information(request):
+    if request.method == "POST" and request.is_ajax():
+        author_id = request.POST.get("id")
+        no_social_profile = False
+        siteuser = SiteUser.objects.get(id=author_id)
+        if siteuser.personalinformation.facebook is None and siteuser.personalinformation.github is None and siteuser.personalinformation.twitter is None and siteuser.personalinformation.insta is None:
+            no_social_profile = True
+            print("Author has no social profile linked")
+
+        data = JsonResponse({
+            "status": "success",
+            "no_social_profile": no_social_profile,
+            "author_avatar": siteuser.personalinformation.picture.url,
+            "author_name": siteuser.user.username,
+            "author_introduction": siteuser.personalinformation.introduction,
+            "fb": siteuser.personalinformation.facebook,
+            "github": siteuser.personalinformation.github,
+            "linkedin": siteuser.personalinformation.linkedin,
+            "twitter": siteuser.personalinformation.twitter,
+            "instagram": siteuser.personalinformation.insta
+        }, status=200)
+
+        return data
+    else:
+        return JsonResponse({"status": "failure", "message": "Author information not found"}, status=400)

@@ -3,10 +3,17 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from siteuser.models import SiteUser
 from django.utils.text import slugify
-from toolbelt.utils import banner_path, category_img_path, get_category_img_thumbnail_path, get_user_directory_thumbnail_path
+from toolbelt.utils import (
+    banner_path,
+    category_img_path,
+    get_category_img_thumbnail_path,
+    get_user_directory_thumbnail_path,
+    get_random_string
+    )
 from ckeditor_uploader.fields import RichTextUploadingField
 from PIL import Image
 import os
+import uuid
 
 
 class Role(models.Model):
@@ -78,12 +85,12 @@ class BlogPost(models.Model):
     blog_author = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
     blog_title = models.CharField(max_length=100, help_text="Keep titles short.")
     blog_subtitle = models.CharField(max_length=150, help_text="Short line for subtitle.")
-    blog_slug = models.SlugField(blank=True, help_text="Slug will be automatically generated.")
-    banner_image = models.ImageField(upload_to=banner_path)
+    blog_slug = models.SlugField(blank=True, max_length=500, help_text="Slug will be automatically generated.")
+    banner_image = models.ImageField(upload_to=banner_path, blank=True, null=True)
     banner_image_source = models.CharField(max_length=50, default="")
     content = RichTextUploadingField(blank=True, null=True)
 
-    blog_category = models.OneToOneField(Category, on_delete=models.CASCADE)
+    blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
     blog_tags = models.ManyToManyField(Tag)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -91,6 +98,7 @@ class BlogPost(models.Model):
     moderator_accepted = models.BooleanField(default=False)
     draft = models.BooleanField(default=False)
     preview = models.BooleanField(default=False)
+    submitted_for_moderation = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
 
     class Meta:
@@ -103,7 +111,9 @@ class BlogPost(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             # newly created object, so create slug.
-            self.blog_slug = slugify(self.blog_title)
+            random_string = get_random_string(5)
+            self.blog_slug = slugify(self.blog_title) + "-" + str(random_string)
+
         super(BlogPost, self).save(*args, **kwargs)
 
         # make thumbnail from original image.
@@ -119,7 +129,7 @@ class BlogPost(models.Model):
             print("Created thumbnails folder.")
 
     def __str__(self):
-        return str(self.blog_author.user.username)
+        return self.blog_author + ":" + self.blog_title
 
 
 class BlogRequest(models.Model):
@@ -132,4 +142,4 @@ class BlogRequest(models.Model):
         db_table = "blog_request"
 
     def __str__(self):
-        return self.siteuser.user.username + "-" + self.blog_category.category_name
+        return self.blog_category
