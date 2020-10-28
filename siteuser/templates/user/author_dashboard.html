@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block extra_css %}
+<style type="text/css">
+/* profile card */
+.customcard {
+  padding-top: 20px;
+  margin: 10px 0 20px 0;
+  background-color: rgba(214, 224, 226, 0.2);
+  border-top-width: 0;
+  border-bottom-width: 2px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.customcard .card-heading {
+  padding: 0 20px;
+  margin: 0;
+}
+
+.customcard .card-heading.simple {
+  font-size: 20px;
+  font-weight: 300;
+  color: #777;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.customcard .card-heading.image img {
+  display: inline-block;
+  width: 46px;
+  height: 46px;
+  margin-right: 15px;
+  vertical-align: top;
+  border: 0;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+}
+
+.customcard .card-heading.image .card-heading-header {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.customcard .card-heading.image .card-heading-header h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 16px;
+  color: #262626;
+}
+
+.customcard .card-heading.image .card-heading-header span {
+  font-size: 12px;
+  color: #999999;
+}
+
+.customcard .card-body {
+  padding: 0 20px;
+  margin-top: 20px;
+}
+
+.customcard.hovercard {
+  position: relative;
+  padding-top: 0;
+  overflow: hidden;
+  text-align: center;
+  background-color: rgba(214, 224, 226, 0.2);
+}
+
+.customcard.hovercard .customcardheader {
+height: 135px;
+background-color: #cdecea;
+background-image: -webkit-linear-gradient(-90deg, #9296ad, yellow);
+background-image: -o-linear-gradient(-90deg, red, yellow);
+background-image: -moz-linear-gradient(-90deg, red, yellow);
+background-image: linear-gradient(-90deg, #539ebb, #808FC8);
+}
+
+.customcard.hovercard .avatar {
+  position: relative;
+  top: -50px;
+  margin-bottom: -50px;
+}
+
+.customcard.hovercard .avatar img {
+  width: 100px;
+  height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,0.5);
+}
+
+.customcard.hovercard .info {
+  padding: 4px 8px 10px;
+}
+
+.customcard.hovercard .info .title {
+  margin-bottom: 4px;
+  font-size: 24px;
+  line-height: 1;
+  color: #262626;
+  vertical-align: middle;
+}
+
+.customcard.hovercard .info .desc {
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 20px;
+  color: #737373;
+  text-overflow: ellipsis;
+}
+
+.customcard.hovercard .bottom {
+  padding: 0 20px;
+  margin-bottom: 17px;
+}
+/* end of profile card */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid author-dashboard-div">
+    <div class="container oc-screen">
+        <h1>Dashboard</h1>
+        <h4 class="text-muted">Insights</h4>
+        <div class="row">
+            <div class="col-md-4" id="authorAllBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_count }}</h1>
+                    <p class="text-center">ALL BLOGS</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" id="authorUnpublishedBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_unpublished_count }}</h1>
+                    <p class="text-center">UNPUBLISHED BLOGS</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" id="authorPublishedBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_published_count }}</h1>
+                    <p class="text-center">PUBLISHED BLOGS</p>
+                </div>
+            </div>
+        </div>
+        <br>
+        <h4 class="text-muted">Control what you see.</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card border-success mb-3">
+                  <div class="card-header card-header-success"> <h4><i class="fa fa-user-circle"></i> People following you</h4></div>
+                  <div class="card-body" id="followCardBody">
+                    <!-- <h4 class="card-title"> </h4> -->
+                    <!-- <p class="card-text">
+
+                    </p> -->
+
+                    {% if users_following_you %}
+                        <table class="table" id="authorFollowersTable">
+                            <thead>
+                                <th>Username</th>
+                            </thead>
+                            <tbody>
+                                {% for row in users_following_you %}
+                                    <tr id="row{{row.siteuser.id}}">
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})"> <img src="{% if row.siteuser.personalinformation.picture %}{{row.siteuser.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.siteuser|title }} </a> </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="container">
+                            <p class="text-center"> <i class="fa fa-info-circle"></i> You have no followers yet. Keep blogging to gain following.</p>
+                        </div>
+                    {% endif %}
+
+
+                  </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <div class="card border-info mb-3">
+                  <div class="card-header card-header-info"> <h4><i class="fa fa-bookmark"></i> Your Bookmarks</h4> </div>
+                  <div class="card-body">
+                    <!-- <h4 class="card-title"> </h4> -->
+                    <!-- <p class="card-text">
+
+                    </p> -->
+                    <table class="table" id="bookmarkBlogsTable">
+                        <thead>
+                            <th>Blog Name</th>
+                            <th>Author</th>
+                            <th>Actions</th>
+                        </thead>
+                        <tbody>
+                            {% for row in user_bookmarks %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'blog:blog_detail' slug=row.blog_post.blog_slug %}">
+                                            <strong>{{ row.blog_post.blog_title }}</strong>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+
+            <!-- The Modal -->
+            <div class="modal fade" id="authorInfoModal">
+              <div class="modal-dialog author-modal-dialog">
+                <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">About Author</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body author-modal-body">
+                    <div class="col-lg-12 col-sm-12">
+
+                      <div class="card hovercard customcard">
+                        <div class="cardheader customcardheader">
+                        </div>
+                        <div class="avatar">
+                            <img src="" alt="nah" class="author-avatar" id="authorAvatar" />
+                        </div>
+                        <div class="info">
+                            <div class="title">
+                                <a target="_blank" href="#" id="blogAuthorName"></a>
+                            </div>
+                            <div class="desc" id="blogAuthorIntroduction"></div>
+
+                        </div>
+                        <div class="col-lg-12" id="FollowMeOnAuthorInfo">
+                          <h4>Follow me on:</h4>
+                          <div class="bottom social-icons-modal">
+
+                            <a href="" id="facebookHref" target="_blank" style="display:none;">
+                              <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                            </a>
+
+                            <a href="" id="twitterHref" target="_blank" style="display:none;">
+                              <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                            </a>
+
+                            <a href="" id="linkedInHref" target="_blank" style="display:none;">
+                              <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                            </a>
+
+                            <a href="" id="githubHref" target="_blank" style="display:none;">
+                              <i class="fa fa-github" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Modal footer -->
+                  <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  </div> -->
+
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-default mb-3">
+                  <div class="card-header"> <h4><i class="fa fa-user-circle"></i> Authors you following</h4></div>
+                  <div class="card-body" id="followCardBody">
+                    <!-- <h4 class="card-title"> </h4> -->
+                    <!-- <p class="card-text">
+
+                    </p> -->
+
+                    {% if following %}
+                        <table class="table" id="followingAuthorTable">
+                            <thead>
+                                <th>Author</th>
+                                <th>Actions</th>
+                            </thead>
+                            <tbody>
+                                {% for row in following %}
+                                    <tr id="row{{row.following.id}}">
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
+                                        <td>
+                                            <button type="button" name="button" data-aid="{{row.following.id}}" class="btn btn-danger btn-sm unfollowAuthor">Unfollow</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="container" id="notFollowingAnyOne" style="display:none;">
+                            <p class="text-center"> <i class="fa fa-info-circle"></i> You are not following any author.</p>
+                        </div>
+                    {% else %}
+                        <div class="container">
+                            <p class="text-center"> <i class="fa fa-info-circle"></i> You are not following any author.</p>
+                        </div>
+                    {% endif %}
+
+
+                  </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                  <div class="card-header-primary"> <h4><i class="fa fa-thumbs-up"></i> Blogs You Liked</h4> </div>
+                  <div class="card-body">
+                    <!-- <h4 class="card-title">Blogs you liked</h4> -->
+                    <!-- <p class="card-text">
+
+                    </p> -->
+                    <table class="table" id="likedBlogsTable">
+                        <thead>
+                            <th>Blog Name</th>
+                            <th>Author</th>
+                            <th>Actions</th>
+                        </thead>
+                        <tbody>
+                            {% for row in user_likes %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'blog:blog_detail' slug=row.blog.blog_slug %}">
+                                            <strong>{{ row.blog.blog_title }}</strong>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- toast notification for ajax request. -->
+<script type="text/javascript" src="{% static 'js/toast.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("#likedBlogsTable").DataTable({
+            "pageLength": 10,
+            "order": [],
+            "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"] ],
+            "autoWidth": false,
+            dom: 'Bfrtip'
+        });
+
+        $("#bookmarkBlogsTable").DataTable({
+            "pageLength": 100,
+            "order": [],
+            "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"] ],
+            "autoWidth": false,
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'csv',
+                text: 'Export CSV',
+                exportOptions: {columns: ':not(.notexport)'},
+                filename: function() {
+                    var d = new Date();
+                    year = d.getFullYear();
+                    m = d.getMonth();
+                    return 'Bookmarked_blogs_' + year + '_' + m;
+                }
+            },{
+                extend: 'copy',
+                text: 'Copy domains',
+                exportOptions: {columns: [1]},
+                header: false,
+                title: null
+            }]
+        });
+    });
+
+    function showAuthorInfo(id) {
+        $.ajax({
+            url: "{% url 'user:get_user_information' %}",
+            dataType: "json",
+            type: "POST",
+            data: {"csrfmiddlewaretoken": "{{ csrf_token }}", "id": id},
+            success: function(result) {
+                if(result.author_avatar) {
+                    $("#authorAvatar").attr("src", result.author_avatar);
+                } else {
+                    $("#authorAvatar").attr("src", "/static/img/default_avatar.jpg");
+                }
+
+                console.log(result);
+                $("#blogAuthorName").text(result.author_name);
+                $("#blogAuthorIntroduction").text(result.author_introduction);
+                if(result.no_social_profile == false) {
+                    if(result.fb) {
+                        $("#facebookHref").attr("href", result.fb);
+                        $("#facebookHref").show();
+                    } else {
+                        $("#facebookHref").attr("href", "");
+                        $("#facebookHref").hide();
+                    }
+
+                    if(result.twitter) {
+                        $("#twitterHref").attr("href", result.twitter);
+                        $("#twitterHref").show();
+                    } else {
+                        $("#twitterHref").attr("href", "");
+                        $("#twitterHref").hide();
+                    }
+
+                    if(result.linkedin) {
+                        $("#linkedInHref").attr("href", result.linkedin);
+                        $("#linkedInHref").show();
+                    } else {
+                        $("#linkedInHref").attr("href", "");
+                        $("#linkedInHref").hide();
+                    }
+
+                    if(result.github) {
+                        $("#githubHref").attr("href", result.github);
+                        $("#githubHref").show();
+                    } else {
+                        $("#githubHref").attr("href", "");
+                        $("#githubHref").hide();
+                    }
+
+                    $("#FollowMeOnAuthorInfo").show();
+                } else {
+                    $("#FollowMeOnAuthorInfo").hide();
+                }
+
+                $("#authorInfoModal").modal('show');
+            },
+            error: function(err) {
+                // do something.
+            }
+        });
+    }
+
+    $(".unfollowAuthor").on("click", function() {
+        console.log("Unfollow Clicked");
+        author_id = $(this).attr("data-aid");
+        $.ajax({
+            url: "{% url 'user:unfollow_author' %}",
+            type: "post",
+            data: {"csrfmiddlewaretoken": "{{ csrf_token }}", "author_id": author_id},
+            dataType: "json",
+            success: function(response) {
+                if(response.status == "success") {
+                    $("#row"+author_id).remove();
+                    $.toast({
+                      title: response.title,
+                      content: response.toast_message,
+                      type: response.response_type,
+                      delay: 3000
+                    });
+                    if(response.is_still_following) {
+
+                    } else {
+                        $("#followingAuthorTable").hide();
+                        $("#notFollowingAnyOne").show();
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+{% endblock %}

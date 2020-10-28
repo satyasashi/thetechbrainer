@@ -153,7 +153,8 @@ def get_categories(request):
 
 def filter_by_category(request, category_slug):
     context = {}
-    blogs_by_category = BlogPost.objects.filter(blog_category__category_slug=category_slug, moderator_accepted=True, submitted_for_moderation=True).order_by("-created_on")
+    blogs_by_category = BlogPost.objects.filter(blog_category__category_slug=category_slug, moderator_accepted=True, published=True).order_by("-created_on")
+
     if len(blogs_by_category) > 0:
         context['category'] = blogs_by_category[0].blog_category
         context['blogs'] = blogs_by_category
@@ -171,12 +172,24 @@ def filter_by_category(request, category_slug):
 
 def filter_by_tag(request, tag_slug):
     context = {}
-    blogs_by_tag = BlogPost.objects.filter(blog_tags__tag_slug=tag_slug, moderator_accepted=True, submitted_for_moderation=True).order_by("-created_on")
+    blogs_by_tag = BlogPost.objects.filter(blog_tags__tag_slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
     print(blogs_by_tag)
     if len(blogs_by_tag) > 0:
         context['tag'] = Tag.objects.get(tag_slug=tag_slug)
         context['blogs'] = blogs_by_tag
         return render(request, "blog/filter_by_tag.html", context)
+
+    else:
+        context['tag'] = Tag.objects.get(tag_slug=tag_slug)
+        context["no_blogs"] = True
+        return render(request, "blog/filter_by_tag.html", context)
+
+
+def filter_by_author(request, id):
+    blogs_by_author = BlogPost.objects.filter(blog_author__id=id, moderator_accepted=True, published=True).order_by("-created_on")
+    print(blogs_by_author)
+    if len(blogs_by_author) > 0:
+        return render(request, "blog/filter_by_author.html", context={"blogs": blogs_by_author, "author": blogs_by_author[0].blog_author})
     else:
         return redirect("user:pagenotfound")
 
@@ -217,11 +230,17 @@ def blog_request(request, category_id):
 @login_required
 def preview_blog(request, id, blog_slug):
     author_group = Group.objects.get(name='author')
-    if request.user.groups.filter(name=author_group).exists():
+    moderator_group = Group.objects.get(name='moderator')
+    if (request.user.groups.filter(name=author_group).exists()) or (request.user.groups.filter(name=moderator_group).exists()):
         if id and blog_slug:
             try:
                 preview_blog = BlogPost.objects.get(id=id, blog_slug=blog_slug, preview=True)
                 context = {"blog": preview_blog}
+                if request.user.groups.filter(name=moderator_group).exists():
+                    context["moderator"] = True
+                else:
+                    context["moderator"] = False
+
                 return render(request, "blog/preview_blog.html", context)
             except BlogPost.DoesNotExist as e:
                 if e:
@@ -285,7 +304,8 @@ def edit_blog(request, id, blog_slug):
 def write_blog(request):
     print(request.POST.get("type"))
     author_group = Group.objects.get(name='author')
-    if request.user.groups.filter(name=author_group).exists():
+    moderator_group = Group.objects.get(name='moderator')
+    if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         if request.method == "POST" and request.POST.get("type") == "preview":
             print(request.POST)
             new_blog_form = BlogPostForm(request.POST, request.FILES)
@@ -305,7 +325,8 @@ def write_blog(request):
                 messages.info(request, "Your blog is saved in your drafts. Please check it there.")
                 return redirect("blog:preview_blog", id=new_blog_obj.id, blog_slug=new_blog_obj.blog_slug)
             else:
-                print(new_blog_form.errors)
+                messages.error(request, "Something went wrong. Please check if all fields are filled.")
+                return redirect("blog:write_blog")
 
         elif request.method == "POST" and request.POST.get("type") == "submitForModeration":
             blog_form = BlogPostEditForm(request.POST, request.FILES)
@@ -383,5 +404,54 @@ def draft_blog_detail(request, slug):
                     return render(request, "blog/blog_detail.html", context)
             else:
                 return redirect("user:pagenotfound")
+    else:
+        return redirect("user:pagenotfound")
+
+
+@login_required
+def accept_and_publish(request, id):
+    moderator_group = Group.objects.get(name='moderator')
+    # check if author of blog is moderator.
+    check_author_of_blog = BlogPost.objects.get(id=id)
+    if check_author_of_blog.blog_author.user.groups.filter(name=moderator_group).exists():
+        check_author_of_blog.preview = False
+        check_author_of_blog.draft = False
+        check_author_of_blog.moderator_accepted = True
+        check_author_of_blog.submitted_for_moderation = True
+        check_author_of_blog.published = True
+        check_author_of_blog.save()
+
+        messages.success(request, "Blog has been successfully published.")
+        return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
+
+    if request.method == "POST" and request.is_ajax() and request.user.groups.filter(name=moderator_group).exists():
+        # blog_id = request.POST.get("blog_id")
+        try:
+            blog_post = BlogPost.objects.get(id=id, submitted_for_moderation=True, moderator_accepted=False)
+            if blog_post:
+                blog_post.preview = False
+                blog_post.draft = False
+                blog_post.moderator_accepted = True
+                blog_post.submitted_for_moderation = True
+                blog_post.published = True
+                blog_post.save()
+
+                messages.success(request, "Blog has been successfully published.")
+                return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
+        except BlogPost.DoesNotExist:
+            return JsonResponse({"status": "failure"}, status=400)
+    else:
+        # messages.success(request, "Blog has been successfully published.")
+        return JsonResponse({"status": "failure"}, status=400)
+
+
+@login_required
+def my_blogs(request):
+    # gets all the blogs written by user so far.
+    author_group = Group.objects.get(name='author')
+    if request.user.groups.filter(name=author_group).exists():
+        siteuser = SiteUser.objects.get(user=request.user)
+        my_blogs = BlogPost.objects.filter(blog_author=siteuser)
+        return render(request, "blog/my_blogs.html", context={"my_blogs": my_blogs})
     else:
         return redirect("user:pagenotfound")

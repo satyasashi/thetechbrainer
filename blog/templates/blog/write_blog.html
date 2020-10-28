@@ -11,6 +11,17 @@
 
 {% block content %}
 <div class="container oc-screen newblog-container">
+    {% if messages %}
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          {% for msg in messages %}
+          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+              {{msg.message}}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
   <div class="row">
     <div class="col-md-8 mx-auto">
       <h1 class="text-center">New Blog Post</h1>

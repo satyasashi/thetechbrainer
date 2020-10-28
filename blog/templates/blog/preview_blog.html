@@ -293,7 +293,11 @@
 
       <div class="detail-blog-banner-and-heading-div">
           <div class="col-sm-12">
+              {% if moderator %}
+              <p class="custom-alert alert-custom-warning"> <strong>Note:</strong> You are previewing this blog. Click <strong>'Accept &amp; Publish'</strong> to publish the blog. </p>
+              {% else %}
               <p class="custom-alert alert-custom-warning"> <strong>Note:</strong> You are previewing your blog. Click <strong>'Submit for Moderation'</strong> at the bottom to process your blog for publishment. </p>
+              {% endif %}
           </div>
           <h3 class="banner-heading" data-bid="{{blog.id}}" id="blogHeadingPreview"><b>{{blog.blog_title}}</b></h3>
           <h4 class="banner-subtitle">{{blog.blog_subtitle}}</h4>
@@ -441,8 +445,12 @@
           <form class="" id="previewBlogForm" action="" method="post">
             {% csrf_token %}
             <!-- <input type="hidden" name="type" id="type" value=""> -->
+            {% if moderator %}
+            <button type="button" name="button" class="btn btn-success" id="acceptAndPublishBtn" data-bid="{{blog.id}}"><i class="fa fa-check"></i> Accept & Publish</button>
+            {% else %}
             <a href="{% url 'blog:edit_blog_post' id=blog.id blog_slug=blog.blog_slug %}" name="editblog" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
             <button type="button" name="button" class="btn btn-success" id="submitForModerationPreview"><i class="fa fa-exchange"></i> Submit For Moderation</button>
+            {% endif %}
           </form>
         </div>
       </div>
@@ -498,6 +506,24 @@
           }
       }); // end ajax call.
 
+    });
+
+    $("#acceptAndPublishBtn").on("click", function(e) {
+        e.preventDefault();
+        var blogId = $("#acceptAndPublishBtn").attr("data-bid");
+
+        // publish and mark as accepted.
+        $.ajax({
+            url: "{% url 'blog:accept_and_publish' id=0 %}".replace(0, blogId),
+            data: {"csrfmiddlewaretoken": "{{csrf_token}}", "blog_id": blogId},
+            dataType: "json",
+            type: "POST",
+            success: function(result) {
+                if(result.status == "success") {
+                    window.location.href = "{% url 'user:index' %}";
+                }
+            }
+        });
     });
 
     // $(".submitForModeration").on("click", function() {

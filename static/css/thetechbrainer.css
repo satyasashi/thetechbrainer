@@ -11,7 +11,6 @@ body {
   background-color: #f7f7f7;
 }
 
-
 /* Make the image fully responsive */
 .carousel-inner img {
   width: 100%;
@@ -56,6 +55,38 @@ body {
 .outer-div:hover .layer-icon {
      display: block;
 }
+
+.aboutUsBanner {
+    height: 250px;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border: 0px;
+    border-radius: 0px;
+    margin: 20px 0px;
+}
+
+.aboutContainer {
+    padding: 40px 0px;
+    border: 1px solid #ccc;
+}
+
+.aboutUsHeading {
+    padding-bottom: 20px;
+    font-weight: bold;
+}
+
+.aboutUsInfo {
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-color: #3c3c3d;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    font-weight: normal;
+    padding: 20px 0px;
+}
+
 
 .blog-main-heading-outer-div {
     font-family: 'Abril Fatface', cursive;
@@ -253,7 +284,7 @@ body {
 }
 
 .side-box-panelinfo {
-  margin-top: 15px;
+  /* margin-top: 15px; */
   padding: 8px 4px;
   background-color: #fff;
 }
@@ -332,6 +363,10 @@ body {
     color: #fff;
 }
 
+.navbar-toggler {
+    position: relative;
+}
+
 .navbar-toggler-icon {
     color: #fff;
 }
@@ -383,12 +418,12 @@ body {
     width: 100%;
 }
 
-.card-img-top {
+.card-img-blog {
     -webkit-transition: -webkit-transform 0.8s ease-in-out;
     transition: transform 0.8s ease-in-out;
 }
 
-.card-img-top:hover {
+.card-img-blog:hover {
     -webkit-transform: rotate(5deg);
     transform: rotate(5deg);
 
@@ -424,6 +459,93 @@ body {
   margin-bottom: 20px;
   background-color: #fff;
   padding: 10px;
+}
+
+.blog-status-success {
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #00cc66;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.blog-status-draft {
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #ff3333;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.blog-status-waiting-for-approval {
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #fafa39;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.moderator-notification-nav-button {
+    position: absolute;
+    top:0;
+    left:0;
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #799aed;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.moderator-notification {
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #799aed;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.card-header-success {
+    background-color: rgba(193, 237, 183, 0.3);
+}
+
+.card-header-info {
+    background-color: rgba(229, 196, 245, 0.3);
+}
+
+.card-header-primary {
+    background-color: rgba(91, 208, 235, 0.3);
+}
+
+.card-header-warning {
+    background-color: rgba(240, 229, 110, 0.3);
+}
+
+#authorAllBlogsCountCard, #authorUnpublishedBlogsCountCard, #authorPublishedBlogsCountCard {
+    padding: 10px 100px;
+    border: 2px solid #fff;
+    min-height: 200px;
+}
+
+#authorAllBlogsCountCard {
+    background-color: #8aaecf;
+}
+
+#authorUnpublishedBlogsCountCard {
+    background-color: #e3787c;
+}
+
+#authorPublishedBlogsCountCard {
+    background-color: #a5d496;
 }
 
 .blog-detail-container h1, .blog-detail-container h2, .blog-detail-container h3,
@@ -474,6 +596,12 @@ body {
     margin: 0 auto;
 }
 
+/* Dashboard page css*/
+#likedBlogsTable > tbody > tr > td, #followingAuthorTable > tbody > tr > td , #bookmarkBlogsTable > tbody > tr > td {
+     vertical-align: middle;
+}
+/* Dashboard page css end */
+
 .side-box {
     padding: 5px;
     border: 1px solid rgba(0,0,0,0.1);
@@ -485,6 +613,10 @@ body {
 
 .categories-cards, .card-div {
   box-shadow: 3px 4px 5px grey;
+}
+
+.related-posts-sidebox .panel-body .media-list {
+    padding-left: 10px;
 }
 
 .follow-your-favorite-blogs {

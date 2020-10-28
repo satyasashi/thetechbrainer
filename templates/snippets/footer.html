@@ -1,3 +1,4 @@
+{% load static %}
 <footer class="page-footer font-small blue pt-4">
     <!-- Footer Links -->
     <div class="container-fluid text-center text-md-left">
@@ -22,13 +23,10 @@
 
         <ul class="list-unstyled">
           <li>
-            <a href="#!">About Us</a>
+            <a href="{% url 'user:about_us' %}">About Us</a>
           </li>
           <li>
-            <a href="#!">Blog Categories</a>
-          </li>
-          <li>
-            <a href="#!">Authors</a>
+            <a href="{% url 'blog:blog_categories' %}">Blog Categories</a>
           </li>
         </ul>
 
@@ -43,7 +41,7 @@
 
         <ul class="list-unstyled">
           <li>
-            <a href="#!">Write Email</a>
+            <a href="mailto:thetechbrainer@gmail.com">Write Email</a>
           </li>
         </ul>
 
@@ -55,15 +53,15 @@
         <!-- Links -->
         <h5 class="text-uppercase">Follow Us On</h5>
 
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Facebook</a>
+        <ul class="list-unstyled list-inline">
+          <li class="list-inline-item">
+            <a href="#!"><img src="{% static 'img/facebook.png' %}" width="50" height="50"/></a>
           </li>
-          <li>
-            <a href="#!">Instagram</a>
+          <li class="list-inline-item">
+            <a href="#!"><img src="{% static 'img/instagram.png' %}" width="50" height="50"/></a>
           </li>
-          <li>
-            <a href="#!">Twitter</a>
+          <li class="list-inline-item">
+            <a href="#!"><img src="{% static 'img/twitter.png' %}" width="50" height="50"/></a>
           </li>
         </ul>
       </div>

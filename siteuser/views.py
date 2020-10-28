@@ -6,7 +6,7 @@ from .models import SiteUser, UserFollowing
 from django.contrib.auth.models import User, Group
 from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
-from siteuser.models import UserLikes, UserBookmarks, UserFollowing
+from siteuser.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation
 
 
 def validate_author_exist_or_not(author_id):
@@ -24,11 +24,16 @@ def index(request):
     return render(request, "index.html", context={'blogs': blogs})
 
 
+def about(request):
+    # authors = User.objects.filter(groups__name="author")
+    authors = PersonalInformation.objects.filter(siteuser__user__groups__name="author")
+    return render(request, "about.html", context={"authors": authors})
+
+
 @login_required
 def follow(request):
     if request.user.username and request.is_ajax() and request.user.is_authenticated:
         userProfile = SiteUser.objects.get(user=request.user)
-        print(request.POST)
         author = validate_author_exist_or_not(request.POST.get('author_id'))
         follows = False
         context = {}
@@ -66,7 +71,8 @@ def follow(request):
             except Exception as e:
                 if e:
                     print(e)
-        return render(request, "user/ajax/components.html", context)
+
+            return render(request, "user/ajax/components.html", context)
     else:
         print("Not authenticated")
         return JsonResponse({"error": "Sorry something went wrong. Please try later.", "authenticated": False}, status=300)
@@ -120,12 +126,37 @@ def user_drafts(request):
 def user_dashboard(request):
     siteuser = SiteUser.objects.get(user=request.user)
     author_group = Group.objects.get(name='author')
+    moderator_group = Group.objects.get(name='moderator')
+
     if request.user.groups.filter(name=author_group).exists():
-        pass
+        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+        following = UserFollowing.objects.filter(siteuser=siteuser)
+        users_following_you = UserFollowing.objects.filter(following=siteuser)
+        print("Following: ", following)
+        user_likes = UserLikes.objects.filter(siteuser=siteuser)
+        my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
+        my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
+        my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
+
+        return render(request, "user/author_dashboard.html", context={
+            "user_likes": user_likes,
+            "user_bookmarks": user_bookmarks,
+            "following": following,
+            "users_following_you": users_following_you,
+            "my_blogs_count": my_blogs_count,
+            "my_blogs_unpublished_count": my_blogs_unpublished_count,
+            "my_blogs_published_count": my_blogs_published_count
+            })
+
+    elif request.user.groups.filter(name=moderator_group).exists():
+        return redirect("user:moderator_dashboard")
+
     else:
         user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
         following = UserFollowing.objects.filter(siteuser=siteuser)
+        print("Following: ", following)
         user_likes = UserLikes.objects.filter(siteuser=siteuser)
+
         return render(request, "user/dashboard.html", context={
             "user_likes": user_likes,
             "user_bookmarks": user_bookmarks,
@@ -146,7 +177,7 @@ def get_user_information(request):
         data = JsonResponse({
             "status": "success",
             "no_social_profile": no_social_profile,
-            "author_avatar": siteuser.personalinformation.picture.url,
+            "author_avatar": siteuser.personalinformation.picture.url if siteuser.personalinformation.picture else "/static/img/default_avatar.jpg",
             "author_name": siteuser.user.username,
             "author_introduction": siteuser.personalinformation.introduction,
             "fb": siteuser.personalinformation.facebook,
@@ -159,3 +190,50 @@ def get_user_information(request):
         return data
     else:
         return JsonResponse({"status": "failure", "message": "Author information not found"}, status=400)
+
+
+@login_required
+def unfollow_author(request):
+    print(request.POST)
+    if request.method == "POST" and request.is_ajax():
+        author_id = request.POST.get("author_id")
+        siteuser = SiteUser.objects.get(user=request.user)
+        print(siteuser)
+        try:
+            following = SiteUser.objects.get(id=author_id)
+            user_follows = UserFollowing.objects.get(siteuser=siteuser, following=following)
+            print("User Follows: ", following)
+            if user_follows:
+                user_follows.delete()
+                check_if_no_followers = True if len(UserFollowing.objects.filter(siteuser=siteuser)) > 0 else False
+                return JsonResponse({"status": "success", "is_still_following": check_if_no_followers,  "title": "Success!", "toast_message": "Successfully Unfollowed Author", "response_type": "success"}, status=200)
+        except Exception as e:
+            print("Exception: ", e)
+            return JsonResponse({"title": "Oops!", "toast_message": "Something went wrong. Please try later.", "response_type": "failure"}, status=400)
+    else:
+        return JsonResponse({"title": "Oops!", "toast_message": "Something went wrong. Please try later.", "response_type": "failure"}, status=400)
+
+
+@login_required
+def moderator_dashboard(request):
+    moderator_group = Group.objects.get(name='moderator')
+    siteuser = SiteUser.objects.get(user=request.user)
+
+    if request.user.groups.filter(name=moderator_group).exists():
+        blogs_for_moderation = BlogPost.objects.filter(submitted_for_moderation=True, moderator_accepted=False, published=False)
+        blogs_published = BlogPost.objects.filter(moderator_accepted=True, published=True)
+
+        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+        following = UserFollowing.objects.filter(siteuser=siteuser)
+        print("Following: ", following)
+        user_likes = UserLikes.objects.filter(siteuser=siteuser)
+
+        return render(request, "user/moderator_dashboard.html", context={
+            "blogs_for_moderation": blogs_for_moderation,
+            "blogs_published": blogs_published,
+            "user_likes": user_likes,
+            "user_bookmarks": user_bookmarks,
+            "following": following
+            })
+    else:
+        return redirect("user:pagenotfound")

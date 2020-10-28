@@ -128,8 +128,8 @@ class BlogPost(models.Model):
             img.save(img_thumbnail_path)
             print("Created thumbnails folder.")
 
-    def __str__(self):
-        return self.blog_author + ":" + self.blog_title
+    # def __str__(self):
+    #     return self.blog_author
 
 
 class BlogRequest(models.Model):

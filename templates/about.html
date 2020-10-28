@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block home_banner %} {% endblock %}
+{% block content %}
+<div class="container-fluid author-dashboard-div" style="padding: 0px;">
+    <div class="container">
+        <div class="row aboutUsContainer">
+            <div class="col-md-12 aboutUsHeading">
+                <h1 class="text-center"> About Thetechbrainer</h1>
+            </div>
+
+            <div class="col-md-4 col-sm-12 col-12" style="width: 100%;">
+                <div class="" style="width: 50%; margin: 0 auto;">
+                    <img src="{% static 'img/aboutus/sashi.jpg' %}" class="img-responsive" height="200" width="200" style="border-radius: 50%;"/>
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-12 col-12">
+                <p class="aboutUsInfo">
+                    I created Thetechbrainer.com to showcase my passion towards learning new technologies
+                    and share the knowledge with others. Most importantly I would like to keep things as layman as possible.
+                    <br><br><br>
+
+                    With everyday passing, I learnt importance of technology, networking & contributions to the OpenSource projects.
+                    With plenty of things to learn in today's world, I would like to keep track of what I learned &amp; share with people who are interested to know more about technology topics.
+
+                    <br><br><br>
+
+                    So, We've decided to write one blog per week on specific topic and publish so that you can learn new things every week. If you have any specific topic you want us to cover in our blogs, feel free to contact us at <a href="mailto:thetechbrainer@gmail.com">Thetechbrainer@gmail.com</a>
+
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="aboutUsBanner" style="background-image: url({% static 'img/banner-laptop.jpg' %});">
+
+    </div>
+    <br> <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 aboutUsHeading">
+                <h1 class="text-center"> Our Authors</h1>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        {% for author in authors %}
+                        <div class="col-md-4 card-deck">
+                            <div class="card card-div" style="width:100%;">
+                              <img class="card-img-top" src="{% if author.picture %}{{author.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="{{author.siteuser.user}}">
+                              <div class="card-body">
+                                <h4 class="card-title">{{author.siteuser|title}}</h4>
+                                <p class="card-text">{{author.introduction}}</p>
+                              </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <p class="aboutUsInfo">
+                    Our authors cover the wide range of topics from Software development, Software testing and much more as we learn and share to you. You can always let us know if you find any category in our site that has no blogs with just one click.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
