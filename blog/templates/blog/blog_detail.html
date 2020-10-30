@@ -415,10 +415,9 @@
                   <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
               </div>
               <div class="col-md-8 col-sm-8 col-12 author-bio">
-                  <span class="written-by">About Author</span>
                   <h3 class="author-bio-name">{{blog.blog_author.user.username}}</h3>
                   <!-- Author Introduction should be down in <p> -->
-                  <p class="author-bio-para col-12">{{blog.blog_author.personalinformation.introduction|truncatechars:"80"}}</p>
+                  <p class="author-bio-para col-12">{{blog.blog_author.personalinformation.introduction}}</p>
               </div>
           </div>
       </a>

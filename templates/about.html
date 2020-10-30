@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static customtags crispy_forms_tags %}
 
+{% block title %} About {% endblock %}
+
 {% block home_banner %} {% endblock %}
 {% block content %}
 <div class="container-fluid author-dashboard-div" style="padding: 0px;">
@@ -11,14 +13,14 @@
             </div>
 
             <div class="col-md-4 col-sm-12 col-12" style="width: 100%;">
-                <div class="" style="width: 50%; margin: 0 auto;">
-                    <img src="{% static 'img/aboutus/sashi.jpg' %}" class="img-responsive" height="200" width="200" style="border-radius: 50%;"/>
+                <div class="text-center" style="width: 50%; margin: 0 auto;">
+                    <img src="{% static 'img/aboutus/sashikanth.jpg' %}" class="img-responsive" height="200" width="185" style="border-radius: 50%;"/>
                 </div>
             </div>
+
             <div class="col-md-8 col-sm-12 col-12">
                 <p class="aboutUsInfo">
-                    I created Thetechbrainer.com to showcase my passion towards learning new technologies
-                    and share the knowledge with others. Most importantly I would like to keep things as layman as possible.
+                    Hello World, my name is <span class="text-primary">SASHIKANTH</span>, created Thetechbrainer.com to showcase my passion towards learning new technologies, & most importantly share the knowledge with others.
                     <br><br><br>
 
                     With everyday passing, I learnt importance of technology, networking & contributions to the OpenSource projects.
@@ -26,45 +28,67 @@
 
                     <br><br><br>
 
-                    So, We've decided to write one blog per week on specific topic and publish so that you can learn new things every week. If you have any specific topic you want us to cover in our blogs, feel free to contact us at <a href="mailto:thetechbrainer@gmail.com">Thetechbrainer@gmail.com</a>
+                    So, We've decided to write one blog per week on specific topic and publish so that interested people can learn new things. If you have any specific topic you want us to cover in our blogs, feel free to contact us at <a href="mailto:thetechbrainer@gmail.com">thetechbrainer@gmail.com</a>
 
                 </p>
             </div>
         </div>
     </div>
 
-    <div class="aboutUsBanner" style="background-image: url({% static 'img/banner-laptop.jpg' %});">
+    <div class="aboutUsBanner" style="background-image: linear-gradient(to right, rgba(70, 197, 197, 0.52), rgba(128, 143, 200, 0.73)),
+    url('{% static 'img/banner-laptop.jpg' %}');">
 
     </div>
     <br> <br>
 
     <div class="container">
-        <div class="row">
-            <div class="col-md-12 aboutUsHeading">
+        <div class="row aboutUsHeading">
+            <div class="col-md-12">
                 <h1 class="text-center"> Our Authors</h1>
             </div>
+        </div>
+        <div class="row">
+            {% for author in authors %}
+            <div class="col-md-4 col-sm-6 col-12 card-deck">
+                <div class="card card-div">
+                  <img class="card-img-top" src="{% if author.picture %}{{author.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="{{author.siteuser.user}}">
+                  <div class="card-body">
+                    <h4 class="card-title">{{author.siteuser|title}}</h4>
+                    <p class="card-text">{{author.introduction}}</p>
+                    <div class="social-icons text-center">
+                        {% if author.facebook %}
+                        <a href="{{author.facebook}}" target="_blank">
+                          <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                        </a>
+                        {% endif %}
+                        {% if author.twitter %}
+                        <a href="{{author.twitter}}"  target="_blank">
+                          <i class="fa fa-twitter-square" aria-hidden="true"></i>
+                        </a>
+                        {% endif %}
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row">
-                        {% for author in authors %}
-                        <div class="col-md-4 card-deck">
-                            <div class="card card-div" style="width:100%;">
-                              <img class="card-img-top" src="{% if author.picture %}{{author.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="{{author.siteuser.user}}">
-                              <div class="card-body">
-                                <h4 class="card-title">{{author.siteuser|title}}</h4>
-                                <p class="card-text">{{author.introduction}}</p>
-                              </div>
-                            </div>
-                        </div>
-                        {% endfor %}
+                        {% if author.linkedin %}
+                        <a href="{{author.linkedin}}"  target="_blank">
+                          <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                        </a>
+                        {% endif %}
+
+                        {% if author.github %}
+                        <a href="{{author.github}}"  target="_blank">
+                          <i class="fa fa-github" aria-hidden="true"></i>
+                        </a>
+                        {% endif %}
                     </div>
+                  </div>
                 </div>
             </div>
+            {% endfor %}
+        </div>
 
-            <div class="row">
-                <p class="aboutUsInfo">
-                    Our authors cover the wide range of topics from Software development, Software testing and much more as we learn and share to you. You can always let us know if you find any category in our site that has no blogs with just one click.
+        <div class="row aboutUsAuthors" style="background-color: #808FC8; background-image: linear-gradient(to right, #46c5c5 , #808FC8); color: #fff; font-family:Helvetica;">
+            <div class="col-md-12">
+                <p class="text-center">
+                    Our Techbrainers cover the wide range of topics from Software Development, Software Testing and much more as we learn and share to you. You can always let us know if you find any category in our site that has no blogs with just one click.
                 </p>
             </div>
         </div>

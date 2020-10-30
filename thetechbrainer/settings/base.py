@@ -1,18 +1,33 @@
 import os
+import json
 from decouple import Config, RepositoryEnv
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+with open('secrets.json') as f:
+    secrets = json.loads(f.read())
+
+
+def get_secret_key(setting, secrets=secrets):
+    '''Get the secret variable or return explicit exception.'''
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = 'Set the {0} environment variable'.format(setting)
+    raise ImproperlyConfigured(error_msg)
+
 # SECURITY WARNING: keep the secret key used in production secret!
-DOTENV_FILE = os.path.join(BASE_DIR, 'keys.env')
-env_config = Config(RepositoryEnv(DOTENV_FILE))
+# DOTENV_FILE = os.path.join(BASE_DIR, 'keys.env')
+# env_config = Config(RepositoryEnv(DOTENV_FILE))
+
 
 # use the Config().get() method as you normally would since
 # decouple.config uses that internally.
 # i.e. config('SECRET_KEY') = env_config.get('SECRET_KEY')
-SECRET_KEY = env_config.get('SECRET_KEY')
+SECRET_KEY = get_secret_key("SECRET_KEY")
 
 
 ALLOWED_HOSTS = ['*']
@@ -28,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
+    # AWS S3
+    'storages',
 
     # our apps
     'blog.apps.BlogConfig',
@@ -107,6 +125,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[No Reply]: Thetechbrainer.com: "
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGOUT_ON_GET = True
@@ -140,6 +159,24 @@ IMG_SMALL = (140, 98)
 #         }
 #     }
 # }
+
+
+# EMAIL SETTINGS
+SERVER_EMAIL = get_secret_key("ADMIN_EMAIL2")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = get_secret_key('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = SERVER_EMAIL
+EMAIL_PORT = 587
+# EMAIL_SUBJECT_PREFIX = "[No Reply]: Thetechbrainer"
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+ADMINS = [
+    (get_secret_key("ADMIN_NAME"), get_secret_key("ADMIN_EMAIL")),
+    (get_secret_key("ADMIN_NAME2"), get_secret_key("ADMIN_EMAIL2")),
+]
+
+MANAGERS = ADMINS
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -184,8 +221,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
-MEDIA_URL = '/media/'
+
+STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')

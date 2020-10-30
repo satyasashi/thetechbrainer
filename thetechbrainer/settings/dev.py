@@ -9,7 +9,7 @@ INSTALLED_APPS += [
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE += [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -21,12 +21,5 @@ INTERNAL_IPS = [
 ]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'thetechbrainer',
-        'USER': 'postgres',
-        'PASSWORD': 'Test@123',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    'default': get_secret_key("DEV_DATABASE")
 }

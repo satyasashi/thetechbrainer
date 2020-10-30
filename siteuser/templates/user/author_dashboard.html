@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static customtags crispy_forms_tags %}
 
+{% block title %} Dashboard {% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 {% endblock %}
@@ -177,12 +179,14 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                     {% if users_following_you %}
                         <table class="table" id="authorFollowersTable">
                             <thead>
+                                <th>Avatar</th>
                                 <th>Username</th>
                             </thead>
                             <tbody>
                                 {% for row in users_following_you %}
                                     <tr id="row{{row.siteuser.id}}">
-                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})"> <img src="{% if row.siteuser.personalinformation.picture %}{{row.siteuser.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.siteuser|title }} </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})"> <img src="{% if row.siteuser.personalinformation.picture %}{{row.siteuser.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})">{{ row.siteuser|title }}</a> </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -211,7 +215,6 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                         <thead>
                             <th>Blog Name</th>
                             <th>Author</th>
-                            <th>Actions</th>
                         </thead>
                         <tbody>
                             {% for row in user_bookmarks %}
@@ -222,9 +225,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" class="authorPicTableData" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
                                     </td>
-                                    <td></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -342,7 +344,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
 
             <div class="col-md-6">
                 <div class="card border-primary mb-3">
-                  <div class="card-header-primary"> <h4><i class="fa fa-thumbs-up"></i> Blogs You Liked</h4> </div>
+                  <div class="card-header card-header-primary"> <h4><i class="fa fa-thumbs-up"></i> Blogs You Liked</h4> </div>
                   <div class="card-body">
                     <!-- <h4 class="card-title">Blogs you liked</h4> -->
                     <!-- <p class="card-text">
@@ -352,7 +354,6 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                         <thead>
                             <th>Blog Name</th>
                             <th>Author</th>
-                            <th>Actions</th>
                         </thead>
                         <tbody>
                             {% for row in user_likes %}
@@ -363,9 +364,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
                                     </td>
-                                    <td></td>
                                 </tr>
                             {% endfor %}
                         </tbody>

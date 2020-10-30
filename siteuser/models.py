@@ -28,7 +28,8 @@ class SiteUser(models.Model):
 
 class PersonalInformation(models.Model):
     siteuser = models.OneToOneField(SiteUser, on_delete=models.CASCADE)
-    introduction = models.TextField()
+    introduction = models.CharField(max_length=200)
+    full_introduction = models.TextField(default="")
     picture = models.ImageField(upload_to=use_directory_path, null=True, blank=True)
     interests = models.ManyToManyField('blog.Category')
 

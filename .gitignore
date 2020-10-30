@@ -6,6 +6,7 @@ __pycache__/
 # keys, env files.
 *.env
 *.cnf
+#secrets.json
 
 # C extensions
 *.so
@@ -140,4 +141,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-

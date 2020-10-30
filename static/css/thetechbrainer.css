@@ -73,7 +73,7 @@ body {
 }
 
 .aboutUsHeading {
-    padding-bottom: 20px;
+    padding: 20px 0px;
     font-weight: bold;
 }
 
@@ -85,6 +85,27 @@ body {
     line-height: 1.2;
     font-weight: normal;
     padding: 20px 0px;
+}
+
+.aboutUsAuthors {
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-color: #3c3c3d;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    font-weight: bold;
+    padding: 30px;
+    margin: 20px 0px;
+}
+
+.card-deck {
+    margin-bottom: 5px;
+}
+
+/* @media (min-width: 576px) */
+.card-deck {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
 }
 
 
@@ -259,6 +280,7 @@ body {
 
 .author-bio-para {
     margin: 0px;
+    padding-left: 0px;
 }
 
 .author-bio-pic-div {
@@ -761,6 +783,10 @@ footer ul li a, footer ul li a:hover {
     display: block;
   }
 
+  .authorPicTableData {
+      display: none;
+  }
+
   .navbar .navsearchform {
     display: none;
   }
@@ -887,4 +913,10 @@ footer ul li a, footer ul li a:hover {
     min-width: 300px;
   }
 
+}
+
+@media only screen and (max-width: 400px) {
+    .author-bio-pic-div {
+        display: none;
+    }
 }

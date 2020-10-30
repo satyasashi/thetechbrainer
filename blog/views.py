@@ -34,7 +34,6 @@ def blog_search(request):
                     context['no_results'] = "no_results"
                 return render(request, "blog/search-results.html", context)
         except Exception:
-            print(Exception)
             return render(request, "blog/search-results.html", context={"no_results": "no_results"})
     else:
         search = True
@@ -44,7 +43,6 @@ def blog_search(request):
 def blog_detail(request, slug):
     if slug:
         blog = get_object_or_404(BlogPost, blog_slug=slug)
-        print("Blog slug exist")
         if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
             authorProfile = blog.blog_author
@@ -61,16 +59,13 @@ def blog_detail(request, slug):
 
                 if len(bookmark) > 0:
                     context['bookmark'] = 1
-                    print("Yes")
                 else:
                     context['bookmark'] = 0
 
                 if len(like) > 0:
                     context['like'] = like[0]
-                    print("Liked")
                 else:
                     context['like'] = False
-                    print("Disliked")
 
                 return render(request, "blog/blog_detail.html", context)
 
@@ -92,7 +87,6 @@ def bookmark_blogpost(request, blog_slug):
 
         try:
             bookmark_check = UserBookmarks.objects.filter(user=userProfile, blog_post=blog_post)
-            print(bookmark_check)
             if len(bookmark_check) > 0:
                 bookmark_status = 0
                 bookmark_check.delete()
@@ -119,7 +113,6 @@ def like_blogpost(request, blog_slug):
             like_check = UserLikes.objects.filter(siteuser=userProfile, blog=blog_post)
             like_status = False
             if len(like_check) > 0:
-                print("User likes found")
                 # if already liked, then unlike it using FALSE.
                 # Else Like it using TRUE
                 if like_check[0].status is True:
@@ -131,7 +124,6 @@ def like_blogpost(request, blog_slug):
                     like_check[0].save()
                     like_status = like_check[0].status
             else:
-                print("User liked this.")
 
                 # Else create new record as User liked it.
                 like_obj = UserLikes.objects.create(siteuser=userProfile, blog=blog_post, status=True)
@@ -173,7 +165,6 @@ def filter_by_category(request, category_slug):
 def filter_by_tag(request, tag_slug):
     context = {}
     blogs_by_tag = BlogPost.objects.filter(blog_tags__tag_slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
-    print(blogs_by_tag)
     if len(blogs_by_tag) > 0:
         context['tag'] = Tag.objects.get(tag_slug=tag_slug)
         context['blogs'] = blogs_by_tag
@@ -187,7 +178,6 @@ def filter_by_tag(request, tag_slug):
 
 def filter_by_author(request, id):
     blogs_by_author = BlogPost.objects.filter(blog_author__id=id, moderator_accepted=True, published=True).order_by("-created_on")
-    print(blogs_by_author)
     if len(blogs_by_author) > 0:
         return render(request, "blog/filter_by_author.html", context={"blogs": blogs_by_author, "author": blogs_by_author[0].blog_author})
     else:
@@ -280,7 +270,7 @@ def edit_blog(request, id, blog_slug):
 
                     return redirect("blog:preview_blog", id=edit_blog_post.id, blog_slug=edit_blog_post.blog_slug)
                 else:
-                    print(form.errors)
+                    return redirect("blog:edit_blog_post", id=id, blog_slug=blog_slug)
             else:
                 return render(request, "pagenotfound.html")
         else:
@@ -288,11 +278,7 @@ def edit_blog(request, id, blog_slug):
                 author = SiteUser.objects.get(user=request.user)
                 edit_blog = BlogPost.objects.get(id=id, blog_slug=blog_slug)
                 tags = Tag.objects.all()
-                for tag in tags:
-                    if tag in edit_blog.blog_tags.all():
-                        print(True)
-                    else:
-                        print(False)
+
                 form = BlogPostEditForm(instance=edit_blog)
                 context = {"edit_blog_form": form, "edit_blog_post": edit_blog, "tags": tags}
                 return render(request, "blog/edit_blog.html", context)
@@ -302,17 +288,14 @@ def edit_blog(request, id, blog_slug):
 
 @login_required
 def write_blog(request):
-    print(request.POST.get("type"))
     author_group = Group.objects.get(name='author')
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         if request.method == "POST" and request.POST.get("type") == "preview":
-            print(request.POST)
             new_blog_form = BlogPostForm(request.POST, request.FILES)
             author = SiteUser.objects.get(user=request.user)
 
             if new_blog_form.is_valid():
-                print("Saving this....")
                 new_blog_obj = new_blog_form.save(commit=False)
                 new_blog_obj.preview = True
                 new_blog_obj.draft = True
@@ -331,7 +314,6 @@ def write_blog(request):
         elif request.method == "POST" and request.POST.get("type") == "submitForModeration":
             blog_form = BlogPostEditForm(request.POST, request.FILES)
             author = SiteUser.objects.get(user=request.user)
-            print("Submit For Moderation Called.")
             if blog_form.is_valid():
                 blog_obj = blog_form.save(commit=False)
                 blog_obj.preview = False
@@ -349,7 +331,7 @@ def write_blog(request):
                 messages.success(request, "Your blog is submitted for moderation. You'll hear from moderator soon!")
                 return redirect("user:index")
             else:
-                print(blog_form.errors)
+                pass
         else:
             new_blog_form = BlogPostForm()
             userProfile = SiteUser.objects.get(user=request.user)
@@ -388,7 +370,6 @@ def draft_blog_detail(request, slug):
     if request.user.groups.filter(name=author_group).exists():
         if slug:
             blog = get_object_or_404(BlogPost, blog_slug=slug)
-            print("Blog slug exist")
             if blog and blog.moderator_accepted is False and blog.published is False and blog.draft is True:
                 context = {'blog': blog}
                 authorProfile = blog.blog_author

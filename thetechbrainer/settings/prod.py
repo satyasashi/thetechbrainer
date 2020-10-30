@@ -6,10 +6,5 @@ DEBUG = False
 ALLOWED_HOSTS += ['www.thetechbrainer.com']
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, 'db_config.cnf'),
-        }
-    }
+    'default': get_secret_key("PROD_DATABASE"),
 }
