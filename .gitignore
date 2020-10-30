@@ -6,7 +6,7 @@ __pycache__/
 # keys, env files.
 *.env
 *.cnf
-#secrets.json
+secrets.json
 
 # C extensions
 *.so
