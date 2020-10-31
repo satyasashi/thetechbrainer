@@ -12,7 +12,8 @@ from toolbelt.utils import (
     )
 from ckeditor_uploader.fields import RichTextUploadingField
 from PIL import Image
-import os
+from thetechbrainer.storage_backends import CategoryMediaStorage
+
 import uuid
 
 
@@ -36,7 +37,7 @@ class Role(models.Model):
 class Category(models.Model):
     category_name = models.CharField(max_length=100)
     category_slug = models.SlugField(blank=True)
-    category_image = models.ImageField(upload_to=category_img_path)
+    category_image = models.ImageField(storage=CategoryMediaStorage())
     category_line = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
@@ -51,14 +52,15 @@ class Category(models.Model):
         # make thumbnail from original image.
         img = Image.open(self.category_image)
         img.thumbnail(settings.IMG_SMALL)  # result dimensions
-        img_thumbnail_path = get_category_img_thumbnail_path(self.category_name, self.category_image)
-        try:
-            img.save(img_thumbnail_path)
-            print("Image Thumbnail saved")
-        except FileNotFoundError:
-            os.makedirs(settings.MEDIA_ROOT+"/category/"+self.category_name+"/thumbnails/")
-            img.save(img_thumbnail_path)
-            print("Created thumbnails folder.")
+        #img_thumbnail_path = get_catgory_img_thumbnail_path(self.category_name, self.category_image)
+        #try:
+        #    img.save(img_thumbnail_path)
+        #    print("Image Thumbnail saved")
+        #except FileNotFoundError:
+        #    os.makedirs(settings.MEDIA_ROOT+"/category/"+self.category_name+"/thumbnails/")
+        #    img.save(img_thumbnail_path)
+        #    print("Created thumbnails folder.")
+        img.save(img.filename.split("/")[-1].split(".")[0]+"_small"+img.filename.split("/")[-1].split(".")[1])
 
     def __str__(self):
         return self.category_name
@@ -99,7 +101,7 @@ class BlogPost(models.Model):
     draft = models.BooleanField(default=False)
     preview = models.BooleanField(default=False)
     submitted_for_moderation = models.BooleanField(default=False)
-    published = models.BooleanField(default=False)
+    published = models.BooleanField(      default=False)
 
     class Meta:
         db_table = "blog_post"

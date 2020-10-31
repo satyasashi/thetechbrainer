@@ -14,7 +14,7 @@ class SiteUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=1)
-    roles = models.ForeignKey('blog.Role', on_delete=models.CASCADE, null=True, blank=True, default=1)
+    #roles = models.ForeignKey('blog.Role', on_delete=models.CASCADE, null=True, blank=True, default=1)
     interests = models.ManyToManyField('blog.Category')
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
