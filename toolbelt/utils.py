@@ -2,6 +2,7 @@ from django.conf import settings
 import random
 import string
 
+
 def banner_path(instance, filename):
     return "user_{0}/banners/{1}".format(instance.blog_author.user.id, filename)
 

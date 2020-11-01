@@ -12,8 +12,8 @@ from toolbelt.utils import (
     )
 from ckeditor_uploader.fields import RichTextUploadingField
 from PIL import Image
-from storage_backends import CategoryMediaStorage, MediaStorage
 
+import os
 import uuid
 
 
@@ -37,7 +37,7 @@ class Role(models.Model):
 class Category(models.Model):
     category_name = models.CharField(max_length=100)
     category_slug = models.SlugField(blank=True)
-    category_image = models.ImageField(storage=CategoryMediaStorage())
+    category_image = models.ImageField()
     category_line = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
@@ -52,19 +52,14 @@ class Category(models.Model):
         # make thumbnail from original image.
         # img = Image.open(self.category_image)
         # img.thumbnail(settings.IMG_SMALL)  # result dimensions
-        # print("Image Filename: ", self.category_image, CategoryMediaStorage())
-        # print(dir(self.category_image), self.category_image.name, self.category_image.file)
-        # img_thumbnail_path = get_catgory_img_thumbnail_path(self.category_name, self.category_image)
+        # img_thumbnail_path = get_category_img_thumbnail_path(self.category_name, self.category_image)
         # try:
-        #    img.save(img_thumbnail_path)
-        #    print("Image Thumbnail saved")
+        #     img.save(img_thumbnail_path)
+        #     print("Image Thumbnail saved")
         # except FileNotFoundError:
-        #    os.makedirs(settings.MEDIA_ROOT+"/category/"+self.category_name+"/thumbnails/")
-        #    img.save(img_thumbnail_path)
-        #    print("Created thumbnails folder.")
-        # category_storage = CategoryMediaStorage()
-        # fh = category_storage.open(self.category_image, )
-        # img.save(self.category_image.name.split(".")[0]+"_small."+self.category_image.name.split(".")[1])
+        #     os.makedirs(settings.MEDIA_ROOT+"/category/"+self.category_name+"/thumbnails/")
+        #     img.save(img_thumbnail_path)
+        #     print("Created thumbnails folder.")
 
     def __str__(self):
         return self.category_name
@@ -92,7 +87,7 @@ class BlogPost(models.Model):
     blog_title = models.CharField(max_length=100, help_text="Keep titles short.")
     blog_subtitle = models.CharField(max_length=150, help_text="Short line for subtitle.")
     blog_slug = models.SlugField(blank=True, max_length=500, help_text="Slug will be automatically generated.")
-    banner_image = models.ImageField(storage=MediaStorage())
+    banner_image = models.ImageField()
     banner_image_source = models.CharField(max_length=50, default="")
     content = RichTextUploadingField(blank=True, null=True)
 
@@ -124,16 +119,16 @@ class BlogPost(models.Model):
         # self.banner_image = self.banner_image.small()
 
         # make thumbnail from original image.
-        # img = Image.open(self.banner_image)
-        # img.thumbnail(settings.IMG_SMALL)  # result dimensions
-        # img_thumbnail_path = get_user_directory_thumbnail_path(self.blog_author.user.id, self.banner_image)
-        # try:
-        #     img.save(img_thumbnail_path)
-        #     print("Image Thumbnail saved")
-        # except FileNotFoundError:
-        #     os.makedirs(settings.MEDIA_ROOT+"/user_{}/banners/thumbnails/".format(self.blog_author.user.id))
-        #     img.save(img_thumbnail_path)
-        #     print("Created thumbnails folder.")
+        img = Image.open(self.banner_image)
+        img.thumbnail(settings.IMG_SMALL)  # result dimensions
+        img_thumbnail_path = get_user_directory_thumbnail_path(self.blog_author.user.id, self.banner_image)
+        try:
+            img.save(img_thumbnail_path)
+            print("Image Thumbnail saved")
+        except FileNotFoundError:
+            os.makedirs(settings.MEDIA_ROOT+"/user_{}/banners/thumbnails/".format(self.blog_author.user.id))
+            img.save(img_thumbnail_path)
+            print("Created thumbnails folder.")
 
     # def __str__(self):
     #     return self.blog_author

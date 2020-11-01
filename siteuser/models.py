@@ -1,7 +1,6 @@
 from django.db import models
 from toolbelt.utils import use_directory_path
 from django.contrib.auth.models import User
-from storage_backends import MediaStorage
 
 
 # Create your models here.
@@ -31,7 +30,7 @@ class PersonalInformation(models.Model):
     siteuser = models.OneToOneField(SiteUser, on_delete=models.CASCADE)
     introduction = models.CharField(max_length=200)
     full_introduction = models.TextField(default="")
-    picture = models.ImageField(storage=MediaStorage())
+    picture = models.ImageField()
     interests = models.ManyToManyField('blog.Category')
 
     # Social media only to authors.

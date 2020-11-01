@@ -252,28 +252,28 @@ USE_L10N = True
 USE_TZ = True
 
 
-AWS_ACCESS_KEY_ID=get_secret_key('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY=get_secret_key('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME=get_secret_key('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL=get_secret_key('AWS_S3_ENDPOINT_URL')
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_LOCATION = get_secret_key('AWS_LOCATION')
+# AWS_ACCESS_KEY_ID=get_secret_key('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY=get_secret_key('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME=get_secret_key('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_ENDPOINT_URL=get_secret_key('AWS_S3_ENDPOINT_URL')
+# AWS_S3_OBJECT_PARAMETERS = {
+#     'CacheControl': 'max-age=86400',
+# }
+# AWS_LOCATION = get_secret_key('AWS_LOCATION')
 STATICFILES_DIRS = [
         os.path.join(BASE_DIR, 'static')
 ]
-STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
-STATICFILES_STORAGE = get_secret_key('STATICFILES_STORAGE')
-DEFAULT_FILE_STORAGE = get_secret_key('DEFAULT_FILE_STORAGE')
-AWS_PRIVATE_MEDIA_LOCATION = get_secret_key('AWS_PRIVATE_MEDIA_LOCATION')
-PRIVATE_FILE_STORAGE = get_secret_key('PRIVATE_FILE_STORAGE')
+# STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+# STATICFILES_STORAGE = get_secret_key('STATICFILES_STORAGE')
+# DEFAULT_FILE_STORAGE = get_secret_key('DEFAULT_FILE_STORAGE')
+# AWS_PRIVATE_MEDIA_LOCATION = get_secret_key('AWS_PRIVATE_MEDIA_LOCATION')
+# PRIVATE_FILE_STORAGE = get_secret_key('PRIVATE_FILE_STORAGE')
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-#STATIC_URL = '/static/'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#MEDIA_URL = '/media/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
+STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
