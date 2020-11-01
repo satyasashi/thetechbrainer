@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'storages',
 
     # our apps
-    
+
     'blog.apps.BlogConfig',
     'siteuser.apps.SiteuserConfig',
     'toolbelt.apps.ToolbeltConfig',
@@ -58,8 +58,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
-    'ckeditor',
-    'ckeditor_uploader',
+    # 'thumbnails',
+    # 'ckeditor',
+    # 'ckeditor_uploader',
 
     # providers
     'allauth.socialaccount.providers.google',
@@ -163,6 +164,36 @@ IMG_SMALL = (140, 98)
 #     }
 # }
 
+# THUMBNAILS = {
+#     'METADATA': {
+#         'BACKEND': 'thumbnails.backends.metadata.DatabaseBackend',
+#     },
+#     'STORAGE': {
+#         'BACKEND': 'thetechbrainer.storage_backends.MediaStorage',
+#         # You can also use Amazon S3 or any other Django storage backends
+#     },
+#     'SIZES': {
+#         'small': {
+#             'PROCESSORS': [
+#                 {'PATH': 'thumbnails.processors.resize', 'width': 10, 'height': 10},
+#                 {'PATH': 'thumbnails.processors.crop', 'width': 80, 'height': 80}
+#             ],
+#             'POST_PROCESSORS': [
+#                 {
+#                     'processor': 'thumbnails.post_processors.optimize',
+#                     'png_command': 'optipng -force -o7 "%(filename)s"',
+#                     'jpg_command': 'jpegoptim -f --strip-all "%(filename)s"',
+#                 },
+#             ],
+#         },
+#         'large': {
+#             'PROCESSORS': [
+#                 {'PATH': 'thumbnails.processors.resize', 'width': 20, 'height': 20},
+#                 {'PATH': 'thumbnails.processors.flip', 'direction': 'horizontal'}
+#             ],
+#         }
+#     }
+# }
 
 # EMAIL SETTINGS
 SERVER_EMAIL = get_secret_key("ADMIN_EMAIL2")
@@ -184,31 +215,31 @@ MANAGERS = ADMINS
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-CKEDITOR_JQUERY_URL = "https://code.jquery.com/jquery-3.5.1.min.js"
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = 'pillow'
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': 800,
-        'extraPlugins': ','.join({'codesnippet', 'image2'}),
-        'stylesSet': [
-            {
-                "name": 'content',
-                "element": 'textarea',
-                "attributes": {'class': 'save'},
-            },
-        ],
-    },
-
-    'awesome_ckeditor': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': 1000,
-        'extraPlugins': ','.join({'codesnippet'})
-    },
-}
+# CKEDITOR_JQUERY_URL = "https://code.jquery.com/jquery-3.5.1.min.js"
+# CKEDITOR_UPLOAD_PATH = "uploads/"
+# CKEDITOR_IMAGE_BACKEND = 'pillow'
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         'toolbar': 'full',
+#         'height': 300,
+#         'width': 800,
+#         'extraPlugins': ','.join({'codesnippet', 'image2'}),
+#         'stylesSet': [
+#             {
+#                 "name": 'content',
+#                 "element": 'textarea',
+#                 "attributes": {'class': 'save'},
+#             },
+#         ],
+#     },
+#
+#     'awesome_ckeditor': {
+#         'toolbar': 'full',
+#         'height': 300,
+#         'width': 1000,
+#         'extraPlugins': ','.join({'codesnippet'})
+#     },
+# }
 
 LANGUAGE_CODE = 'en-us'
 
@@ -246,4 +277,3 @@ PRIVATE_FILE_STORAGE = get_secret_key('PRIVATE_FILE_STORAGE')
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #MEDIA_URL = '/media/'
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
-

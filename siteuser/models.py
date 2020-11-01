@@ -1,6 +1,7 @@
 from django.db import models
 from toolbelt.utils import use_directory_path
 from django.contrib.auth.models import User
+from storage_backends import MediaStorage
 
 
 # Create your models here.
@@ -14,7 +15,7 @@ class SiteUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, blank=True, null=True, max_length=1)
-    #roles = models.ForeignKey('blog.Role', on_delete=models.CASCADE, null=True, blank=True, default=1)
+    roles = models.ForeignKey('blog.Role', on_delete=models.CASCADE, null=True, blank=True, default=1)
     interests = models.ManyToManyField('blog.Category')
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -30,7 +31,7 @@ class PersonalInformation(models.Model):
     siteuser = models.OneToOneField(SiteUser, on_delete=models.CASCADE)
     introduction = models.CharField(max_length=200)
     full_introduction = models.TextField(default="")
-    picture = models.ImageField(upload_to=use_directory_path, null=True, blank=True)
+    picture = models.ImageField(storage=MediaStorage())
     interests = models.ManyToManyField('blog.Category')
 
     # Social media only to authors.
@@ -80,9 +81,6 @@ class UserBookmarks(models.Model):
     """Stores User(Viewer's) Blog Bookmarks"""
     user = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
     blog_post = models.ForeignKey('blog.BlogPost', on_delete=models.CASCADE, default=1)
-
-    def __str__(self):
-        return self.user + "-" + self.blog_post
 
     class Meta:
         verbose_name = "UserBookmark"

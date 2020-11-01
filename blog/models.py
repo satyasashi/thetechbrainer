@@ -10,9 +10,9 @@ from toolbelt.utils import (
     get_user_directory_thumbnail_path,
     get_random_string
     )
-from ckeditor_uploader.fields import RichTextUploadingField
+# from ckeditor_uploader.fields import RichTextUploadingField
 from PIL import Image
-from thetechbrainer.storage_backends import CategoryMediaStorage
+from storage_backends import CategoryMediaStorage, MediaStorage
 
 import uuid
 
@@ -50,17 +50,21 @@ class Category(models.Model):
         super(Category, self).save(*args, **kwargs)
 
         # make thumbnail from original image.
-        img = Image.open(self.category_image)
-        img.thumbnail(settings.IMG_SMALL)  # result dimensions
-        #img_thumbnail_path = get_catgory_img_thumbnail_path(self.category_name, self.category_image)
-        #try:
+        # img = Image.open(self.category_image)
+        # img.thumbnail(settings.IMG_SMALL)  # result dimensions
+        # print("Image Filename: ", self.category_image, CategoryMediaStorage())
+        # print(dir(self.category_image), self.category_image.name, self.category_image.file)
+        # img_thumbnail_path = get_catgory_img_thumbnail_path(self.category_name, self.category_image)
+        # try:
         #    img.save(img_thumbnail_path)
         #    print("Image Thumbnail saved")
-        #except FileNotFoundError:
+        # except FileNotFoundError:
         #    os.makedirs(settings.MEDIA_ROOT+"/category/"+self.category_name+"/thumbnails/")
         #    img.save(img_thumbnail_path)
         #    print("Created thumbnails folder.")
-        img.save(img.filename.split("/")[-1].split(".")[0]+"_small"+img.filename.split("/")[-1].split(".")[1])
+        # category_storage = CategoryMediaStorage()
+        # fh = category_storage.open(self.category_image, )
+        # img.save(self.category_image.name.split(".")[0]+"_small."+self.category_image.name.split(".")[1])
 
     def __str__(self):
         return self.category_name
@@ -88,9 +92,10 @@ class BlogPost(models.Model):
     blog_title = models.CharField(max_length=100, help_text="Keep titles short.")
     blog_subtitle = models.CharField(max_length=150, help_text="Short line for subtitle.")
     blog_slug = models.SlugField(blank=True, max_length=500, help_text="Slug will be automatically generated.")
-    banner_image = models.ImageField(upload_to=banner_path, blank=True, null=True)
+    banner_image = models.ImageField(storage=MediaStorage())
     banner_image_source = models.CharField(max_length=50, default="")
-    content = RichTextUploadingField(blank=True, null=True)
+    # content = RichTextUploadingField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
 
     blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
     blog_tags = models.ManyToManyField(Tag)
@@ -101,7 +106,7 @@ class BlogPost(models.Model):
     draft = models.BooleanField(default=False)
     preview = models.BooleanField(default=False)
     submitted_for_moderation = models.BooleanField(default=False)
-    published = models.BooleanField(      default=False)
+    published = models.BooleanField(default=False)
 
     class Meta:
         db_table = "blog_post"
@@ -117,18 +122,19 @@ class BlogPost(models.Model):
             self.blog_slug = slugify(self.blog_title) + "-" + str(random_string)
 
         super(BlogPost, self).save(*args, **kwargs)
+        # self.banner_image = self.banner_image.small()
 
         # make thumbnail from original image.
-        img = Image.open(self.banner_image)
-        img.thumbnail(settings.IMG_SMALL)  # result dimensions
-        img_thumbnail_path = get_user_directory_thumbnail_path(self.blog_author.user.id, self.banner_image)
-        try:
-            img.save(img_thumbnail_path)
-            print("Image Thumbnail saved")
-        except FileNotFoundError:
-            os.makedirs(settings.MEDIA_ROOT+"/user_{}/banners/thumbnails/".format(self.blog_author.user.id))
-            img.save(img_thumbnail_path)
-            print("Created thumbnails folder.")
+        # img = Image.open(self.banner_image)
+        # img.thumbnail(settings.IMG_SMALL)  # result dimensions
+        # img_thumbnail_path = get_user_directory_thumbnail_path(self.blog_author.user.id, self.banner_image)
+        # try:
+        #     img.save(img_thumbnail_path)
+        #     print("Image Thumbnail saved")
+        # except FileNotFoundError:
+        #     os.makedirs(settings.MEDIA_ROOT+"/user_{}/banners/thumbnails/".format(self.blog_author.user.id))
+        #     img.save(img_thumbnail_path)
+        #     print("Created thumbnails folder.")
 
     # def __str__(self):
     #     return self.blog_author

@@ -31,8 +31,9 @@
           <div class="col-md-12">
             <div class="media position-relative">
 
-              <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}"><img class="mr-2" src="/media/user_{{blog.blog_author.user.id}}/banners/thumbnails/{{blog.banner_image.url|getImageName}}"
-                alt="image"></a>
+              <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                  <img class="mr-2" src="{{blog.banner_image.url}}" alt="image" height="98" width="140">
+              </a>
 
               <div class="media-body">
                 <h5 class="mt-0" style="margin-bottom: 0px;">{{blog.blog_title}}</h5>
