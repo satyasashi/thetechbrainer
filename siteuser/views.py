@@ -19,6 +19,10 @@ def validate_author_exist_or_not(author_id):
             return False
 
 
+#def handler404(request):
+#   return render(request, "pagenotfound.html", status=404)
+
+
 def index(request):
     blogs = BlogPost.objects.filter(published=True, moderator_accepted=True, preview=False, draft=False)
 

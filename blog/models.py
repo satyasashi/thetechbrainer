@@ -10,7 +10,7 @@ from toolbelt.utils import (
     get_user_directory_thumbnail_path,
     get_random_string
     )
-# from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor_uploader.fields import RichTextUploadingField
 from PIL import Image
 from storage_backends import CategoryMediaStorage, MediaStorage
 
@@ -94,8 +94,7 @@ class BlogPost(models.Model):
     blog_slug = models.SlugField(blank=True, max_length=500, help_text="Slug will be automatically generated.")
     banner_image = models.ImageField(storage=MediaStorage())
     banner_image_source = models.CharField(max_length=50, default="")
-    # content = RichTextUploadingField(blank=True, null=True)
-    content = models.TextField(blank=True, null=True)
+    content = RichTextUploadingField(blank=True, null=True)
 
     blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
     blog_tags = models.ManyToManyField(Tag)

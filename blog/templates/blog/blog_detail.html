@@ -409,7 +409,7 @@
       </div>
 
       <!-- Blog author bio -->
-      <a href="#" onclick="showAuthorInfo({{blog.blog_author.id}})" class="author-bio-div-link" style="text-decoration:none;">
+      <a href="#" class="author-bio-div-link" style="text-decoration:none;">
           <div class="author-bio-div mx-auto">
               <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
                   <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
