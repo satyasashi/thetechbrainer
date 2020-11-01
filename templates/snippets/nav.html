@@ -44,7 +44,7 @@
                 {% else %}
                 <a class="dropdown-item" href="{% url 'user:user_dashboard' %}"> <i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
                 {% endif %}
-                {% if request.user|has_group:"author" %}
+                {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
                 <a class="dropdown-item" href="{% url 'user:user_drafts' %}"><i class="fa fa-file" aria-hidden="true"></i>&nbsp;My Drafts</a>
                 {% endif %}
 
@@ -54,7 +54,7 @@
 
               <!-- <a class="dropdown-item" href="#"><i class="fa fa-user"></i>&nbsp;&nbsp;My Profile</a> -->
               <!-- <a class="dropdown-item" href="#"><i class="fa fa-gear"></i> Settings</a> -->
-              {% if request.user|has_group:"author" %}
+              {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
               <a class="dropdown-item" href="{% url 'blog:my_blogs' %}"><i class="fa fa-list-alt" aria-hidden="true"></i>&nbsp;&nbsp;My Blogs</a>
               {% endif %}
               <a class="dropdown-item" href="{% url 'account_change_password' %}"><i class="fa fa-key"></i>&nbsp;&nbsp;Change password</a>

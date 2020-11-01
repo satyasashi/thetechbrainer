@@ -308,6 +308,7 @@ def write_blog(request):
                 messages.info(request, "Your blog is saved in your drafts. Please check it there.")
                 return redirect("blog:preview_blog", id=new_blog_obj.id, blog_slug=new_blog_obj.blog_slug)
             else:
+                print(new_blog_form.errors)
                 messages.error(request, "Something went wrong. Please check if all fields are filled.")
                 return redirect("blog:write_blog")
 
@@ -430,7 +431,9 @@ def accept_and_publish(request, id):
 def my_blogs(request):
     # gets all the blogs written by user so far.
     author_group = Group.objects.get(name='author')
-    if request.user.groups.filter(name=author_group).exists():
+    moderator_group = Group.objects.get(name='moderator')
+
+    if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         siteuser = SiteUser.objects.get(user=request.user)
         my_blogs = BlogPost.objects.filter(blog_author=siteuser)
         return render(request, "blog/my_blogs.html", context={"my_blogs": my_blogs})

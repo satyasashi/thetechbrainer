@@ -92,7 +92,7 @@ class BlogPost(models.Model):
     content = RichTextUploadingField(blank=True, null=True)
 
     blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    blog_tags = models.ManyToManyField(Tag)
+    blog_tags = models.ManyToManyField(Tag, blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

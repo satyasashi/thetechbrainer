@@ -105,7 +105,9 @@ def pagenotfound(request):
 @login_required
 def user_drafts(request):
     author_group = Group.objects.get(name='author')
-    if request.user.groups.filter(name=author_group).exists():
+    moderator_group = Group.objects.get(name='moderator')
+
+    if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         blogs = BlogPost.objects.filter(blog_author=SiteUser.objects.get(user=request.user), preview=True, draft=True, published=False)
         return render(request, "user/user_drafts.html", context={"blogs": blogs})
     else:
@@ -203,6 +205,10 @@ def moderator_dashboard(request):
     siteuser = SiteUser.objects.get(user=request.user)
 
     if request.user.groups.filter(name=moderator_group).exists():
+        my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
+        my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
+        my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
+
         blogs_for_moderation = BlogPost.objects.filter(submitted_for_moderation=True, moderator_accepted=False, published=False)
         blogs_published = BlogPost.objects.filter(moderator_accepted=True, published=True)
 
@@ -215,7 +221,10 @@ def moderator_dashboard(request):
             "blogs_published": blogs_published,
             "user_likes": user_likes,
             "user_bookmarks": user_bookmarks,
-            "following": following
+            "following": following,
+            "my_blogs_count": my_blogs_count,
+            "my_blogs_unpublished_count": my_blogs_unpublished_count,
+            "my_blogs_published_count": my_blogs_published_count
             })
     else:
         return redirect("user:pagenotfound")

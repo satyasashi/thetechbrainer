@@ -139,6 +139,30 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
 <div class="container-fluid author-dashboard-div">
     <div class="container oc-screen">
         <h1>Moderator Dashboard</h1>
+        <h4 class="text-muted">Insights</h4>
+        <div class="row">
+            <div class="col-md-4" id="authorAllBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_count }}</h1>
+                    <p class="text-center">ALL BLOGS</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" id="authorUnpublishedBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_unpublished_count }}</h1>
+                    <p class="text-center">UNPUBLISHED BLOGS</p>
+                </div>
+            </div>
+
+            <div class="col-md-4" id="authorPublishedBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ my_blogs_published_count }}</h1>
+                    <p class="text-center">PUBLISHED BLOGS</p>
+                </div>
+            </div>
+        </div>
+        <br>
         <h4 class="text-muted">Review Author Blogs And Publish.</h4>
         <div class="row">
             <div class="col-md-12">
@@ -165,7 +189,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#"> <img src="{{row.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{{row.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a>
                                     </td>
                                     <td>{{row.created_on}}</td>
                                     <td>
@@ -268,7 +292,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                     <td>
                                     <a href="{% url 'blog:blog_detail' slug=row.blog_slug %}">{{row.blog_title}}</a>
                                     </td>
-                                    <td> <a href="#"> <img src="{{row.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a> </td>
+                                    <td> <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{{row.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a> </td>
                                     <td>{{row.created_on}}</td>
                                     <td style="text-align: center;">
                                         {% if row.moderator_accepted %}
@@ -310,7 +334,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -344,7 +368,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -376,7 +400,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             <tbody>
                                 {% for row in following %}
                                     <tr id="row{{row.following.id}}">
-                                        <td> <a href="#"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
                                         <td>
                                             <button type="button" name="button" data-aid="{{row.following.id}}" class="btn btn-danger btn-sm unfollowAuthor">Unfollow</button>
                                         </td>

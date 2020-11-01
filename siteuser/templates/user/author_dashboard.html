@@ -185,8 +185,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             <tbody>
                                 {% for row in users_following_you %}
                                     <tr id="row{{row.siteuser.id}}">
-                                        <td> <a href="#" > <img src="{% if row.siteuser.personalinformation.picture %}{{row.siteuser.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> </a> </td>
-                                        <td> <a href="#">{{ row.siteuser|title }}</a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})"> <img src="{% if row.siteuser.personalinformation.picture %}{{row.siteuser.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.siteuser.id}})">{{ row.siteuser|title }}</a> </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -225,7 +225,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" > <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" class="authorPicTableData" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" class="authorPicTableData" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -320,7 +320,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             <tbody>
                                 {% for row in following %}
                                     <tr id="row{{row.following.id}}">
-                                        <td> <a href="#"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
                                         <td>
                                             <button type="button" name="button" data-aid="{{row.following.id}}" class="btn btn-danger btn-sm unfollowAuthor">Unfollow</button>
                                         </td>
@@ -364,7 +364,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
                                     </td>
                                 </tr>
                             {% endfor %}

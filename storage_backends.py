@@ -8,7 +8,7 @@ class MediaStorage(S3Boto3Storage):
 
 
 class CategoryMediaStorage(S3Boto3Storage):
-    location = settings.AWS_PRIVATE_MEDIA_LOCATION
+    # location = settings.AWS_PRIVATE_MEDIA_LOCATION
     default_acl = 'private'
     file_overwrite = False
     custom_domain = False

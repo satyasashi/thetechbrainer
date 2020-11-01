@@ -1,4 +1,4 @@
-{% load static %}
+{% load static customtags %}
 <footer class="page-footer font-small blue pt-4">
     <!-- Footer Links -->
     <div class="container-fluid text-center text-md-left">
@@ -8,8 +8,7 @@
       <div class="col-md-3 mt-md-0 mt-3">
         <!-- Content -->
         <h5 class="text-uppercase">Thetechbrainer</h5>
-        <p>A place to find techblogs on new topics every week.</p>
-
+        <p>Place Where You Find Techblogs On New Topics Every Week.</p>
       </div>
       <!-- Grid column -->
 
@@ -28,6 +27,21 @@
           <li>
             <a href="{% url 'blog:blog_categories' %}">Blog Categories</a>
           </li>
+
+          {% if request.user|has_group:"moderator" %}
+          <li>
+              <a href="{% url 'user:moderator_dashboard' %}">Dashboard</a>
+          </li>
+          {% else %}
+          <li>
+              <a href="{% url 'user:user_dashboard' %}">Dashboard</a>
+          </li>
+          {% endif %}
+          {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
+          <li>
+              <a href="{% url 'user:user_drafts' %}"> My Drafts</a>
+          </li>
+          {% endif %}
         </ul>
 
       </div>
