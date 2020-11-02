@@ -104,8 +104,11 @@ def pagenotfound(request):
 
 @login_required
 def user_drafts(request):
-    author_group = Group.objects.get(name='author')
-    moderator_group = Group.objects.get(name='moderator')
+    try:
+        author_group = Group.objects.get(name='author')
+        moderator_group = Group.objects.get(name='moderator')
+    except Group.DoesNotExist:
+        return redirect("user:pagenotfound")
 
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         blogs = BlogPost.objects.filter(blog_author=SiteUser.objects.get(user=request.user), preview=True, draft=True, published=False)
@@ -117,41 +120,47 @@ def user_drafts(request):
 @login_required
 def user_dashboard(request):
     siteuser = SiteUser.objects.get(user=request.user)
-    author_group = Group.objects.get(name='author')
-    moderator_group = Group.objects.get(name='moderator')
+    try:
+        author_group = Group.objects.get(name='author')
 
-    if request.user.groups.filter(name=author_group).exists():
-        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
-        following = UserFollowing.objects.filter(siteuser=siteuser)
-        users_following_you = UserFollowing.objects.filter(following=siteuser)
-        user_likes = UserLikes.objects.filter(siteuser=siteuser)
-        my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
-        my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
-        my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
+        if request.user.groups.filter(name=author_group).exists():
+            user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+            following = UserFollowing.objects.filter(siteuser=siteuser)
+            users_following_you = UserFollowing.objects.filter(following=siteuser)
+            user_likes = UserLikes.objects.filter(siteuser=siteuser)
+            my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
+            my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
+            my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
 
-        return render(request, "siteuser/author_dashboard.html", context={
-            "user_likes": user_likes,
-            "user_bookmarks": user_bookmarks,
-            "following": following,
-            "users_following_you": users_following_you,
-            "my_blogs_count": my_blogs_count,
-            "my_blogs_unpublished_count": my_blogs_unpublished_count,
-            "my_blogs_published_count": my_blogs_published_count
-            })
+            return render(request, "siteuser/author_dashboard.html", context={
+                "user_likes": user_likes,
+                "user_bookmarks": user_bookmarks,
+                "following": following,
+                "users_following_you": users_following_you,
+                "my_blogs_count": my_blogs_count,
+                "my_blogs_unpublished_count": my_blogs_unpublished_count,
+                "my_blogs_published_count": my_blogs_published_count
+                })
 
-    elif request.user.groups.filter(name=moderator_group).exists():
-        return redirect("user:moderator_dashboard")
+    except Group.DoesNotExist:
+        return redirect("user:pagenotfound")
 
-    else:
-        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
-        following = UserFollowing.objects.filter(siteuser=siteuser)
-        user_likes = UserLikes.objects.filter(siteuser=siteuser)
+    try:
+        moderator_group = Group.objects.get(name='moderator')
+        if request.user.groups.filter(name=moderator_group).exists():
+            return redirect("user:moderator_dashboard")
+    except Group.DoesNotExist:
+        return redirect("user:pagenotfound")
 
-        return render(request, "siteuser/dashboard.html", context={
-            "user_likes": user_likes,
-            "user_bookmarks": user_bookmarks,
-            "following": following
-            })
+    user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+    following = UserFollowing.objects.filter(siteuser=siteuser)
+    user_likes = UserLikes.objects.filter(siteuser=siteuser)
+
+    return render(request, "siteuser/dashboard.html", context={
+        "user_likes": user_likes,
+        "user_bookmarks": user_bookmarks,
+        "following": following
+        })
 
 
 @login_required
@@ -201,30 +210,35 @@ def unfollow_author(request):
 
 @login_required
 def moderator_dashboard(request):
-    moderator_group = Group.objects.get(name='moderator')
-    siteuser = SiteUser.objects.get(user=request.user)
+    try:
+        moderator_group = Group.objects.get(name='moderator')
+    except Group.DoesNotExist:
+        return redirect("user:pagenotfound")
 
-    if request.user.groups.filter(name=moderator_group).exists():
-        my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
-        my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
-        my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
+    try:
+        siteuser = SiteUser.objects.get(user=request.user)
 
-        blogs_for_moderation = BlogPost.objects.filter(submitted_for_moderation=True, moderator_accepted=False, published=False)
-        blogs_published = BlogPost.objects.filter(moderator_accepted=True, published=True)
+        if request.user.groups.filter(name=moderator_group).exists():
+            my_blogs_count = BlogPost.objects.filter(blog_author=siteuser).count()
+            my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
+            my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
 
-        user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
-        following = UserFollowing.objects.filter(siteuser=siteuser)
-        user_likes = UserLikes.objects.filter(siteuser=siteuser)
+            blogs_for_moderation = BlogPost.objects.filter(submitted_for_moderation=True, moderator_accepted=False, published=False)
+            blogs_published = BlogPost.objects.filter(moderator_accepted=True, published=True)
 
-        return render(request, "siteuser/moderator_dashboard.html", context={
-            "blogs_for_moderation": blogs_for_moderation,
-            "blogs_published": blogs_published,
-            "user_likes": user_likes,
-            "user_bookmarks": user_bookmarks,
-            "following": following,
-            "my_blogs_count": my_blogs_count,
-            "my_blogs_unpublished_count": my_blogs_unpublished_count,
-            "my_blogs_published_count": my_blogs_published_count
-            })
-    else:
+            user_bookmarks = UserBookmarks.objects.filter(user=siteuser)
+            following = UserFollowing.objects.filter(siteuser=siteuser)
+            user_likes = UserLikes.objects.filter(siteuser=siteuser)
+
+            return render(request, "siteuser/moderator_dashboard.html", context={
+                "blogs_for_moderation": blogs_for_moderation,
+                "blogs_published": blogs_published,
+                "user_likes": user_likes,
+                "user_bookmarks": user_bookmarks,
+                "following": following,
+                "my_blogs_count": my_blogs_count,
+                "my_blogs_unpublished_count": my_blogs_unpublished_count,
+                "my_blogs_published_count": my_blogs_published_count
+                })
+    except SiteUser.DoesNotExist:
         return redirect("user:pagenotfound")
