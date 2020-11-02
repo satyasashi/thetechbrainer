@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # AWS S3
-    'storages',
+    #'storages',
 
     # our apps
 
