@@ -71,7 +71,7 @@ def follow(request):
             except Exception as e:
                 pass
 
-            return render(request, "user/ajax/components.html", context)
+            return render(request, "siteuser/ajax/components.html", context)
     else:
         return JsonResponse({"error": "Sorry something went wrong. Please try later.", "authenticated": False}, status=300)
 
@@ -95,7 +95,7 @@ def user_interests(request):
         categories = Category.objects.all()
         userProfile = SiteUser.objects.get(user=request.user)
         user_interests = userProfile.interests.all()
-        return render(request, "user/interests.html", context={'categories': categories, 'user_interests': user_interests})
+        return render(request, "siteuser/interests.html", context={'categories': categories, 'user_interests': user_interests})
 
 
 def pagenotfound(request):
@@ -109,7 +109,7 @@ def user_drafts(request):
 
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         blogs = BlogPost.objects.filter(blog_author=SiteUser.objects.get(user=request.user), preview=True, draft=True, published=False)
-        return render(request, "user/user_drafts.html", context={"blogs": blogs})
+        return render(request, "siteuser/user_drafts.html", context={"blogs": blogs})
     else:
         return redirect("user:pagenotfound")
 
@@ -129,7 +129,7 @@ def user_dashboard(request):
         my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=siteuser, published=False, draft=True, preview=True).count()
         my_blogs_published_count = BlogPost.objects.filter(blog_author=siteuser, published=True, moderator_accepted=True).count()
 
-        return render(request, "user/author_dashboard.html", context={
+        return render(request, "siteuser/author_dashboard.html", context={
             "user_likes": user_likes,
             "user_bookmarks": user_bookmarks,
             "following": following,
@@ -147,7 +147,7 @@ def user_dashboard(request):
         following = UserFollowing.objects.filter(siteuser=siteuser)
         user_likes = UserLikes.objects.filter(siteuser=siteuser)
 
-        return render(request, "user/dashboard.html", context={
+        return render(request, "siteuser/dashboard.html", context={
             "user_likes": user_likes,
             "user_bookmarks": user_bookmarks,
             "following": following
@@ -216,7 +216,7 @@ def moderator_dashboard(request):
         following = UserFollowing.objects.filter(siteuser=siteuser)
         user_likes = UserLikes.objects.filter(siteuser=siteuser)
 
-        return render(request, "user/moderator_dashboard.html", context={
+        return render(request, "siteuser/moderator_dashboard.html", context={
             "blogs_for_moderation": blogs_for_moderation,
             "blogs_published": blogs_published,
             "user_likes": user_likes,
