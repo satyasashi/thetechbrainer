@@ -5,8 +5,9 @@ from django.http import JsonResponse, HttpResponse
 from .models import SiteUser, UserFollowing
 from django.contrib.auth.models import User, Group
 from toolbelt.utils import use_directory_path, banner_directory_path
-from blog.models import BlogPost, Category
+from blog.models import BlogPost, Category, Tag
 from siteuser.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation
+from django.utils.text import slugify
 
 
 def validate_author_exist_or_not(author_id):
@@ -17,10 +18,6 @@ def validate_author_exist_or_not(author_id):
     except Exception as e:
         if e:
             return False
-
-
-#def handler404(request):
-#   return render(request, "pagenotfound.html", status=404)
 
 
 def index(request):
@@ -115,6 +112,40 @@ def user_drafts(request):
         return render(request, "siteuser/user_drafts.html", context={"blogs": blogs})
     else:
         return redirect("user:pagenotfound")
+
+
+@login_required
+def get_all_tags(request):
+    if request.method == "POST" and request.is_ajax():
+        tags_list = []
+        for t in Tag.objects.all():
+            tags_list.append(t.tag_name)
+
+        print(tags_list)
+        return JsonResponse({"status": "success", "tags": ",".join(tags_list)}, status=200)
+    else:
+        return JsonResponse({"status": "failure"}, status=404)
+
+
+@login_required
+def add_new_tag(request):
+    if request.method == "POST" and request.is_ajax():
+        tag_name = request.POST.get("new_tag")
+        print(tag_name)
+        if len(tag_name) > 0:
+            newtag = Tag.objects.create(
+                tag_name=tag_name,
+                tag_slug=slugify(tag_name)
+            )
+            newtag.save()
+
+            tags_list = []
+            for t in Tag.objects.all():
+                tags_list.append(t.tag_name)
+
+            return JsonResponse({"status": "success", "tags": ",".join(tags_list)}, status=200)
+    else:
+        return JsonResponse({"status": "failure"}, status=400)
 
 
 @login_required

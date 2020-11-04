@@ -13,5 +13,7 @@ urlpatterns = [
     path('dashboard/', views.user_dashboard, name="user_dashboard"),
     path('ajax/get-user-info/', views.get_user_information, name="get_user_information"),
     path('ajax/unfollow-author/', views.unfollow_author, name="unfollow_author"),
+    path('ajax/get-all-tags/', views.get_all_tags, name="get_all_tags"),
+    path('ajax/add-new-tag/', views.add_new_tag, name="add_new_tag"),
     path('moderator-dashboard/', views.moderator_dashboard, name="moderator_dashboard"),
 ]

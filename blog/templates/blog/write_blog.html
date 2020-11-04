@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" />
 <link rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
 {% endblock %}
@@ -12,6 +13,30 @@
 {% block home_banner %} {% endblock %}
 
 {% block content %}
+<div class="modal fade" id="tagModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Blog Tag</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        	<span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <span class="error-message" id="newTagErrorSpan" style="display:none;"></span>
+          <form class="newTagForm" action="">
+              {% csrf_token %}
+              <input type="text" name="newTag" class="form-control" value="" placeholder="Add New Tag Here..." id="newTagInputValue" required/>
+          </form>
+      </div>
+      <div class="modal-footer">
+  		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="finishNewTagBtn">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container oc-screen newblog-container">
     {% if messages %}
       <div class="row">
@@ -58,66 +83,138 @@
           <div class="form-group">
             {{ new_blog_form.blog_tags|as_crispy_field }}
           </div>
-          <div class="col-* write-blog-footer">
-            <button type="button" class="btn btn-warning" id="previewBlog"><i class="fa fa-eye"></i> Preview</a>
-            <!-- <button type="button" class="btn btn-primary" id="draftBtn">Save as Draft</button> -->
-            <!-- <button type="submit" class="btn btn-success submitForModeration"><i class="fa fa-exchange"></i> Submit For Moderation</button> -->
+          <div class="col-* alert alert-dark">
+            <button type="button" class="btn btn-warning" id="previewBlog"><i class="fa fa-eye"></i> Preview &amp; Submit</button>
+            <button type="button" class="btn btn-primary" id="addNewTagBtn" data-toggle="modal" data-target="#tagModal"><i class="fa fa-plus"></i> New Tag</button>
           </div>
         </fieldset>
       </form>
     </div>
   </div>
 </div>
-
+<div id="tags" style="display:none;"></div>
 
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
 <script type="text/javascript">
-  var preview = false;
-  var saveAsDraft = false;
-  var submitForModeration = false;
+    var preview = false;
+    var saveAsDraft = false;
+    var submitForModeration = false;
 
-  function blogSubmit(event) {
-    var data = new FormData(this);
-    console.log(data);
+    function taginput() {
+      $.ajax({
+          url: "{% url 'user:get_all_tags' %}",
+          dataType: "json",
+          data: {"csrfmiddlewaretoken": "{{csrf_token}}"},
+          type: "POST",
+          success: function(result) {
+              $("#tags").text(result["tags"]);
+              var mytags = $("#tags").text().split(",");
+              $('.select2').select2({
+                    data: mytags,
+                    tags: true,
+                    maximumSelectionLength: 10,
+                    tokenSeparators: [',', ' '],
+                    placeholder: "Select or type keywords",
+                    //minimumInputLength: 1,
+                    //ajax: {
+                   //   url: "you url to data",
+                   //   dataType: 'json',
+                    //  quietMillis: 250,
+                    //  data: function (term, page) {
+                    //     return {
+                    //         q: term, // search term
+                    //    };
+                   //  },
+                   //  results: function (data, page) {
+                   //  return { results: data.items };
+                  //   },
+                  //   cache: true
+                   // }
+                });
+          }
+      });
+    }
 
-    $.ajax({
-      url: "{% url 'blog:write_blog' %}",
-      type: "POST",
-      data: data,
-      dataType: "json",
-      success: function(result) {
-        console.log("Success");
-      },
-      error: function(error) {
-        console.log(error);
-      }
+    $("#finishNewTagBtn").on("click", function(e) {
+        e.preventDefault();
+
+        var newTag = $("#newTagInputValue").val();
+        if(newTag.length == 0) {
+            $("#newTagErrorSpan").attr("class", "error-message")
+            $("#newTagErrorSpan").text("Tag Cannot Be Empty.")
+            $("#newTagErrorSpan").show();
+            // $("#tagModal").modal("show");
+        } else {
+            $.ajax({
+                url: "{% url 'user:add_new_tag' %}",
+                dataType: "json",
+                type: "POST",
+                data: {"csrfmiddlewaretoken": "{{csrf_token}}", "new_tag": newTag},
+                success: function(result) {
+                    console.log(result);
+                    if(result.status == "success") {
+                        $("#newTagErrorSpan").attr("class", "success-message")
+                        $("#newTagErrorSpan").text("Added new tag successfully");
+                        $("#newTagErrorSpan").show();
+                        // Reload the tags.
+                        taginput();
+                    } else {
+                        $("#newTagErrorSpan").attr("class", "error-message")
+                        $("#newTagErrorSpan").text("Something went wrong");
+                        $("#newTagErrorSpan").show();
+                    }
+                }
+            });
+        }
     });
-  }
 
-  $("#previewBlog").on("click", function(event) {
-    event.preventDefault();
+    function blogSubmit(event) {
+        var data = new FormData(this);
+        console.log(data);
 
-    $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
-    $("#newBlogForm #type").val("preview");
-    $("#newBlogForm").submit();
-  });
+        $.ajax({
+          url: "{% url 'blog:write_blog' %}",
+          type: "POST",
+          data: data,
+          dataType: "json",
+          success: function(result) {
+            console.log("Success");
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+    }
 
-  // $("#draftBtn").on("click", function() {
-  //   event.preventDefault();
-  //
-  //   $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
-  //   $("#newBlogForm #type").val("draft");
-  //   $("#newBlogForm").submit();
-  // });
+    $("#previewBlog").on("click", function(event) {
+        event.preventDefault();
 
-  $(".submitForModeration").on("click", function() {
-    event.preventDefault();
+        $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+        $("#newBlogForm #type").val("preview");
+        $("#newBlogForm").submit();
+    });
 
-    $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
-    $("#newBlogForm #type").val("submitForModeration");
-    $("#newBlogForm").submit();
-  });
+    // $("#draftBtn").on("click", function() {
+    //   event.preventDefault();
+    //
+    //   $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+    //   $("#newBlogForm #type").val("draft");
+    //   $("#newBlogForm").submit();
+    // });
+
+    $(".submitForModeration").on("click", function() {
+        event.preventDefault();
+
+        $("#newBlogForm").attr("action", "{% url 'blog:write_blog' %}");
+        $("#newBlogForm #type").val("submitForModeration");
+        $("#newBlogForm").submit();
+    });
+
+    $(function() {
+        taginput();
+    });
 </script>
 {% endblock %}

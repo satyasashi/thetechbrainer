@@ -328,8 +328,22 @@ body {
 }
 
 .write-blog-footer {
-  background-color: #f2f2f2;
+  background-color: #000;
   padding: 10px;
+}
+
+.write-blog-footer-content {
+    color: #fff;
+}
+
+.error-message {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.success-message  {
+    color: green;
+    font-weight: bold;
 }
 
 .scrollTop {

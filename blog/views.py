@@ -9,6 +9,7 @@ from django.utils.text import slugify
 from .forms import BlogPostForm, BlogPostEditForm
 
 import re
+import json
 import datetime
 
 
@@ -336,9 +337,14 @@ def write_blog(request):
         else:
             new_blog_form = BlogPostForm()
             userProfile = SiteUser.objects.get(user=request.user)
+            tags_list = []
+            for t in Tag.objects.all():
+                tags_list.append(t.tag_name)
+
             context = {
                 "new_blog_form": new_blog_form,
-                "user_profile": userProfile
+                "user_profile": userProfile,
+                "tags": ",".join(tags_list)
             }
             return render(request, "blog/write_blog.html", context)
     else:
