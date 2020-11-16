@@ -274,7 +274,8 @@ def filter_by_author(request, id):
     if len(blogs_by_author) > 0:
         return render(request, "blog/filter_by_author.html", context={"blogs": blogs_by_author, "author": blogs_by_author[0].blog_author})
     else:
-        return redirect("user:pagenotfound")
+        author = User.objects.get(id=id)
+        return render(request, "blog/filter_by_author.html", context={"author": author.username})
 
 
 def get_categories(request):

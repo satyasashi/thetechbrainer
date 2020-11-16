@@ -49,7 +49,7 @@
                 </button>
               </div>
               <div class="modal-body">
-                <form class="blog-search" action="#" method="post">
+		  <form class="blog-search" action="{% url 'blog:blog_search' %}" method="post">
                   {% csrf_token %}
                   <label for="blogSearch"></label>
                   <input type="text" name="blogsearch" class="form-control blogSearch" value="" placeholder="Enter Blog name or Keywords" required /><br>
