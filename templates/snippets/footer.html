@@ -1,0 +1,96 @@
+{% load static customtags %}
+<footer class="page-footer font-small blue pt-4">
+    <!-- Footer Links -->
+    <div class="container-fluid text-center text-md-left">
+    <!-- Grid row -->
+    <div class="row">
+      <!-- Grid column -->
+      <div class="col-md-3 mt-md-0 mt-3">
+        <!-- Content -->
+        <h5 class="text-uppercase">Thetechbrainer</h5>
+        <p>Place Where You Find Techblogs On New Topics Every Week.</p>
+      </div>
+      <!-- Grid column -->
+
+      <hr class="clearfix w-100 d-md-none pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">Sitemap</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="{% url 'user:about_us' %}">About Us</a>
+          </li>
+          <li>
+            <a href="{% url 'blog:blog_categories' %}">Blog Categories</a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+          {% if request.user|has_group:"moderator" %}
+          <li>
+              <a href="{% url 'user:moderator_dashboard' %}">Dashboard</a>
+          </li>
+          {% else %}
+          <li>
+              <a href="{% url 'user:user_dashboard' %}">Dashboard</a>
+          </li>
+          {% endif %}
+          {% endif %}
+          {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
+          <li>
+              <a href="{% url 'user:user_drafts' %}"> My Drafts</a>
+          </li>
+          {% endif %}
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">Contact Us</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="mailto:thetechbrainer@gmail.com">Write Email</a>
+          </li>
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+        <!-- Links -->
+        <h5 class="text-uppercase">Follow Us On</h5>
+
+        <ul class="list-unstyled list-inline">
+          <li class="list-inline-item">
+            <a href="https://www.facebook.com/thetechbrainer"><img src="{% static 'img/facebook.png' %}" width="50" height="50"/></a>
+          </li>
+          <li class="list-inline-item">
+            <a href="#!"><img src="{% static 'img/instagram.png' %}" width="50" height="50"/></a>
+          </li>
+          <li class="list-inline-item">
+            <a href="#!"><img src="{% static 'img/twitter.png' %}" width="50" height="50"/></a>
+          </li>
+        </ul>
+      </div>
+      <!-- Grid column -->
+    </div>
+    <!-- Grid row -->
+    </div>
+    <!-- Footer Links -->
+    <div class="text-center py-3">
+      Made With <i class="fa fa-heart" aria-hidden="true" style="color:red"></i> &amp; <i class="fa fa-coffee" aria-hidden="true"></i>
+    </div>
+    <div class="footer-copyright text-center py-3">
+      Copyright © 2020
+        <a href="https://thetechbrainer.com/"> thetechbrainer.com</a>
+    </div>
+</footer>

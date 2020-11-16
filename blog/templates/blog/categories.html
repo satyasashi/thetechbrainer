@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Categories {% endblock %}
+
+{% block home_banner %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid allblogs-div">
+  <div class="container">
+    <div class="oc-screen">
+      {% if messages %}
+        <div class="row">
+          <div class="col-md-6 mx-auto">
+            {% for msg in messages %}
+            <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+                {{msg.message}}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <h1 class="text-center">Blog Categories</h1>
+        </div>
+      </div>
+      <div class="row equal content-container categories-list-div">
+        {% for category in categories %}
+        <div class="col-md-4 col-sm-6 col-12 d-flex">
+          <div class="card mb-3 categories-cards" style="padding:0px">
+            <a href="{% url 'blog:filter_by_category' category_slug=category.category_slug %}">
+              <img style="height: 200px; width: 100%; display: block;" src="{{category.category_image.url}}" alt="Card image" class="img-responsive">
+              <h3 class="card-header">{{category.category_name}}</h3>
+              <div class="card-body">
+                <p>{{category.category_line}}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

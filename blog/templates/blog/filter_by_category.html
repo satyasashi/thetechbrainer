@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static customtags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="container oc-screen">
+  {% if messages %}
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        {% for msg in messages %}
+        <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+            {{msg.message}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+  <div class="row content-container">
+    <div class="col-md-8">
+      {% if category and blogs %}
+        <div class="col-md-12 filter_by_category_div">
+          <h4 class="">Blogs by category - {{category}}</h4>
+          <hr>
+
+          {% for blog in blogs %}
+          <div class="col-md-12">
+            <div class="media position-relative">
+
+                <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                    <img class="mr-2" src="{{blog.banner_image.url}}" alt="image" height="98" width="140">
+                </a>
+
+              <div class="media-body">
+                <h4 class="mt-0" style="margin-bottom: 0px;"> <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" style="text-decoration:none;"> <b>{{blog.blog_title}}</b> </a> </h4>
+                <span class="badge badge-light blog-badge" style="font-size: 12px; border-radius: 0px;">{{blog.blog_category}}</span>
+                <p>{{blog.blog_subtitle}} <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class=""> <b>Read More</b> </a> <br>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}" class="category_filter_authorname"><b>{{blog.blog_author|upper}}</b></a> | On : {{blog.created_on|date:"b d, Y"}} </p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      {% elif no_data and category %}
+        <div class="col-md-12 noblogs-category-div">
+          <h1>Seems There Are No Blogs Writtern For This Category Yet.</h1>
+          <h5>Do not be upset, with just One Click you can let our authors know that you are looking for content on this category.</h5>
+          <button type="button" name="letAuthorKnow" class="btn btn-primary mb-2 col-md-4 col-sm-8 col-8" id="letAuthorKnow" data-pid="{{category.id}}">Let Author Know</button>
+          <button type="button" name="nevermind" class="btn btn-dark mb-2 col-md-4 col-sm-8 col-8" id="neverMind">Never Mind</button>
+        </div>
+      {% endif %}
+    </div>
+
+
+    {% include "snippets/sidebox.html" %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<!-- toast notification for ajax request. -->
+<script type="text/javascript" src="{% static 'js/toast.min.js' %}"></script>
+<script type="text/javascript">
+  $("#letAuthorKnow").click(function () {
+    console.log("Clicked");
+    var blog_id = $(this).attr("data-pid");
+
+    // bookmark blogpost and sending 0 as param then replacing with slug.
+    var url = "{% url 'blog:blog_request' category_id=0 %}".replace('0', blog_id);
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {
+        "blog_id": blog_id,
+        "csrfmiddlewaretoken": '{{ csrf_token }}'
+      },
+      success: function(result) {
+        // jquery success message.
+        console.log(result);
+        if (result.success == true && result.created == true) {
+          console.log(true);
+          $.toast({
+            title: result.title,
+            content: result.toast_message,
+            type: result.response_type,
+            delay: 4000
+          });
+        } else if (result.success && result.notified_again) {
+          $.toast({
+            title: result.title,
+            content: result.toast_message,
+            type: result.response_type,
+            delay: 4000
+          });
+        } else {
+          $.toast({
+            title: result.title,
+            content: result.toast_message,
+            type: result.response_type,
+            delay: 3000
+          });
+        }
+      },
+      error: function(error) {
+        // If user not authenticated, then redirect to login.
+        console.log(error);
+        if (error.responseJSON.authenticated == false) {
+          var path = window.location.pathname;
+          window.location.replace("/accounts/login/?next="+path);
+        }
+      }
+    });
+  });
+
+  $("#neverMind").click(function () {
+    console.log("never mind");
+    var url = "{% url 'user:index' %}";
+    window.location.replace(url);
+  });
+</script>
+{% endblock %}

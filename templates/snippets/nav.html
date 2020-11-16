@@ -1,0 +1,78 @@
+{% load static customtags %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+  <a class="navbar-brand" href="{% url 'user:index' %}"><b>Thetechbrainer</b></a>
+  <i class="fa fa-search" data-toggle="modal" data-target="#blogSearchModal" aria-hidden="true" style="font-size: 20px; color: #fff; cursor:pointer;" id="navbarSearchIcon"></i>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+      {% if author_waiting_for_publish and request.user|has_group:"moderator" %}
+      <i class="moderator-notification-nav-button" data-toggle="tooltip" data-placement="bottom" title="{% if author_waiting_for_publish %}New Notification{% endif %}"></i>
+      {% endif %}
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="{% url 'user:index' %}">Home</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'blog:blog_categories' %}">Categories</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'user:about_us' %}">About</a>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <!-- Dropdown -->
+        {% if request.user.is_authenticated %}
+          <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+              {% if author_waiting_for_publish and request.user|has_group:"moderator" %}
+              <i class="moderator-notification" data-toggle="tooltip" data-placement="bottom" title="{% if author_waiting_for_publish %}New Notification{% endif %}"></i>
+              {% endif %}
+            {{request.user.username|title}}
+          </a>
+          <div class="dropdown-menu">
+              {% if request.user.is_authenticated %}
+                {% if request.user|has_group:"moderator" %}
+                <a class="dropdown-item" href="{% url 'user:moderator_dashboard' %}">
+                    <i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;Dashboard
+                    {% if author_waiting_for_publish and request.user|has_group:"moderator" %}
+                    <i class="moderator-notification" data-toggle="tooltip" data-placement="bottom" title="{% if author_waiting_for_publish %}New Notification{% endif %}"></i>
+                    {% endif %}
+                </a>
+                {% else %}
+                <a class="dropdown-item" href="{% url 'user:user_dashboard' %}"> <i class="fa fa-tachometer"></i>&nbsp;Dashboard</a>
+                {% endif %}
+                {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
+                <a class="dropdown-item" href="{% url 'user:user_drafts' %}"><i class="fa fa-file" aria-hidden="true"></i>&nbsp;My Drafts</a>
+                {% endif %}
+
+                {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
+                <a class="dropdown-item" href="{% url 'blog:write_new_blog' %}"><i class="fa fa-plus" aria-hidden="true"></i> New Blog</a>
+                {% endif %}
+
+              <!-- <a class="dropdown-item" href="#"><i class="fa fa-user"></i>&nbsp;&nbsp;My Profile</a> -->
+              <!-- <a class="dropdown-item" href="#"><i class="fa fa-gear"></i> Settings</a> -->
+              {% if request.user|has_group:"author" or request.user|has_group:"moderator" %}
+              <a class="dropdown-item" href="{% url 'blog:my_blogs' %}"><i class="fa fa-list-alt" aria-hidden="true"></i>&nbsp;&nbsp;My Blogs</a>
+              {% endif %}
+              <a class="dropdown-item" href="{% url 'account_change_password' %}"><i class="fa fa-key"></i>&nbsp;&nbsp;Change password</a>
+              <a class="dropdown-item" href="{% url 'user:user_interests' %}"><i class="fa fa-bolt" aria-hidden="true"></i>&nbsp;&nbsp;Interests</a>
+              <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i>&nbsp;&nbsp;Logout</a>
+              {% endif %}
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item"> <a class="nav-link" href="{% url 'account_login' %}">Login</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="{% url 'account_signup' %}">Signup</a> </li>
+        {% endif %}
+    </ul>
+    <form class="form-inline my-2 my-lg-0 navsearchform" action="{% url 'blog:blog_search' %}" method="post">
+      {% csrf_token %}
+      <input class="form-control mr-sm-2 blogSearch" type="text" placeholder="Search Blog" name="blogsearch" required />
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+</nav>

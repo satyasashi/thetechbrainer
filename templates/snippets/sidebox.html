@@ -1,0 +1,57 @@
+<!-- Right side box -->
+<div class="col-md-4">
+    <div class="panel panel-info side-box-panelinfo related-posts-sidebox">
+      <div class="panel-heading">
+          <h3 class="panel-title">
+              <span class="glyphicon glyphicon-list-alt"></span>  Recent Posts
+          </h3>
+      </div>
+      <hr />
+      <div class="panel-body">
+          <ul class="media-list">
+              {% for post in recent_posts %}
+              <li class="media">
+                  <div class="media-body">
+                      <h4 class="media-heading">
+                          <a href="{% url 'blog:blog_detail' slug=post.blog_slug %}" class="text-primary">
+                              {{post.blog_title}}
+                          </a>
+                      </h4>
+                      <p class="margin-top-10 margin-bottom-20">
+                          {{post.blog_subtitle}}
+                      </p>
+                  </div>
+              </li>
+              {% endfor %}
+          </ul>
+          <!-- <a href="#" class="btn btn-default btn-block">More Blog Posts »</a> -->
+      </div>
+    </div>
+    <!-- End fluid width widget -->
+
+
+    <div class="panel panel-info side-box-panelinfo">
+      <div class="panel-heading">
+          <h3 class="panel-title">
+              <span class="glyphicon glyphicon-list-alt"></span>  Hash Tags
+          </h3>
+      </div>
+      <hr />
+      <div class="panel-body">
+          <ul class="media-list">
+              <li class="media">
+                  <div class="media-body">
+                      <p>
+                          {% for tag in tags %}
+                            <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
+                              <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
+                            </a>
+                          {% endfor %}
+                      </p>
+                  </div>
+              </li>
+          </ul>
+      </div>
+    </div>
+    <!-- End fluid width widget -->
+</div> <!-- Right side box end -->

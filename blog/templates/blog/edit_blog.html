@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+<link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-colors.min.css">
+<link rel="stylesheet"
+href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="modal fade" id="tagModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Blog Tag</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        	<span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <span class="error-message" id="newTagErrorSpan" style="display:none;"></span>
+          <form class="newTagForm" action="">
+              {% csrf_token %}
+              <input type="text" name="newTag" class="form-control" value="" placeholder="Add New Tag Here..." id="newTagInputValue" required/>
+          </form>
+      </div>
+      <div class="modal-footer">
+  		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="finishNewTagBtn">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container oc-screen newblog-container">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1 class="text-center">Edit Blog Post</h1>
+      <form method="post" name="editPostForm" action="{% url 'blog:edit_blog_post' id=post.id slug=post.blog_slug %}" id="editPostForm" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ edit_form.media }}
+          <fieldset>
+            <!-- <legend>Legend</legend> -->
+            <div class="form-group">
+              {{ edit_form.blog_title|as_crispy_field }}
+            </div>
+            <div class="form-group">
+              {{ edit_form.blog_subtitle|as_crispy_field }}
+            </div>
+            <div class="form-group">
+              {{ edit_form.banner_image }}
+            </div>
+            <div class="form-group">
+              {{ edit_form.banner_image_source|as_crispy_field }}
+              <small id="banner_image_source_help" class="form-text text-muted">Please mention credits for banner image you are using if it is licensed.</small>
+            </div>
+            <div class="form-group">
+              {{ edit_form.content|as_crispy_field }}
+            </div>
+
+            <input type="hidden" name="type" id="type" value="">
+
+            <div class="form-group">
+              {{ edit_form.blog_category|as_crispy_field }}
+            </div>
+
+            <div class="col-* alert alert-dark">
+                <h4> <i class="fa fa-gears"></i> Actions</h4>
+                {% if submitted_for_moderation or is_moderator %}
+                <button type="submit" class="btn btn-success" id=""><i class="fa fa-eye"></i> Preview &amp; Save</button>
+                {% else %}
+                <button type="submit" class="btn btn-warning" id=""><i class="fa fa-eye"></i> Preview &amp; Submit</button>
+                {% endif %}
+                <button type="button" class="btn btn-primary" id="addNewTagBtn" data-toggle="modal" data-target="#tagModal"><i class="fa fa-plus"></i> New Tag</button>
+            </div>
+          </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="tags" style="display:none;"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+
+<script type="text/javascript">
+
+function taginput() {
+  $.ajax({
+      url: "{% url 'user:get_all_tags' %}",
+      dataType: "html",
+      data: {"csrfmiddlewaretoken": "{{csrf_token}}"},
+      type: "POST",
+      success: function(result) {
+          $("#blogTagsDiv").html(result);
+      }
+  });
+}
+
+$("#finishNewTagBtn").on("click", function(e) {
+    e.preventDefault();
+
+    var newTag = $("#newTagInputValue").val();
+    if(newTag.length == 0) {
+        $("#newTagErrorSpan").attr("class", "error-message")
+        $("#newTagErrorSpan").text("Tag Cannot Be Empty.")
+        $("#newTagErrorSpan").show();
+        // $("#tagModal").modal("show");
+    } else {
+        $.ajax({
+            url: "{% url 'user:add_new_tag' %}",
+            dataType: "json",
+            type: "POST",
+            data: {"csrfmiddlewaretoken": "{{csrf_token}}", "new_tag": newTag},
+            success: function(result) {
+                console.log(result);
+                if(result.status == "success") {
+                    $("#newTagErrorSpan").attr("class", "success-message")
+                    $("#newTagErrorSpan").text("Added new tag successfully");
+                    $("#newTagErrorSpan").show();
+                    for(i=0; i<result.tags.length; i++) {
+                        $("#id_blog_tags").append("<option value='"+result["tags"][i][0]+"'>"+result["tags"][i][1]+"</option>");
+                    }
+                } else {
+                    $("#newTagErrorSpan").attr("class", "error-message")
+                    $("#newTagErrorSpan").text("Something went wrong");
+                    $("#newTagErrorSpan").show();
+                }
+            }
+        });
+    }
+});
+
+$("#editPreviewBlog").on("click", function(event) {
+  event.preventDefault();
+
+  $("#editPostForm").attr("action", "url 'blog:preview_from_edit_blog'");
+  $("#editPostForm #type").val("preview");
+  $("#editPostForm").submit();
+
+});
+
+$("#previewAndSave").on("click", function(event) {
+  event.preventDefault();
+
+  $("#editPostForm").attr("action", "url 'blog:preview_from_edit_blog'");
+  $("#editPostForm #type").val("preview");
+  $("#editPostForm").submit();
+
+});
+
+
+// $("#draftBtn").on("click", function() {
+//   event.preventDefault();
+//
+//   $("#newBlogForm").attr("action", "{% url 'blog:write_new_blog' %}");
+//   $("#newBlogForm #type").val("draft");
+//   $("#newBlogForm").submit();
+// });
+
+$("#submitForModerationEdit").on("click", function() {
+  event.preventDefault();
+  console.log("submitForModeration clicked");
+  $("#editPostForm").attr("action", "{% url 'blog:write_new_blog' %}");
+  $("#editPostForm #type").val("submitForModeration");
+  $("#editPostForm").submit();
+});
+</script>
+{% endblock %}

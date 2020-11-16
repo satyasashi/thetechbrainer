@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block title %} New Blog Post {% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+<link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="modal fade" id="tagModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Blog Tag</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        	<span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <span class="error-message" id="newTagErrorSpan" style="display:none;"></span>
+          <form class="newTagForm" action="">
+              {% csrf_token %}
+              <input type="text" name="newTag" class="form-control" value="" placeholder="Add New Tag Here..." id="newTagInputValue" required/>
+          </form>
+      </div>
+      <div class="modal-footer">
+  		<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="finishNewTagBtn">Finish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container oc-screen newblog-container">
+    {% if messages %}
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          {% for msg in messages %}
+          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+              {{msg.message}}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1 class="text-center">New Blog Post</h1>
+      <form method="post" action="{% url 'blog:save_blog_and_show_preview' %}" name="newBlogForm" id="newBlogForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ new_blog_form.media }}
+        <fieldset>
+          <!-- <legend>Legend</legend> -->
+          <div class="form-group">
+            {{ new_blog_form.blog_title|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.blog_subtitle|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.banner_image|as_crispy_field }}
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.banner_image_source|as_crispy_field }}
+            <small id="banner_image_source_help" class="form-text text-muted">Please mention credits for banner image you are using if it is licensed.</small>
+          </div>
+          <div class="form-group">
+            {{ new_blog_form.content|as_crispy_field }}
+          </div>
+
+          <input type="hidden" name="type" id="type" value="">
+
+          <div class="form-group">
+            {{ new_blog_form.blog_category|as_crispy_field }}
+          </div>
+
+          <div class="col-* alert alert-dark">
+              <h4> <i class="fa fa-gears"></i> Actions</h4>
+              <button type="submit" class="btn btn-warning" id="previewBlog"><i class="fa fa-eye"></i> Preview &amp; Submit</button>
+              <button type="button" class="btn btn-primary" id="addNewTagBtn" data-toggle="modal" data-target="#tagModal"><i class="fa fa-plus"></i> New Tag</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="tags" style="display:none;"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

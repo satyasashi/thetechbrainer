@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static customtags %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+<div class="container oc-screen">
+  {% if messages %}
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        {% for msg in messages %}
+        <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+            {{msg.message}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+  <div class="row content-container">
+    <div class="col-md-8">
+        <div class="col-md-12 filter_by_tag_div">
+          <h4 class="">Blogs by tag - #{{tag}}</h4>
+          <hr>
+
+          {% if tag and blogs %}
+          {% for blog in blogs %}
+          <div class="col-md-12">
+            <div class="media position-relative">
+
+              <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                  <img class="mr-2" src="{{blog.banner_image.url}}" alt="image" height="98" width="140">
+              </a>
+
+              <div class="media-body">
+                <h5 class="mt-0" style="margin-bottom: 0px;">{{blog.blog_title}}</h5>
+                <p>{{blog.blog_subtitle|truncatewords:"10"}} <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class=""> <b>Read More</b> </a> <br>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}"><b>{{blog.blog_author|upper}}</b></a> | On : {{blog.created_on|date:"b d, Y"}} </p>
+              </div>
+            </div>
+          </div>
+          <br>
+          {% endfor %}
+          {% else %}
+          <div class="col-md-12">
+              <p class="text-center">Oops! Seems there are no blogs for that tag.</p>
+          </div>
+          {% endif %}
+        </div>
+    </div>
+
+    {% include "snippets/sidebox.html" %}
+
+  </div>
+</div>
+{% endblock %}
