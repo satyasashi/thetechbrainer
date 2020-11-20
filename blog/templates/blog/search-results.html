@@ -27,7 +27,7 @@
           <div class="col-md-4 col-sm-6 col-12">
             <div class="card card-div">
               <!-- <img class="card-img-top" src="{% static 'img/banner.jpg' %}" alt="Card image cap"> -->
-                <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                <a href="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}">
                     <div class="outer-div">
                         <div class="layer">{{blog.blog_title}}</div>
                         <div class="inner-div" style='background-image: url("{{blog.banner_image.url}}");'>
@@ -39,7 +39,7 @@
                     <div class="blog-intro">
                       <span></span>
                       <small>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}">{{blog.blog_author|upper}}</a> &nbsp; On: <b>{{blog.created_on|date:"M d, Y"}}</b> </small><br><br>
-                      <p>{{blog.blog_subtitle|truncatechars:30}}<a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class="text-primary"> <b>Read Blog</b>
+                      <p>{{blog.blog_subtitle|truncatechars:30}}<a href="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" class="text-primary"> <b>Read Blog</b>
                       </a></p>
                       <p><span class="badge badge-light blog-badge">{{blog.blog_category}}</span></p>
                     </div>

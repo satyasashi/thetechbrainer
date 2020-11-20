@@ -13,7 +13,7 @@
               <li class="media">
                   <div class="media-body">
                       <h4 class="media-heading">
-                          <a href="{% url 'blog:blog_detail' slug=post.blog_slug %}" class="text-primary">
+                          <a href="{% url 'blog:blog_detail' id=post.id slug=post.blog_slug %}" class="text-primary">
                               {{post.blog_title}}
                           </a>
                       </h4>

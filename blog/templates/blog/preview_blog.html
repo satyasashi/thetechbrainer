@@ -297,7 +297,7 @@
               {% if submitted_for_moderation %}
               <p class="custom-alert alert-custom-info"> <strong>Note:</strong> Awaiting Moderation Acceptance. </p>
               {% else %}
-              {% if moderator %}
+              {% if is_moderator %}
               <p class="custom-alert alert-custom-warning"> <strong>Note:</strong> You are previewing this blog. Click <strong>'Accept &amp; Publish'</strong> to publish the blog. </p>
               {% else %}
               <p class="custom-alert alert-custom-warning"> <strong>Note:</strong> You are previewing your blog. Click <strong>'Submit for Moderation'</strong> at the bottom to process your blog for publishment. </p>
@@ -457,7 +457,7 @@
           <form class="" id="previewBlogForm" action="" method="post">
             {% csrf_token %}
 
-            {% if moderator %}
+            {% if is_moderator %}
                 <!-- Can directly Publish. -->
                 <button type="button" name="button" class="btn btn-success" id="acceptAndPublishBtn" data-bid="{{blog.id}}"><i class="fa fa-check"></i> Accept & Publish</button>
             {% else %}

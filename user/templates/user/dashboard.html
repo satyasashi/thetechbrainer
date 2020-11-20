@@ -159,7 +159,7 @@
                             {% for row in user_likes %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'blog:blog_detail' slug=row.blog.blog_slug %}">
+                                        <a href="{% url 'blog:blog_detail' id=row.blog.id slug=row.blog.blog_slug %}">
                                             <strong>{{ row.blog.blog_title }}</strong>
                                         </a>
                                     </td>
@@ -193,7 +193,7 @@
                             {% for row in user_bookmarks %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'blog:blog_detail' slug=row.blog_post.blog_slug %}">
+                                        <a href="{% url 'blog:blog_detail' id=row.blog.id slug=row.blog_post.blog_slug %}">
                                             <strong>{{ row.blog_post.blog_title }}</strong>
                                         </a>
                                     </td>

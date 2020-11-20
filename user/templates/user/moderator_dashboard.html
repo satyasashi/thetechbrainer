@@ -141,21 +141,28 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
         <h1>Moderator Dashboard</h1>
         <h4 class="text-muted">Your Blog Insights</h4>
         <div class="row">
-            <div class="col-md-4" id="authorAllBlogsCountCard">
+            <div class="col-md-3" id="authorAllBlogsCountCard">
                 <div class="container" style="margin: 100px 0;">
                     <h1 class="text-center">{{ my_blogs_count }}</h1>
                     <p class="text-center">ALL BLOGS</p>
                 </div>
             </div>
 
-            <div class="col-md-4" id="authorUnpublishedBlogsCountCard">
+            <div class="col-md-3" id="authorUnpublishedBlogsCountCard">
                 <div class="container" style="margin: 100px 0;">
                     <h1 class="text-center">{{ my_blogs_unpublished_count }}</h1>
                     <p class="text-center">UNPUBLISHED BLOGS</p>
                 </div>
             </div>
 
-            <div class="col-md-4" id="authorPublishedBlogsCountCard">
+            <div class="col-md-3" id="authorAwaitingModerationBlogsCountCard">
+                <div class="container" style="margin: 100px 0;">
+                    <h1 class="text-center">{{ awaiting_moderation_count }}</h1>
+                    <p class="text-center">AWAITING MODERATION</p>
+                </div>
+            </div>
+
+            <div class="col-md-3" id="authorPublishedBlogsCountCard">
                 <div class="container" style="margin: 100px 0;">
                     <h1 class="text-center">{{ my_blogs_published_count }}</h1>
                     <p class="text-center">PUBLISHED BLOGS</p>
@@ -290,7 +297,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             {% for row in blogs_published %}
                                 <tr id="">
                                     <td>
-                                    <a href="{% url 'blog:blog_detail' slug=row.blog_slug %}">{{row.blog_title}}</a>
+                                    <a href="{% url 'blog:blog_detail' id=row.blog.id slug=row.blog_slug %}">{{row.blog_title}}</a>
                                     </td>
                                     <td> <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{% if row.blog_author.personalinformation.picture %}{{row.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a> </td>
                                     <td>{{row.created_on}}</td>
@@ -329,7 +336,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             {% for row in user_likes %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'blog:blog_detail' slug=row.blog.blog_slug %}">
+                                        <a href="{% url 'blog:blog_detail' id=row.blog.id slug=row.blog.blog_slug %}">
                                             <strong>{{ row.blog.blog_title }}</strong>
                                         </a>
                                     </td>
@@ -363,7 +370,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             {% for row in user_bookmarks %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'blog:blog_detail' slug=row.blog_post.blog_slug %}">
+                                        <a href="{% url 'blog:blog_detail' id=row.blog.id slug=row.blog_post.blog_slug %}">
                                             <strong>{{ row.blog_post.blog_title }}</strong>
                                         </a>
                                     </td>

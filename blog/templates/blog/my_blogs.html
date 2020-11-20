@@ -30,7 +30,7 @@
                         <div class="col-md-4 col-sm-4 col-12">
                         <div class="card card-div">
                           <!-- <img class="card-img-top" src="{% static 'img/banner.jpg' %}" alt="Card image cap"> -->
-                            <a href="{% if blog.published %} {% url 'blog:blog_detail' slug=blog.blog_slug %} {% elif blog.submitted_for_moderation %} {% url 'blog:awaiting_moderation' slug=blog.blog_slug %} {% else %} {% url 'blog:draft_blog_detail' slug=blog.blog_slug %} {% endif %}">
+                            <a href="{% if blog.published %} {% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %} {% elif blog.submitted_for_moderation %} {% url 'blog:awaiting_moderation' id=blog.id slug=blog.blog_slug %} {% else %} {% url 'blog:draft_blog_detail' id=blog.id slug=blog.blog_slug %} {% endif %}">
                                 <div class="outer-div">
                                     <div class="layer">{{blog.blog_title}}</div>
                                     <div class="inner-div" style='background-image: url("{{blog.banner_image.url}}");'>
@@ -42,7 +42,7 @@
                                 <div class="blog-intro">
                                   <span></span>
                                   <small>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}">{{blog.blog_author|upper}}</a> &nbsp; On: <b>{{blog.created_on|date:"M d, Y"}}</b><span class="pull-right">Status <i class="blog-status-{% if blog.published %}success{% elif blog.submitted_for_moderation %}waiting-for-approval{% else %}draft{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{% if blog.published %}Published{% elif blog.submitted_for_moderation %}Waiting for approval{% else %}Not Published{% endif %}"></i> </span> </small><br><br>
-                                  <p>{{blog.blog_subtitle|truncatechars:30}}<a href="{% if blog.published %} {% url 'blog:blog_detail' slug=blog.blog_slug %} {% elif blog.submitted_for_moderation %} {% url 'blog:awaiting_moderation' slug=blog.blog_slug %} {% else %} {% url 'blog:draft_blog_detail' slug=blog.blog_slug %} {% endif %}" class="text-primary"> <b>Read Blog</b>
+                                  <p>{{blog.blog_subtitle|truncatechars:30}}<a href="{% if blog.published %} {% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %} {% elif blog.submitted_for_moderation %} {% url 'blog:awaiting_moderation' id=blog.id slug=blog.blog_slug %} {% else %} {% url 'blog:draft_blog_detail' id=blog.id slug=blog.blog_slug %} {% endif %}" class="text-primary"> <b>Read Blog</b>
                                   </a></p>
                                   <p><span class="badge badge-light blog-badge">{{blog.blog_category}}</span></p>
                                 </div>

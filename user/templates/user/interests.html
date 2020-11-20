@@ -7,17 +7,17 @@
   <div class="container oc-screen interests-div">
     <h1 class="text-center blog-category-page-heading">Select the Categories you are interested in.</h1>
     <p class="text-center">This will help us to suggest articles that you are interested in. You can undo this whenever you want.</p>
+
     {% if messages %}
-
-        {% for msg in messages %}
-
-        <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
-
-            {{msg.message}}
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          {% for msg in messages %}
+          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+              {{msg.message}}
+          </div>
+          {% endfor %}
         </div>
-
-        {% endfor %}
-
+      </div>
     {% endif %}
 
     <div class="row" id="checkboxes">

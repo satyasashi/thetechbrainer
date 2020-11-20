@@ -28,17 +28,17 @@
           <hr>
 
           {% for blog in blogs %}
-          <div class="col-md-12">
+          <div class="col-md-12"  style="margin-bottom: 2px;">
             <div class="media position-relative">
 
-                <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}">
+                <a href="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}">
                     <img class="mr-2" src="{{blog.banner_image.url}}" alt="image" height="98" width="140">
                 </a>
 
               <div class="media-body">
-                <h4 class="mt-0" style="margin-bottom: 0px;"> <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" style="text-decoration:none;"> <b>{{blog.blog_title}}</b> </a> </h4>
+                <h4 class="mt-0" style="margin-bottom: 0px;"> <a href="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" style="text-decoration:none;"> <b>{{blog.blog_title}}</b> </a> </h4>
                 <span class="badge badge-light blog-badge" style="font-size: 12px; border-radius: 0px;">{{blog.blog_category}}</span>
-                <p>{{blog.blog_subtitle}} <a href="{% url 'blog:blog_detail' slug=blog.blog_slug %}" class=""> <b>Read More</b> </a> <br>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}" class="category_filter_authorname"><b>{{blog.blog_author|upper}}</b></a> | On : {{blog.created_on|date:"b d, Y"}} </p>
+                <p>{{blog.blog_subtitle}} <a href="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" class=""> <b>Read More</b> </a> <br>By: <a href="{% url 'blog:filter_by_author' id=blog.blog_author.id %}" class="category_filter_authorname"><b>{{blog.blog_author|upper}}</b></a> | On : {{blog.created_on|date:"b d, Y"}} </p>
               </div>
             </div>
           </div>

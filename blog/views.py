@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import BlogPost, Category, BlogRequest
+from taggit.models import Tag
+
 from django.http import JsonResponse
 from user.models import Profile, UserBookmarks, UserFollowing, UserLikes
 from django.contrib import messages
@@ -62,9 +64,9 @@ def preview_blog(request, id, blog_slug):
                     # -> EDIT -> EDIT BLOG -> PREVIEW -> PREVIEW BLOG (Check mod submission)
 
                 if request.user.groups.filter(name=moderator_group).exists():
-                    context["moderator"] = True
+                    context["is_moderator"] = True
                 else:
-                    context["moderator"] = False
+                    context["is_moderator"] = False
 
                 return render(request, "blog/preview_blog.html", context)
             except BlogPost.DoesNotExist as e:
@@ -97,6 +99,12 @@ def write_new_blog(request):
         return redirect("user:pagenotfound")
 
 
+def blog_tags(request):
+    tags = [tag.name for tag in Tag.objects.all()]
+    print(tags)
+    return tags
+
+
 @login_required
 def save_blog_and_show_preview(request):
     author_group = Group.objects.get(name='author')
@@ -114,6 +122,8 @@ def save_blog_and_show_preview(request):
                 blog_post.draft = True
                 blog_post.blog_author = request.user
                 blog_post.save()
+                # for tags to save use 'save_m2m'
+                blogpostform.save_m2m()
                 messages.success(request, "Your blog is now saved as draft, check your drafts to publish.")
                 return redirect("blog:preview_blog", id=blog_post.id, blog_slug=blog_post.blog_slug)
             else:
@@ -139,6 +149,8 @@ def edit_blog(request, id, slug):
                 post.preview = True
                 post.draft = True
                 post.save()
+                # for tags to save use 'save_m2m'
+                form.save_m2m()
                 messages.success(request, "Your blog is successfully updated.")
                 return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
         else:
@@ -146,10 +158,10 @@ def edit_blog(request, id, slug):
             return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
 
 
-def bookmark_blogpost(request, blog_slug):
+def bookmark_blogpost(request, id):
     if request.user.is_authenticated:
         # Add this blog to bookmark table.
-        blog_post = BlogPost.objects.get(blog_slug=blog_slug)
+        blog_post = BlogPost.objects.get(id=id)
         # check if bookmarked already
         bookmark_status = 0
 
@@ -278,14 +290,29 @@ def filter_by_author(request, id):
         return render(request, "blog/filter_by_author.html", context={"author": author.username})
 
 
+def filter_by_tag(request, slug):
+    # context = {}
+    # blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
+    # if len(blogs_by_tag) > 0:
+    #     context['tag'] = Tag.objects.get(slug=slug)
+    #     context['blogs'] = blogs_by_tag
+    #     return render(request, "blog/filter_by_tag.html", context)
+    #
+    # else:
+    #     context['tag'] = Tag.objects.get(slug=slug)
+    #     context["no_blogs"] = True
+    #     return render(request, "blog/filter_by_tag.html", context)
+    pass
+    
+
 def get_categories(request):
     categories = Category.objects.all()
     return render(request, "blog/categories.html", context={"categories": categories})
 
 
-def blog_detail(request, slug):
+def blog_detail(request, id, slug):
     if slug:
-        blog = get_object_or_404(BlogPost, blog_slug=slug)
+        blog = get_object_or_404(BlogPost, id=id)
         if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
             authorProfile = blog.blog_author
@@ -320,19 +347,24 @@ def blog_detail(request, slug):
 
 
 @login_required
-def draft_blog_detail(request, slug):
+def draft_blog_detail(request, id, slug):
     author_group = Group.objects.get(name='author')
-    if request.user.groups.filter(name=author_group).exists():
+    moderator_group = Group.objects.get(name='moderator')
+
+    if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
+        print("is author")
         if slug:
-            blog = get_object_or_404(BlogPost, blog_slug=slug)
+            blog = get_object_or_404(BlogPost, id=id)
+            print("Blog found")
             if blog and blog.moderator_accepted is False and blog.published is False and blog.draft is True:
                 context = {'blog': blog}
-                authorProfile = blog.blog_author
+                # authorProfile = blog.blog_author
                 if request.user.is_authenticated:
-                    bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
-                    like = UserLikes.objects.filter(user=request.user, blog=blog)
-                    follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
-
+                    # bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
+                    # like = UserLikes.objects.filter(user=request.user, blog=blog)
+                    # follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
+                    if request.user.groups.filter(name=moderator_group).exists():
+                        context["is_moderator"] = True
                     return render(request, "blog/preview_blog.html", context)
 
                 else:
@@ -364,11 +396,11 @@ def submit_for_moderation(request):
 
 
 @login_required
-def awaiting_moderation_blog_detail(request, slug):
+def awaiting_moderation_blog_detail(request, id, slug):
     author_group = Group.objects.get(name='author')
     if request.user.groups.filter(name=author_group).exists():
         if slug:
-            blog = get_object_or_404(BlogPost, blog_slug=slug)
+            blog = get_object_or_404(BlogPost, id=id)
             if blog and blog.moderator_accepted is False and blog.published is False and blog.submitted_for_moderation is True:
                 context = {'blog': blog, 'submitted_for_moderation': True}
                 authorProfile = blog.blog_author

@@ -32,14 +32,13 @@ def about(request):
     return render(request, "about.html", context={"authors": authors})
 
 
-@login_required
 def follow(request):
-    if request.user.username and request.is_ajax() and request.user.is_authenticated:
+    if request.is_ajax() and request.user.is_authenticated:
+        print("Authenticated user")
         author = validate_author_exist_or_not(request.POST.get('author_id'))
         author = User.objects.get(username=author)
         follows = False
         context = {}
-        print(author)
 
         if author is not False:
             try:
@@ -68,9 +67,10 @@ def follow(request):
                     follows = userfollowObj.status
                     context["follow_obj"] = userfollowObj
                     context["follows"] = follows
+
             except Exception:
                 pass
-
+            print("Rendering")
             return render(request, "user/ajax/components.html", context)
         else:
             print("error")
@@ -83,13 +83,24 @@ def user_interests(request):
     if request.method == "POST":
         categories = request.POST.getlist('rGroup')
         all_categories = [cat.category_slug for cat in list(Category.objects.all())]
-        check = [True for cat in categories if cat in all_categories]
+        check = [True if cat in all_categories else False for cat in categories]
+
         if True in check:
             userProfile = Profile.objects.get(user=request.user)
             for cat in categories:
                 userProfile.interests.add(Category.objects.get(category_slug=cat))
                 # save_category.save()
             messages.success(request, "Your interests saved.")
+            return redirect("user:user_interests")
+
+        elif len(check) == 0:
+            userProfile = Profile.objects.get(user=request.user)
+            for interest in userProfile.interests.all():
+                userProfile.interests.remove(interest)
+
+            userProfile.save()
+            messages.success(request, "Your interests saved.")
+
             return redirect("user:user_interests")
         else:
             return redirect("user:pagenotfound")
@@ -157,7 +168,7 @@ def add_new_tag(request):
 
 @login_required
 def user_dashboard(request):
-    profile = Profile.objects.get(user=request.user)
+    # profile = Profile.objects.get(user=request.user)
     try:
         author_group = Group.objects.get(name='author')
 
@@ -262,6 +273,8 @@ def moderator_dashboard(request):
             my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=request.user, published=False, draft=True, preview=True).count()
             my_blogs_published_count = BlogPost.objects.filter(blog_author=request.user, published=True, moderator_accepted=True).count()
 
+            author_blogs_moderation_count = BlogPost.objects.filter(moderator_accepted=False, submitted_for_moderation=True).count()
+
             blogs_for_moderation = BlogPost.objects.filter(submitted_for_moderation=True, moderator_accepted=False, published=False)
             blogs_published = BlogPost.objects.filter(moderator_accepted=True, published=True)
 
@@ -277,7 +290,8 @@ def moderator_dashboard(request):
                 "following": following,
                 "my_blogs_count": my_blogs_count,
                 "my_blogs_unpublished_count": my_blogs_unpublished_count,
-                "my_blogs_published_count": my_blogs_published_count
+                "my_blogs_published_count": my_blogs_published_count,
+                "awaiting_moderation_count": author_blogs_moderation_count
                 })
     except Profile.DoesNotExist:
         return redirect("user:pagenotfound")

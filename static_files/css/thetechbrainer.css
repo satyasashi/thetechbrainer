@@ -11,6 +11,17 @@ body {
   background-color: #f7f7f7;
 }
 
+.bootstrap-tagsinput .tag {
+    margin-right: 2px !important;
+    color: #fff !important;
+}
+
+.tag {
+    background-color: #5bd5e8 !important;
+}
+
+
+
 /* Make the image fully responsive */
 .carousel-inner img {
   width: 100%;

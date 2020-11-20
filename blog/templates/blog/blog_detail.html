@@ -423,7 +423,7 @@
           </div>
       </a>
 
-      {% if blog.blog_author.user.id == request.user.id %}
+      {% if blog.blog_author.user.id == request.user.id and request.user.is_authenticated%}
       <div class="col-md-8 mx-auto">
         <div class="alert alert-dark">
           <h4> <i class="fa fa-gears"></i> Actions</h4>
@@ -519,24 +519,24 @@
   $("#follow-author").click(function() {
     var author_id = $(this).attr("data-followa");
     $.ajax({
-      type: "POST",
-      url: "{% url 'user:follow_author' %}",
-      data: {
-        "author_id": author_id,
-        "dashboard": "dashboard",
-        "csrfmiddlewaretoken": "{{csrf_token}}"
-      },
-      success: function(result) {
-        $("#follow-author").empty();
-        $("#follow-author").append(result);
-      },
-      error: function(error) {
-        // If user not authenticated, then redirect to login.
-        if (error.responseJSON.authenticated == false) {
-          var path = window.location.pathname;
-          window.location.replace("/accounts/login/?next="+path);
+        url: "{% url 'user:follow_author' %}",
+        type: "POST",
+        data: {
+            "author_id": author_id,
+            "dashboard": "dashboard",
+            "csrfmiddlewaretoken": "{{csrf_token}}"
+        },
+        success: function(result) {
+            $("#follow-author").empty();
+            $("#follow-author").append(result);
+        },
+        error: function(error) {
+            // If user not authenticated, then redirect to login.
+            if (error.responseJSON.authenticated == false) {
+                var path = window.location.pathname;
+                window.location.replace("/accounts/login/?next="+path);
+            }
         }
-      }
     });
   });
 
@@ -554,7 +554,7 @@
     var blog_id = $(this).attr("data-pid");
 
     // bookmark blogpost and sending 0 as param then replacing with slug.
-    var url = "{% url 'blog:bookmark_blogpost' blog_slug=0 %}".replace('0', blog_slug);
+    var url = "{% url 'blog:bookmark_blogpost' id=0 %}".replace('0', blog_id);
     $.ajax({
       type: "POST",
       url: url,
@@ -563,6 +563,7 @@
         "csrfmiddlewaretoken": '{{ csrf_token }}'
       },
       success: function(result) {
+          console.log(result);
         $("#bookmark"+blog_id).empty();
         $("#bookmark"+blog_id).append(result);
       },
