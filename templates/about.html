@@ -42,6 +42,7 @@
     <br> <br>
 
     <div class="container">
+        {% if authors %}
         <div class="row aboutUsHeading">
             <div class="col-md-12">
                 <h1 class="text-center"> Our Authors</h1>
@@ -84,11 +85,12 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
 
         <div class="row aboutUsAuthors" style="background-color: #808FC8; background-image: linear-gradient(to right, #46c5c5 , #808FC8); color: #fff; font-family:Helvetica;">
             <div class="col-md-12">
                 <p class="text-center">
-                    We thetechbrainers cover the wide range of topics from Software Development, Software Testing and much more as we learn and share with you. You can always let us know if you find any category in our site that has no blogs with just one click.
+                    We cover the wide range of topics from Software Development, Software Testing and much more as we learn and share with you. You can always let us know if you find any category in our site that has no blogs with just one click.
                 </p>
             </div>
         </div>
