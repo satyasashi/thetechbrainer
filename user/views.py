@@ -218,7 +218,7 @@ def get_user_information(request):
         author_id = request.POST.get("id")
         no_social_profile = False
         user = User.objects.get(id=author_id)
-        if user.personalinformation.facebook is None and user.personalinformation.github is None and user.personalinformation.twitter is None and user.personalinformation.insta is None and user.personalinformation.linkedin:
+        if user.personalinformation.facebook is None and user.personalinformation.github is None and user.personalinformation.twitter is None and user.personalinformation.insta is None and user.personalinformation.linkedin is None:
             no_social_profile = True
 
         data = JsonResponse({
