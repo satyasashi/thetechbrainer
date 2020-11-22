@@ -14,7 +14,7 @@ class BlogPostForm(forms.ModelForm):
     banner_image_source = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Ex: Picture taken by @JohnDoe", "class": "save"}))
     content = forms.CharField(widget=CKEditorUploadingWidget())
     blog_category = forms.ChoiceField(widget=forms.Select(attrs={"class": "save"}), choices=[(cat.id, cat.category_name) for cat in Category.objects.all()])
-    blog_tags = forms.CharField(widget=forms.TextInput(attrs={"data-role": "tagsinput", "class": "form-control"}))
+    # blog_tags = forms.CharField(widget=forms.TextInput(attrs={"data-role": "tagsinput", "class": "form-control"}))
 
     class Meta:
         model = BlogPost
