@@ -174,7 +174,7 @@ def user_dashboard(request):
             user_bookmarks = UserBookmarks.objects.filter(user=request.user)
             following = UserFollowing.objects.filter(user=request.user)
             users_following_you = UserFollowing.objects.filter(following=request.user)
-            user_likes = UserLikes.objects.filter(user=request.user)
+            user_likes = UserLikes.objects.filter(user=request.user, status=True)
             my_blogs_count = BlogPost.objects.filter(blog_author=request.user).count()
             my_blogs_unpublished_count = BlogPost.objects.filter(blog_author=request.user, published=False, draft=True, preview=True).count()
             my_blogs_published_count = BlogPost.objects.filter(blog_author=request.user, published=True, moderator_accepted=True).count()
@@ -278,7 +278,7 @@ def moderator_dashboard(request):
 
             user_bookmarks = UserBookmarks.objects.filter(user=request.user)
             following = UserFollowing.objects.filter(user=request.user)
-            user_likes = UserLikes.objects.filter(user=request.user)
+            user_likes = UserLikes.objects.filter(user=request.user, status=True)
 
             return render(request, "user/moderator_dashboard.html", context={
                 "blogs_for_moderation": blogs_for_moderation,
