@@ -87,6 +87,9 @@ def user_interests(request):
 
         if True in check:
             userProfile = Profile.objects.get(user=request.user)
+            for interest in userProfile.interests.all():
+                userProfile.interests.remove(interest)
+
             for cat in categories:
                 userProfile.interests.add(Category.objects.get(category_slug=cat))
                 # save_category.save()
@@ -94,12 +97,7 @@ def user_interests(request):
             return redirect("user:user_interests")
 
         elif len(check) == 0:
-            userProfile = Profile.objects.get(user=request.user)
-            for interest in userProfile.interests.all():
-                userProfile.interests.remove(interest)
-
-            userProfile.save()
-            messages.success(request, "Your interests saved.")
+            messages.error(request, "You should select at least one category.")
 
             return redirect("user:user_interests")
         else:

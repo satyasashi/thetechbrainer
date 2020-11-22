@@ -334,14 +334,14 @@
               <span class="badge badge-light blog-badge">{{blog.blog_category}}</span>
             </a>
           </div>
-          <div class="tags col-md-12">
+          <!-- <div class="tags col-md-12">
             Tags:
             {% for tag in blog.blog_tags.all %}
               <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
                 <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
               </a>
             {% endfor %}
-          </div>
+          </div> -->
           {% if request.user.is_authenticated %}
           <div class="reading-time col-md-12">
             <span class="reading-time__label"></span>
@@ -372,9 +372,9 @@
             {% else %}
             <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
             {% if like.status is True %}
-            <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
+            <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
             {% else %}
-            <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt(this.id)"></div>
+            <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
             {% endif %}
             {% endif %}
           </div>
@@ -632,16 +632,18 @@
   timeline.add(tween1, tween2, tween3);
 
   // when clicking the button start the timeline/animation:
-  function likeIt(element_id) {
+  function likeIt(id, element_id) {
     var heart = "#"+element_id;
     var blog_slug = $(heart).attr("data-pslug");
-    var url = "{% url 'blog:like_blogpost' blog_slug=0 %}".replace('0', blog_slug);
+    var url = "{% url 'blog:like_blogpost' id=0 %}".replace('0', id);
     $.ajax({
       type: "POST",
       url: url,
       data: {"blog_slug": blog_slug, "csrfmiddlewaretoken": "{{csrf_token}}"},
       success: function(result) {
+
         if(result.status == true) {
+            console.log(result.status);
           $("#"+element_id).addClass('active');
           timeline.play();
         } else {
