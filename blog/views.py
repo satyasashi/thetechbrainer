@@ -183,11 +183,11 @@ def bookmark_blogpost(request, id):
         return JsonResponse({"error": "Sorry something went wrong. Please try later.", "authenticated": False}, status=300)
 
 
-def like_blogpost(request, blog_slug):
+def like_blogpost(request, id):
     if request.user.is_authenticated:
         # Add this blog to user likes table.
-        blog_post = BlogPost.objects.get(blog_slug=blog_slug)
-
+        blog_post = BlogPost.objects.get(id=id)
+        print(blog_post)
         try:
             like_check = UserLikes.objects.filter(user=request.user, blog=blog_post)
             like_status = False
@@ -197,14 +197,16 @@ def like_blogpost(request, blog_slug):
                 if like_check[0].status is True:
                     like_check[0].status = False
                     like_check[0].save()
+                    print("Unliked")
                     like_status = like_check[0].status
                 else:
                     like_check[0].status = True
                     like_check[0].save()
+                    print("Liked")
                     like_status = like_check[0].status
             else:
-
                 # Else create new record as User liked it.
+                print("First like")
                 like_obj = UserLikes.objects.create(user=request.user, blog=blog_post, status=True)
                 like_obj.save()
                 like_status = like_obj.status
@@ -303,7 +305,7 @@ def filter_by_tag(request, slug):
     #     context["no_blogs"] = True
     #     return render(request, "blog/filter_by_tag.html", context)
     pass
-    
+
 
 def get_categories(request):
     categories = Category.objects.all()
