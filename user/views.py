@@ -8,6 +8,7 @@ from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
 from user.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation
 from django.utils.text import slugify
+from django.db.models import Q
 
 
 def validate_author_exist_or_not(author_id):
@@ -28,7 +29,7 @@ def index(request):
 
 def about(request):
     # authors = User.objects.filter(groups__name="author")
-    authors = PersonalInformation.objects.filter(user__groups__name="author")
+    authors = PersonalInformation.objects.filter(Q(user__groups__name="author") | Q(user__groups__name="moderator"))
     return render(request, "about.html", context={"authors": authors})
 
 
