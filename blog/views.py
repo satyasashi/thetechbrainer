@@ -51,7 +51,6 @@ def preview_blog(request, id, blog_slug):
     print(request.user.groups.filter(name=moderator_group).exists())
     if (request.user.groups.filter(name=author_group).exists()) or (request.user.groups.filter(name=moderator_group).exists()):
         if id and blog_slug:
-            print("inside 'if id and blog_slug'")
             try:
                 preview_blog = BlogPost.objects.get(id=id, blog_slug=blog_slug, preview=True)
                 context = {"blog": preview_blog}
@@ -70,7 +69,6 @@ def preview_blog(request, id, blog_slug):
 
                 return render(request, "blog/preview_blog.html", context)
             except BlogPost.DoesNotExist as e:
-                print(e)
                 if e:
                     return render(request, "pagenotfound.html")
         else:
@@ -354,10 +352,8 @@ def draft_blog_detail(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
 
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
-        print("is author")
         if slug:
             blog = get_object_or_404(BlogPost, id=id)
-            print("Blog found")
             if blog and blog.moderator_accepted is False and blog.published is False and blog.draft is True:
                 context = {'blog': blog}
                 # authorProfile = blog.blog_author
