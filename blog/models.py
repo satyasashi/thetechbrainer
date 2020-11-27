@@ -76,7 +76,7 @@ class BlogPost(models.Model):
     content = RichTextUploadingField(blank=True, null=True)
 
     blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    # blog_tags = TaggableManager()
+    blog_tags = TaggableManager()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

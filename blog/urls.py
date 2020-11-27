@@ -25,7 +25,7 @@ urlpatterns = [
     # re_path(r'^preview/from-edit-blog/$', views.preview_from_edit_blog, name="preview_from_edit_blog"),
     #
     re_path(r'^filter-by-category/(?P<category_slug>[\w\d-]+)$', views.filter_by_category, name="filter_by_category"),
-    # re_path(r'^filter-by-tag/(?P<slug>[\w\d-]+)$', views.filter_by_tag, name="filter_by_tag"),
+    re_path(r'^filter-by-tag/(?P<slug>[\w\d-]+)$', views.filter_by_tag, name="filter_by_tag"),
     re_path(r'^filter-by-author/(?P<id>[\d]+)$', views.filter_by_author, name="filter_by_author"),
     #
     re_path(r'^accept-and-publish/blog/(?P<id>[\d]+)/$', views.accept_and_publish, name="accept_and_publish"),

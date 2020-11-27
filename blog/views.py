@@ -293,18 +293,17 @@ def filter_by_author(request, id):
 
 
 def filter_by_tag(request, slug):
-    # context = {}
-    # blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
-    # if len(blogs_by_tag) > 0:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context['blogs'] = blogs_by_tag
-    #     return render(request, "blog/filter_by_tag.html", context)
-    #
-    # else:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context["no_blogs"] = True
-    #     return render(request, "blog/filter_by_tag.html", context)
-    pass
+    context = {}
+    blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=slug, moderator_accepted=True, published=True).order_by("-created_on")
+    if len(blogs_by_tag) > 0:
+        context['tag'] = Tag.objects.get(slug=slug)
+        context['blogs'] = blogs_by_tag
+        return render(request, "blog/filter_by_tag.html", context)
+
+    else:
+        context['tag'] = Tag.objects.get(slug=slug)
+        context["no_blogs"] = True
+        return render(request, "blog/filter_by_tag.html", context)
 
 
 def get_categories(request):

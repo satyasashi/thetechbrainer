@@ -334,14 +334,14 @@
               <span class="badge badge-light blog-badge">{{blog.blog_category}}</span>
             </a>
           </div>
-          <!-- <div class="tags col-md-12">
+          <div class="tags col-md-12">
             Tags:
             {% for tag in blog.blog_tags.all %}
-              <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
-                <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
+              <a href="{% url 'blog:filter_by_tag' slug=tag.slug %}">
+                <span class="badge badge-dark blog-badge">{{tag.name}}</span>
               </a>
             {% endfor %}
-          </div> -->
+          </div>
           {% if request.user.is_authenticated %}
           <div class="reading-time col-md-12">
             <span class="reading-time__label"></span>
