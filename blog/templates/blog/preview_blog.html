@@ -459,6 +459,7 @@
 
             {% if is_moderator %}
                 <!-- Can directly Publish. -->
+                <a href="{% url 'blog:edit_blog_post' id=blog.id slug=blog.blog_slug %}" name="editblog" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
                 <button type="button" name="button" class="btn btn-success" id="acceptAndPublishBtn" data-bid="{{blog.id}}"><i class="fa fa-check"></i> Accept & Publish</button>
             {% else %}
                 <!-- Can Edit or Submit for moderation. -->
