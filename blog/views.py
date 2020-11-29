@@ -45,10 +45,9 @@ def blog_search(request):
 
 @login_required
 def preview_blog(request, id, blog_slug):
-    print(id, blog_slug)
     author_group = Group.objects.get(name='author')
     moderator_group = Group.objects.get(name='moderator')
-    print(request.user.groups.filter(name=moderator_group).exists())
+
     if (request.user.groups.filter(name=author_group).exists()) or (request.user.groups.filter(name=moderator_group).exists()):
         if id and blog_slug:
             try:
@@ -57,6 +56,7 @@ def preview_blog(request, id, blog_slug):
 
                 if preview_blog.submitted_for_moderation is True:
                     context["submitted_for_moderation"] = True
+                    print("Submitted for moderation already.")
                 else:
                     context["submitted_for_moderation"] = False
                     # STOPPED HERE. WRITE BLOG -> PREVIEW -> PREVIEW FROM NEW BLOG
@@ -140,20 +140,29 @@ def edit_blog(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         post = get_object_or_404(BlogPost, pk=id)
-        if request.method == "POST":
-            form = BlogPostForm(request.POST, request.FILES, instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.preview = True
-                post.draft = True
-                post.save()
-                # for tags to save use 'save_m2m'
-                form.save_m2m()
-                messages.success(request, "Your blog is successfully updated.")
-                return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+        try:
+            post = BlogPost.objects.get(pk=id)
+            print(post.submitted_for_moderation)
+        except BlogPost.DoesNotExist:
+            return redirect("user:pagenotfound")
+
+        if post.blog_author == request.user:
+            if request.method == "POST":
+                form = BlogPostForm(request.POST, request.FILES, instance=post)
+                if form.is_valid():
+                    post = form.save(commit=False)
+                    post.preview = True
+                    post.draft = True
+                    post.save()
+                    # for tags to save use 'save_m2m'
+                    form.save_m2m()
+                    messages.success(request, "Your blog is successfully updated.")
+                    return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+            else:
+                edit_form = BlogPostForm(instance=post)
+                return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
         else:
-            edit_form = BlogPostForm(instance=post)
-            return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
+            return redirect("user:pagenotfound")
 
 
 def bookmark_blogpost(request, id):
