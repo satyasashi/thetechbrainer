@@ -86,3 +86,18 @@ class UserBookmarks(models.Model):
 
     def __str__(self):
         return self.user
+
+
+# class Notifications(models.Model):
+#     """Stores User's Notifications"""
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=100)
+#     read = models.BooleanField(default=False)
+#     created_on = models.DateTimeField(auto_now_add=True)
+#
+#     class Meta:
+#         verbose_name = "Notification"
+#         verbose_name_plural = "Notifications"
+#
+#     def __str__(self):
+#         return self.user
