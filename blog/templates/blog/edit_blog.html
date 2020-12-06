@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static customtags crispy_forms_tags %}
 
+{% block title %}
+{{ edit_form.blog_title }}
+{% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-colors.min.css">

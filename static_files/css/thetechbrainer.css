@@ -867,6 +867,10 @@ footer ul li a, footer ul li a:hover {
     display: block;
   }
 
+  .notfound {
+      font-size: 10px;
+  }
+
   .authorPicTableData {
       display: none;
   }
