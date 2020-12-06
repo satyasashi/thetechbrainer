@@ -353,9 +353,16 @@
       <hr class="hr-50">
       <div class="blog-detail-div">
           <div class="blog-body">
-              <article class="detail-wrapper">
-                <p>{{blog.content|safe}}</p>
-              </article>
+              {% if request.user.is_anonymous %}
+                {{blog.content|safe|truncatewords:200}}
+                <div class="col-md-12 col-sm-10 col-12 mx-auto">
+                  <button type="button" id="readFullArticle" class="btn btn-primary btn-lg btn-block">Read Full Article</button>
+                </div>
+              {% else %}
+                  <article class="detail-wrapper">
+                    <p>{{blog.content|safe}}</p>
+                  </article>
+              {% endif %}
           </div>
       </div>
 
@@ -402,6 +409,20 @@
       </div>
 
       <!-- Blog author bio -->
+      {% if request.user.is_anonymous %}
+      <!-- No info modal until user logs in -->
+      <div class="author-bio-div mx-auto">
+          <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
+              <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
+          </div>
+          <div class="col-md-8 col-sm-8 col-12 author-bio">
+              <span class="written-by">About Author</span>
+              <h3 class="author-bio-name">{{blog.blog_author.user.username}}</h3>
+              <!-- Author Introduction should be down in <p> -->
+              <p class="author-bio-para col-12">{{blog.blog_author.personalinformation.full_introduction|truncatewords:15}}</p>
+          </div>
+      </div>
+      {% else %}
       <a href="#" class="author-bio-div-link" onclick="showAuthorInfo({{blog.blog_author.id}})" style="text-decoration:none;">
           <div class="author-bio-div mx-auto">
               <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
@@ -415,6 +436,7 @@
               </div>
           </div>
       </a>
+      {% endif %}
 
       {% if blog.blog_author.user.id == request.user.id and request.user.is_authenticated%}
       <div class="col-md-8 mx-auto">
