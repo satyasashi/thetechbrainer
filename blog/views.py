@@ -334,10 +334,11 @@ def blog_detail(request, id, slug):
         if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
             authorProfile = blog.blog_author
+            likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
+
             if request.user.is_authenticated:
                 bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
                 like = UserLikes.objects.filter(user=request.user, blog=blog)
-                likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
                 follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
 
                 if len(follows_author) > 0 and follows_author[0].status is True:
@@ -359,6 +360,7 @@ def blog_detail(request, id, slug):
                 return render(request, "blog/blog_detail.html", context)
 
             else:
+                context["likes_count"] = likes_count
                 return render(request, "blog/blog_detail.html", context)
         else:
             return render(request, "pagenotfound.html")
