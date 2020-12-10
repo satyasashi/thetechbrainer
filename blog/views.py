@@ -194,31 +194,40 @@ def like_blogpost(request, id):
     if request.user.is_authenticated:
         # Add this blog to user likes table.
         blog_post = BlogPost.objects.get(id=id)
-        print(blog_post)
+
         try:
             like_check = UserLikes.objects.filter(user=request.user, blog=blog_post)
             like_status = False
+            likes_count = None
+
             if len(like_check) > 0:
                 # if already liked, then unlike it using FALSE.
                 # Else Like it using TRUE
                 if like_check[0].status is True:
                     like_check[0].status = False
                     like_check[0].save()
-                    print("Unliked")
+                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                     like_status = like_check[0].status
                 else:
                     like_check[0].status = True
                     like_check[0].save()
-                    print("Liked")
+                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                     like_status = like_check[0].status
             else:
                 # Else create new record as User liked it.
-                print("First like")
                 like_obj = UserLikes.objects.create(user=request.user, blog=blog_post, status=True)
                 like_obj.save()
+                likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                 like_status = like_obj.status
 
-            return JsonResponse({"success": True, "status": like_status}, status=200)
+            return JsonResponse({
+                    "success": True,
+                    "status": like_status,
+                    "likes_count": likes_count,
+                    "title": "Success",
+                    "toast_message": "Updated Your Likes",
+                    "response_type": "success"
+                    }, status=200)
         except Exception:
             return JsonResponse({"error": "Sorry something went wrong. Please try later."}, status=300)
     else:
@@ -328,6 +337,7 @@ def blog_detail(request, id, slug):
             if request.user.is_authenticated:
                 bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
                 like = UserLikes.objects.filter(user=request.user, blog=blog)
+                likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
                 follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
 
                 if len(follows_author) > 0 and follows_author[0].status is True:
@@ -345,6 +355,7 @@ def blog_detail(request, id, slug):
                 else:
                     context['like'] = False
 
+                context["likes_count"] = likes_count
                 return render(request, "blog/blog_detail.html", context)
 
             else:
