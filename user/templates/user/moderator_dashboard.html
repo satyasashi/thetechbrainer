@@ -198,11 +198,13 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{% if row.blog_author.personalinformation.picture %}{{row.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})">
+                                            <img src="{% if row.blog_author.personalinformation.picture %}{{row.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a>
                                     </td>
-                                    <td>{{row.created_on}}</td>
+                                    <td>{{row.created_on|date:'b d, y. h:m:a'|title}}</td>
                                     <td>
-                                        <button type="button" name="button" class="btn btn-sm btn-success" onclick="acceptAndPublish('{{row.id}}')" data-bid="{{row.id}}"><i class="fa fa-check"></i> Accept &amp; Publish</button>
+                                        <button type="button" name="button" id="acceptAndPublishFullBtn" class="btn btn-sm btn-success" onclick="acceptAndPublish('{{row.id}}')" data-bid="{{row.id}}"><i class="fa fa-check"></i> Accept &amp; Publish</button>
+                                        <button type="button" name="button" id="acceptAndPublishCheckBtn" class="btn btn-sm btn-success" onclick="acceptAndPublish('{{row.id}}')" data-bid="{{row.id}}"><i class="fa fa-check"></i></button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -301,8 +303,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                     <td>
                                     <a href="{% url 'blog:blog_detail' id=row.id slug=row.blog_slug %}">{{row.blog_title}}</a>
                                     </td>
-                                    <td> <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{% if row.blog_author.personalinformation.picture %}{{row.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a> </td>
-                                    <td>{{row.created_on}}</td>
+                                    <td> <a href="#" onclick="showAuthorInfo({{row.blog_author.id}})"> <img src="{% if row.blog_author.personalinformation.picture %}{{row.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_author|title }} </a> </td>
+                                    <td>{{row.created_on|date:'b d, y. h:m:a'|title}}</td>
                                     <td style="text-align: center;">
                                         {% if row.moderator_accepted %}
                                             <i class="fa fa-check-circle text-success" style="font-size: 20px" aria-hidden="true"></i>
@@ -343,7 +345,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{% if row.blog.blog_author.personalinformation.picture %}{{row.blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{% if row.blog.blog_author.personalinformation.picture %}{{row.blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -377,7 +379,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{% if row.blog_post.blog_author.personalinformation.picture %}{{row.blog_post.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})">
+                                            <img src="{% if row.blog_post.blog_author.personalinformation.picture %}{{row.blog_post.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -409,7 +412,8 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                             <tbody>
                                 {% for row in following %}
                                     <tr id="row{{row.following.id}}">
-                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})"> <img src="{% if row.following.personalinformation.picture %}{{row.following.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})">
+                                            <img src="{% if row.following.personalinformation.picture %}{{row.following.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;" /> {{ row.following|title }} </a> </td>
                                         <td>
                                             <button type="button" name="button" data-aid="{{row.following.id}}" class="btn btn-danger btn-sm unfollowAuthor">Unfollow</button>
                                         </td>
@@ -447,7 +451,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
             // scrollCollapse: true,
             "order": [],
             "lengthMenu": [[50, 100, 500, -1], [50, 100, 500, "All"] ],
-            // "autoWidth": false,
+            "autoWidth": true,
             dom: 'Bfrtip'
         });
 

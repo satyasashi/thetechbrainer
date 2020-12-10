@@ -858,6 +858,10 @@ footer ul li a, footer ul li a:hover {
   font-weight: bold;
 }
 
+#acceptAndPublishCheckBtn {
+    display: none;
+}
+
 /* End of Categories CSS */
 
 /* Media queries for Mobile & Tablet */
@@ -914,6 +918,16 @@ footer ul li a, footer ul li a:hover {
   .blog-body {
       width: 100%;
       font-size: 15px;
+  }
+
+  #acceptAndPublishCheckBtn {
+      display: block;
+      /* padding: 2px 4px; */
+      width: 100%;
+  }
+
+  #acceptAndPublishFullBtn {
+      display: none;
   }
 
   .categories-list-div h3 {
