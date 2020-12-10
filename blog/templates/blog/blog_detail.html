@@ -377,15 +377,12 @@
 
       <div class="row social-icons-and-likes">
           <div class="col-4">
-            {% if request.user.is_anonymous %}
-            {% else %}
-            <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
-            {% if like.status is True %}
-            <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
-            {% else %}
-            <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
-            {% endif %}
-            {% endif %}
+              <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
+              {% if like.status is True %}
+              <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
+              {% else %}
+              <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
+              {% endif %}
             <span class="likesCount" id="likesCount{{blog.id}}">Likes: {{likes_count}}</span>
           </div>
           <div class="col-8">
@@ -723,7 +720,14 @@
             delay: 3000
           });
         }
+    },
+    error: function(error) {
+      // If user not authenticated, then redirect to login.
+      if (error.responseJSON.authenticated == false) {
+        var path = window.location.pathname;
+        window.location.replace("/accounts/login/?next="+path);
       }
+    }
     });
   }
   </script>
