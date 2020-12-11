@@ -612,7 +612,6 @@
         "csrfmiddlewaretoken": '{{ csrf_token }}'
       },
       success: function(result) {
-          console.log(result);
         $("#bookmark"+blog_id).empty();
         $("#bookmark"+blog_id).append(result);
       },
@@ -692,7 +691,6 @@
       success: function(result) {
 
         if(result.status == true) {
-            console.log(result.status);
           $("#"+element_id).addClass('active');
           timeline.play();
 
