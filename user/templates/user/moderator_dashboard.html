@@ -539,14 +539,12 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
             type: "POST",
             data: {"csrfmiddlewaretoken": "{{ csrf_token }}", "id": id},
             success: function(result) {
-                console.log(result);
                 if(result.author_avatar) {
                     $("#authorAvatar").attr("src", result.author_avatar);
                 } else {
                     $("#authorAvatar").attr("src", "/static/img/default_avatar.jpg");
                 }
 
-                console.log(result);
                 $("#blogAuthorName").text(result.author_name);
                 $("#blogAuthorIntroduction").text(result.author_introduction);
                 if(result.no_social_profile == false) {
@@ -591,7 +589,6 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
             },
             error: function(err) {
                 // do something.
-                console.log(err);
             }
         });
     }
@@ -614,7 +611,6 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
     }
 
     $(".unfollowAuthor").on("click", function() {
-        console.log("Unfollow Clicked");
         author_id = $(this).attr("data-aid");
         $.ajax({
             url: "{% url 'user:unfollow_author' %}",
