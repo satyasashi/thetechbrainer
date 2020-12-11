@@ -382,7 +382,6 @@
                     $("#authorAvatar").attr("src", "/static/img/default_avatar.jpg");
                 }
 
-                console.log(result);
                 $("#blogAuthorName").text(result.author_name);
                 $("#blogAuthorIntroduction").text(result.author_introduction);
                 if(result.no_social_profile == false) {
@@ -432,7 +431,6 @@
     }
 
     $(".unfollowAuthor").on("click", function() {
-        console.log("Unfollow Clicked");
         author_id = $(this).attr("data-aid");
         $.ajax({
             url: "{% url 'user:unfollow_author' %}",

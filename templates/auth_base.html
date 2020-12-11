@@ -85,12 +85,11 @@
           $(document).ready(function() {
             // success alerts. fadeaway.
             if($(".alert alert-success")) {
-              console.log("alert-success found");
               $(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
                 $(".alert-success").slideUp(500);
               });
             } else {
-              console.log("alert-success not found");
+              //
             }
           });
         </script>
