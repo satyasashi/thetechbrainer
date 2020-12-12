@@ -114,8 +114,8 @@ class BlogPost(models.Model):
             img.save(img_thumbnail_path)
             print("Created thumbnails folder.")
 
-    # def __str__(self):
-    #     return self.blog_author
+    def __str__(self):
+        return self.blog_title
 
 
 class BlogRequest(models.Model):
@@ -128,4 +128,4 @@ class BlogRequest(models.Model):
         db_table = "blog_request"
 
     def __str__(self):
-        return self.blog_category
+        return self.blog_category.category_name
