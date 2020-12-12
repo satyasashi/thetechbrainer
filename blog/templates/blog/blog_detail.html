@@ -362,16 +362,9 @@
       <hr class="hr-50">
       <div class="blog-detail-div">
           <div class="blog-body">
-              {% if request.user.is_anonymous %}
-                {{blog.content|safe|truncatewords:150}}
-                <div class="col-md-12 col-sm-10 col-12 mx-auto">
-                  <button type="button" id="readFullArticle" class="btn btn-primary btn-lg btn-block">Read Full Article</button>
-                </div>
-              {% else %}
-                  <article class="detail-wrapper">
-                    <p>{{blog.content|safe}}</p>
-                  </article>
-              {% endif %}
+              <article class="detail-wrapper">
+                <p>{{blog.content|safe}}</p>
+              </article>
           </div>
       </div>
 
