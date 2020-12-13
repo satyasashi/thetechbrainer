@@ -386,7 +386,7 @@
               {% endif %}
             <span class="likesCount" id="likesCount{{blog.id}}">Likes: {{likes_count}}</span>
           </div>
-          <div class="col-8">
+          <div class="col-6">
               <div class="row">
                   <div class="social-icons">
                       {% if blog.blog_author.personalinformation.facebook %}
@@ -413,6 +413,12 @@
                       {% endif %}
                   </div>
               </div>
+          </div>
+          <div class="col-2">
+              {% if blog.blog_author == request.user %}
+              <!-- Can directly Publish. -->
+              <a href="{% url 'blog:edit_blog_post' id=blog.id slug=blog.blog_slug %}" name="editblog" class="btn btn-dark" title="Edit Blog" style="border-radius: 50%;"><i class="fa fa-edit" style="font-size: 16px; font-weight:bold;"></i></a>
+              {% endif %}
           </div>
       </div>
 
