@@ -11,6 +11,13 @@
 <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
 
+{% block og_info %}
+<meta property="og:title" content="{{blog.blog_subtitle}}" />
+<meta property="og:url" content="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" />
+<meta property="og:description" content="{{blog.content|truncatechars:65}}">
+<meta property="og:image" content="{{blog.banner_image.url}}">
+{% endblock %}
+
 {% block extra_css %}
 <style type="text/css">
   .written-by {
@@ -327,7 +334,6 @@
           </div>
           <div class="jumbotron detail-blog-banner" style="background-image: url({{blog.banner_image.url}});">
               <div class="banner-info">
-
               </div>
           </div>
           <div class="banner-caption">
