@@ -14,7 +14,7 @@
 {% block og_info %}
 <meta property="og:title" content="{{blog.blog_title}}" />
 <meta property="og:url" content="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" />
-<meta property="og:description" content="{{blog.content|truncatechars:65}}" />
+<meta property="og:description" content="{{blog.content|safe|truncatechars:65}}" />
 <meta property="og:image" content="https://thetechbrainer.com{{blog.banner_image.url}}" />
 <meta property="og:image:alt" content="{{blog.banner_image_source}}" />
 <meta property="og:type" content="article" />
