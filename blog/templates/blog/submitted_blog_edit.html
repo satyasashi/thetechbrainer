@@ -8,6 +8,8 @@
 href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
 {% endblock %}
 
+{% block title %} Edit Blog Post {% endblock %}
+
 {% block home_banner %} {% endblock %}
 
 {% block content %}
@@ -115,7 +117,6 @@ $("#finishNewTagBtn").on("click", function(e) {
             type: "POST",
             data: {"csrfmiddlewaretoken": "{{csrf_token}}", "new_tag": newTag},
             success: function(result) {
-                console.log(result);
                 if(result.status == "success") {
                     $("#newTagErrorSpan").attr("class", "success-message")
                     $("#newTagErrorSpan").text("Added new tag successfully");
@@ -153,7 +154,6 @@ $("#editPreviewBlog").on("click", function(event) {
 
 $("#submitForModerationEdit").on("click", function() {
   event.preventDefault();
-  console.log("submitForModeration clicked");
   $("#editPostForm").attr("action", "{% url 'blog:write_blog' %}");
   $("#editPostForm #type").val("submitForModeration");
   $("#editPostForm").submit();

@@ -54,7 +54,7 @@
                 <div class="card card-div">
                   <img class="card-img-top" src="{% if author.picture %}{{author.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" alt="{{author.siteuser.user}}">
                   <div class="card-body">
-                    <h4 class="card-title">{{author.siteuser|title}}</h4>
+                    <h4 class="card-title text-center">{{author.user|title}}</h4>
                     <p class="card-text">{{author.introduction}}</p>
                     <div class="social-icons text-center">
                         {% if author.facebook %}

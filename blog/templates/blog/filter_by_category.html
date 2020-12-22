@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 {% endblock %}
 
+{% block title %} Filter By Category {% endblock %}
+
 {% block home_banner %} {% endblock %}
 
 {% block content %}
@@ -68,7 +70,6 @@
 <script type="text/javascript" src="{% static 'js/toast.min.js' %}"></script>
 <script type="text/javascript">
   $("#letAuthorKnow").click(function () {
-    console.log("Clicked");
     var blog_id = $(this).attr("data-pid");
 
     // bookmark blogpost and sending 0 as param then replacing with slug.
@@ -83,9 +84,7 @@
       },
       success: function(result) {
         // jquery success message.
-        console.log(result);
         if (result.success == true && result.created == true) {
-          console.log(true);
           $.toast({
             title: result.title,
             content: result.toast_message,
@@ -110,7 +109,6 @@
       },
       error: function(error) {
         // If user not authenticated, then redirect to login.
-        console.log(error);
         if (error.responseJSON.authenticated == false) {
           var path = window.location.pathname;
           window.location.replace("/accounts/login/?next="+path);
@@ -120,7 +118,6 @@
   });
 
   $("#neverMind").click(function () {
-    console.log("never mind");
     var url = "{% url 'user:index' %}";
     window.location.replace(url);
   });

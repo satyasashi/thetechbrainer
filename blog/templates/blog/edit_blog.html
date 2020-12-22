@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static customtags crispy_forms_tags %}
 
+{% block title %}
+{{ edit_form.blog_title }}
+{% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-colors.min.css">
@@ -75,7 +79,7 @@ href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.
                 {% else %}
                 <button type="submit" class="btn btn-warning" id=""><i class="fa fa-eye"></i> Preview &amp; Submit</button>
                 {% endif %}
-                <button type="button" class="btn btn-primary" id="addNewTagBtn" data-toggle="modal" data-target="#tagModal"><i class="fa fa-plus"></i> New Tag</button>
+                <!-- <button type="button" class="btn btn-primary" id="addNewTagBtn" data-toggle="modal" data-target="#tagModal"><i class="fa fa-plus"></i> New Tag</button> -->
             </div>
           </fieldset>
       </form>
@@ -119,7 +123,6 @@ $("#finishNewTagBtn").on("click", function(e) {
             type: "POST",
             data: {"csrfmiddlewaretoken": "{{csrf_token}}", "new_tag": newTag},
             success: function(result) {
-                console.log(result);
                 if(result.status == "success") {
                     $("#newTagErrorSpan").attr("class", "success-message")
                     $("#newTagErrorSpan").text("Added new tag successfully");

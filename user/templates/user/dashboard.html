@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static customtags crispy_forms_tags %}
 
+{% block title %} User Dashboard {% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 {% endblock %}
@@ -164,7 +166,8 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})"> <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog.blog_author.id}})">
+                                            <img src="{{row.blog.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" class="authorPicTableData" style="border-radius:50%;"> {{ row.blog.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -198,7 +201,8 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})"> <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
+                                        <a href="#" onclick="showAuthorInfo({{row.blog_post.blog_author.id}})">
+                                            <img src="{{row.blog_post.blog_author.personalinformation.picture.url}}" alt="author" height="50px" width="50px" class="authorPicTableData" style="border-radius:50%;"> {{ row.blog_post.blog_author|title }} </a>
                                     </td>
                                     <!-- <td></td> -->
                                 </tr>
@@ -294,7 +298,8 @@
                             <tbody>
                                 {% for row in following %}
                                     <tr id="row{{row.following.id}}">
-                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})"> <img src="{{row.following.personalinformation.picture.url}}" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
+                                        <td> <a href="#" onclick="showAuthorInfo({{row.following.id}})">
+                                            <img src="{{row.following.personalinformation.picture.url}}" class="authorPicTableData" alt="author" height="50px" width="50px" style="border-radius:50%;"> {{ row.following|title }} </a> </td>
                                         <td>
                                             <button type="button" name="button" data-aid="{{row.following.id}}" class="btn btn-danger btn-sm unfollowAuthor">Unfollow</button>
                                         </td>
@@ -377,7 +382,6 @@
                     $("#authorAvatar").attr("src", "/static/img/default_avatar.jpg");
                 }
 
-                console.log(result);
                 $("#blogAuthorName").text(result.author_name);
                 $("#blogAuthorIntroduction").text(result.author_introduction);
                 if(result.no_social_profile == false) {
@@ -427,7 +431,6 @@
     }
 
     $(".unfollowAuthor").on("click", function() {
-        console.log("Unfollow Clicked");
         author_id = $(this).attr("data-aid");
         $.ajax({
             url: "{% url 'user:unfollow_author' %}",

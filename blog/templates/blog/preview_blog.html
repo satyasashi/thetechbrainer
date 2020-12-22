@@ -371,11 +371,9 @@
           </div>
           <!-- <div class="tags col-md-12">
             Tags:
-            {% for tag in blog.blog_tags.all %}
-              <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
-                <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
+              <a href="#">
+                <span class="badge badge-dark blog-badge"></span>
               </a>
-            {% endfor %}
           </div> -->
           {% if request.user.is_authenticated %}
           <div class="reading-time col-md-12">
@@ -424,13 +422,6 @@
               <i class="fa fa-twitter-square" aria-hidden="true"></i>
               <i class="fa fa-linkedin-square" aria-hidden="true"></i>
               <i class="fa fa-github" aria-hidden="true"></i>
-              <a href="#" class="circle-icons">
-                  <span>
-                      <i class="fa fa-circle-o" aria-hidden="true"></i>
-                      <i class="fa fa-circle-o" aria-hidden="true"></i>
-                      <i class="fa fa-circle-o" aria-hidden="true"></i>
-                  </span>
-              </a>
           </div>
       </div>
 
@@ -458,8 +449,10 @@
             {% csrf_token %}
 
             {% if is_moderator %}
-                <a href="{% url 'blog:edit_blog_post' id=blog.id slug=blog.blog_slug %}" name="editblog" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                {% if blog.blog_author == request.user %}
                 <!-- Can directly Publish. -->
+                <a href="{% url 'blog:edit_blog_post' id=blog.id slug=blog.blog_slug %}" name="editblog" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                {% endif %}
                 <button type="button" name="button" class="btn btn-success" id="acceptAndPublishBtn" data-bid="{{blog.id}}"><i class="fa fa-check"></i> Accept & Publish</button>
             {% else %}
                 <!-- Can Edit or Submit for moderation. -->

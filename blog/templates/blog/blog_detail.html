@@ -6,14 +6,32 @@
 {% block extra_head %}
 <link rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
+{% block og_info %}
+<meta property="og:title" content="{{blog.blog_title}}" />
+<meta property="og:url" content="{% url 'blog:blog_detail' id=blog.id slug=blog.blog_slug %}" />
+<meta property="og:description" content="{{blog.blog_subtitle}}" />
+<meta property="og:image" content="https://thetechbrainer.com{{blog.banner_image.url}}" />
+<meta property="og:image:alt" content="{{blog.banner_image_source}}" />
+<meta property="og:type" content="article" />
 {% endblock %}
 
 {% block extra_css %}
 <style type="text/css">
   .written-by {
       font-transform: uppercase;
+  }
+
+  .likesCount {
+      padding: 2px 4px;
+      border-radius: 4px;
+      background-color: #808FC8;
+      color: #fff;
+      font-weight: bold;
   }
 
   .heartBtn{
@@ -318,7 +336,6 @@
           </div>
           <div class="jumbotron detail-blog-banner" style="background-image: url({{blog.banner_image.url}});">
               <div class="banner-info">
-
               </div>
           </div>
           <div class="banner-caption">
@@ -353,32 +370,23 @@
       <hr class="hr-50">
       <div class="blog-detail-div">
           <div class="blog-body">
-              {% if request.user.is_anonymous %}
-                {{blog.content|safe|truncatewords:100}}
-                <div class="col-md-12 col-sm-10 col-12 mx-auto">
-                  <button type="button" id="readFullArticle" class="btn btn-primary btn-lg btn-block">Read Full Article</button>
-                </div>
-              {% else %}
-                  <article class="detail-wrapper">
-                    <p>{{blog.content|safe}}</p>
-                  </article>
-              {% endif %}
+              <article class="detail-wrapper">
+                <p>{{blog.content|safe}}</p>
+              </article>
           </div>
       </div>
 
       <div class="row social-icons-and-likes">
           <div class="col-4">
-            {% if request.user.is_anonymous %}
-            {% else %}
-            <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
-            {% if like.status is True %}
-            <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
-            {% else %}
-            <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
-            {% endif %}
-            {% endif %}
+              <!-- <button type="button" name="like" class="btn btn-primary">Like <i class="fa fa-thumbs-o-up thumbs-up-icon" aria-hidden="true"></i></button> -->
+              {% if like.status is True %}
+              <div id='heart{{blog.id}}' class='button heartBtn active' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
+              {% else %}
+              <div id='heart{{blog.id}}' class='button heartBtn' name="like_btn" data-pslug="{{blog.blog_slug}}" data-bid="{{blog.id}}" onclick="likeIt({{blog.id}}, this.id)"></div>
+              {% endif %}
+            <span class="likesCount" id="likesCount{{blog.id}}">Likes: {{likes_count}}</span>
           </div>
-          <div class="col-8">
+          <div class="col-6">
               <div class="row">
                   <div class="social-icons">
                       {% if blog.blog_author.personalinformation.facebook %}
@@ -406,9 +414,29 @@
                   </div>
               </div>
           </div>
+          <div class="col-2">
+              {% if blog.blog_author == request.user %}
+              <!-- Can directly Publish. -->
+              <a href="{% url 'blog:edit_blog_post' id=blog.id slug=blog.blog_slug %}" name="editblog" class="btn btn-dark" title="Edit Blog" style="border-radius: 50%;"><i class="fa fa-edit" style="font-size: 16px; font-weight:bold;"></i></a>
+              {% endif %}
+          </div>
       </div>
 
       <!-- Blog author bio -->
+      {% if request.user.is_anonymous %}
+      <!-- No info modal until user logs in -->
+      <div class="author-bio-div mx-auto">
+          <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
+              <img src="{% if blog.blog_author.personalinformation.picture %}{{blog.blog_author.personalinformation.picture.url}}{% else %}{% static 'img/default_avatar.jpg' %}{% endif %}" class="img-responsive author-bio-pic pull-right" alt="Author:sashi" width="90px" height="90px">
+          </div>
+          <div class="col-md-8 col-sm-8 col-12 author-bio">
+              <span class="written-by">About Author</span>
+              <h3 class="author-bio-name">{{blog.blog_author.user.username}}</h3>
+              <!-- Author Introduction should be down in <p> -->
+              <p class="author-bio-para col-12">{{blog.blog_author.personalinformation.full_introduction|truncatewords:15}}</p>
+          </div>
+      </div>
+      {% else %}
       <a href="#" class="author-bio-div-link" onclick="showAuthorInfo({{blog.blog_author.id}})" style="text-decoration:none;">
           <div class="author-bio-div mx-auto">
               <div class="col-md-4 col-sm-4 col-6 author-bio-pic-div">
@@ -422,6 +450,7 @@
               </div>
           </div>
       </a>
+      {% endif %}
 
       {% if blog.blog_author.user.id == request.user.id and request.user.is_authenticated%}
       <div class="col-md-8 mx-auto">
@@ -440,13 +469,40 @@
       </div>
       {% endif %}
   </div>
+
+  <div class="container">
+      <div id="disqus_thread"></div>
+  </div>
 {% endblock %}
+
 
 {% block extra_js %}
   <script src="{% static 'js/read-time-count.js' %}"></script>
+  <!-- toast notification for ajax request. -->
+  <script type="text/javascript" src="{% static 'js/toast.min.js' %}"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js">
 
   </script>
+
+  <script>
+
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  /*
+  var disqus_config = function () {
+  this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+  this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+  };
+  */
+  (function() { // DON'T EDIT BELOW THIS LINE
+  var d = document, s = d.createElement('script');
+  s.src = 'https://thetechbrainer.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
   <script type="text/javascript">
 
@@ -563,7 +619,6 @@
         "csrfmiddlewaretoken": '{{ csrf_token }}'
       },
       success: function(result) {
-          console.log(result);
         $("#bookmark"+blog_id).empty();
         $("#bookmark"+blog_id).append(result);
       },
@@ -643,13 +698,41 @@
       success: function(result) {
 
         if(result.status == true) {
-            console.log(result.status);
           $("#"+element_id).addClass('active');
           timeline.play();
+
+          // update the likes count
+          $("#likesCount"+id).text("Likes: "+result.likes_count);
+
+          // show toast
+          $.toast({
+            title: result.title,
+            content: result.toast_message,
+            type: result.response_type,
+            delay: 3000
+          });
+
         } else {
           $("#"+element_id).removeClass('active');
+          // update the likes count.
+          $("#likesCount"+id).text("Likes: "+result.likes_count);
+
+          // show toast
+          $.toast({
+            title: result.title,
+            content: result.toast_message,
+            type: result.response_type,
+            delay: 3000
+          });
         }
+    },
+    error: function(error) {
+      // If user not authenticated, then redirect to login.
+      if (error.responseJSON.authenticated == false) {
+        var path = window.location.pathname;
+        window.location.replace("/accounts/login/?next="+path);
       }
+    }
     });
   }
   </script>

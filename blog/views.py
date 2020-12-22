@@ -45,19 +45,18 @@ def blog_search(request):
 
 @login_required
 def preview_blog(request, id, blog_slug):
-    print(id, blog_slug)
     author_group = Group.objects.get(name='author')
     moderator_group = Group.objects.get(name='moderator')
-    print(request.user.groups.filter(name=moderator_group).exists())
+
     if (request.user.groups.filter(name=author_group).exists()) or (request.user.groups.filter(name=moderator_group).exists()):
         if id and blog_slug:
-            print("inside 'if id and blog_slug'")
             try:
                 preview_blog = BlogPost.objects.get(id=id, blog_slug=blog_slug, preview=True)
                 context = {"blog": preview_blog}
 
                 if preview_blog.submitted_for_moderation is True:
                     context["submitted_for_moderation"] = True
+                    print("Submitted for moderation already.")
                 else:
                     context["submitted_for_moderation"] = False
                     # STOPPED HERE. WRITE BLOG -> PREVIEW -> PREVIEW FROM NEW BLOG
@@ -70,7 +69,6 @@ def preview_blog(request, id, blog_slug):
 
                 return render(request, "blog/preview_blog.html", context)
             except BlogPost.DoesNotExist as e:
-                print(e)
                 if e:
                     return render(request, "pagenotfound.html")
         else:
@@ -123,7 +121,7 @@ def save_blog_and_show_preview(request):
                 blog_post.blog_author = request.user
                 blog_post.save()
                 # for tags to save use 'save_m2m'
-                blogpostform.save_m2m()
+                # blogpostform.save_m2m()
                 messages.success(request, "Your blog is now saved as draft, check your drafts to publish.")
                 return redirect("blog:preview_blog", id=blog_post.id, blog_slug=blog_post.blog_slug)
             else:
@@ -142,20 +140,29 @@ def edit_blog(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         post = get_object_or_404(BlogPost, pk=id)
-        if request.method == "POST":
-            form = BlogPostForm(request.POST, request.FILES, instance=post)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.preview = True
-                post.draft = True
-                post.save()
-                # for tags to save use 'save_m2m'
-                form.save_m2m()
-                messages.success(request, "Your blog is successfully updated.")
-                return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+        try:
+            post = BlogPost.objects.get(pk=id)
+            print(post.submitted_for_moderation)
+        except BlogPost.DoesNotExist:
+            return redirect("user:pagenotfound")
+
+        if post.blog_author == request.user:
+            if request.method == "POST":
+                form = BlogPostForm(request.POST, request.FILES, instance=post)
+                if form.is_valid():
+                    post = form.save(commit=False)
+                    post.preview = True
+                    post.draft = True
+                    post.save()
+                    # for tags to save use 'save_m2m'
+                    # form.save_m2m()
+                    messages.success(request, "Your blog is successfully updated.")
+                    return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+            else:
+                edit_form = BlogPostForm(instance=post)
+                return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
         else:
-            edit_form = BlogPostForm(instance=post)
-            return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
+            return redirect("user:pagenotfound")
 
 
 def bookmark_blogpost(request, id):
@@ -187,31 +194,40 @@ def like_blogpost(request, id):
     if request.user.is_authenticated:
         # Add this blog to user likes table.
         blog_post = BlogPost.objects.get(id=id)
-        print(blog_post)
+
         try:
             like_check = UserLikes.objects.filter(user=request.user, blog=blog_post)
             like_status = False
+            likes_count = None
+
             if len(like_check) > 0:
                 # if already liked, then unlike it using FALSE.
                 # Else Like it using TRUE
                 if like_check[0].status is True:
                     like_check[0].status = False
                     like_check[0].save()
-                    print("Unliked")
+                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                     like_status = like_check[0].status
                 else:
                     like_check[0].status = True
                     like_check[0].save()
-                    print("Liked")
+                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                     like_status = like_check[0].status
             else:
                 # Else create new record as User liked it.
-                print("First like")
                 like_obj = UserLikes.objects.create(user=request.user, blog=blog_post, status=True)
                 like_obj.save()
+                likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
                 like_status = like_obj.status
 
-            return JsonResponse({"success": True, "status": like_status}, status=200)
+            return JsonResponse({
+                    "success": True,
+                    "status": like_status,
+                    "likes_count": likes_count,
+                    "title": "Success",
+                    "toast_message": "Updated Your Likes",
+                    "response_type": "success"
+                    }, status=200)
         except Exception:
             return JsonResponse({"error": "Sorry something went wrong. Please try later."}, status=300)
     else:
@@ -317,6 +333,8 @@ def blog_detail(request, id, slug):
         if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
             authorProfile = blog.blog_author
+            likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
+
             if request.user.is_authenticated:
                 bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
                 like = UserLikes.objects.filter(user=request.user, blog=blog)
@@ -337,9 +355,11 @@ def blog_detail(request, id, slug):
                 else:
                     context['like'] = False
 
+                context["likes_count"] = likes_count
                 return render(request, "blog/blog_detail.html", context)
 
             else:
+                context["likes_count"] = likes_count
                 return render(request, "blog/blog_detail.html", context)
         else:
             return render(request, "pagenotfound.html")
@@ -353,10 +373,8 @@ def draft_blog_detail(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
 
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
-        print("is author")
         if slug:
             blog = get_object_or_404(BlogPost, id=id)
-            print("Blog found")
             if blog and blog.moderator_accepted is False and blog.published is False and blog.draft is True:
                 context = {'blog': blog}
                 # authorProfile = blog.blog_author

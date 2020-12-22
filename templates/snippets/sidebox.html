@@ -42,11 +42,11 @@
               <li class="media">
                   <div class="media-body">
                       <p>
-                          {% for tag in tags %}
-                            <a href="{% url 'blog:filter_by_tag' tag_slug=tag.tag_slug %}">
-                              <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
-                            </a>
-                          {% endfor %}
+                      {% for tag in tags %}
+                        <a href="{% url 'blog:filter_by_tag' slug=tag.slug %}">
+                          <span class="badge badge-dark blog-badge">{{tag.tag_name}}</span>
+                        </a>
+                      {% endfor %}
                       </p>
                   </div>
               </li>

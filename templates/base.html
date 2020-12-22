@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
     <head>
-        <meta charset="utf-8">
         <link rel="icon" href="{% static 'img/favicon.ico' %}">
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
@@ -18,19 +17,40 @@
         <!-- Data Tables -->
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
 
-        <meta charset="utf-8" />
+        <!-- Google Adsense -->
+        <script data-ad-client="ca-pub-6486759556400726" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-7HZT37TDCJ"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-7HZT37TDCJ');
+        </script>
+
         <title>
-            Thetechbrainer | {% block title %}{% endblock %}
+            {% block title %}{% endblock %} | Thetechbrainer
         </title>
+        <meta charset="utf-8" />
         <meta name="description" content="Thetechbrainer is a place where you find good tech blogs and tutorials. Our aim is to provide new tech blogs every week. We love to learn, understand and share the knowledge with the techbrainers out there. You can find blogs related to different categories of technology. If you are interested to bookmark or follow the authors you love, you can login and do it right away. Are you also interested to be part of thetechbrainers and want to contribute? leave us an email about you and your interests. Thetechbrainer will reach out to you and you can get access to be our beloved author." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        {% block og_info %}
+        {% endblock %}
+
         {% block extra_head %}
 
         {% endblock %}
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/thetechbrainer.css' %}">
-        <link rel="stylesheet" href="{% static 'css/bootstrap-tagsinput.css' %}">
+        <style type="text/css">
+            .bootstrap-tagsinput {
+                display: block !important;
+            }
+        </style>
+
         {% block extra_css %}
             {# Override this in templates to add extra stylesheets #}
         {% endblock %}
@@ -65,11 +85,14 @@
           {% block home_banner %}
           <div class="row banner-div">
             <div class="col-md-6 col-sm-4">
-              <img src="{% static 'img/banner.jpg' %}" alt="coffee-man" class="float-right" height="400px">
+              <img src="{% static 'img/banner.jpg' %}" alt="coffee-man" class="float-right" height="400px" style="padding: 2px 0px;">
             </div>
             <div class="col-md-6 col-sm-8">
               <h1 class="text-center">
-              TechKnowledg-E &lt;/Dose&gt;
+                  Tech<span
+                     class="txt-rotate"
+                     data-period="2000"
+                     data-rotate='[ "nology", "Knowledg-E" ]'></span><br>&lt;/Dose&gt;
               </h1>
             </div>
           </div>
@@ -88,22 +111,20 @@
         <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/notify.min.js' %}"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="{% static 'js/bootstrap-tagsinput.js' %}"></script>
         <script type="text/javascript">
           $(document).ready(function() {
             // success alerts. fadeaway.
             if($(".alert alert-success")) {
-              console.log("alert-success found");
               $(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
                 $(".alert-success").slideUp(500);
               });
             } else {
-              console.log("alert-success not found");
+              //
             }
 
             $.toastDefaults = {
               // top-left, top-right, bottom-left, bottom-right, top-center, and bottom-center
-              position: 'top-center',
+              position: 'bottom-left',
 
               // is dismissable?
               dismissible: true,
@@ -135,5 +156,63 @@
         <div id="stop" class="scrollTop">
             <span><a href="#">Top</a></span>
         </div>
+        <script type="text/javascript">
+            var TxtRotate = function(el, toRotate, period) {
+                this.toRotate = toRotate;
+                this.el = el;
+                this.loopNum = 0;
+                this.period = parseInt(period, 10) || 2000;
+                this.txt = '';
+                this.tick();
+                this.isDeleting = false;
+            };
+
+            TxtRotate.prototype.tick = function() {
+                var i = this.loopNum % this.toRotate.length;
+                var fullTxt = this.toRotate[i];
+
+                if (this.isDeleting) {
+                    this.txt = fullTxt.substring(0, this.txt.length - 1);
+                } else {
+                    this.txt = fullTxt.substring(0, this.txt.length + 1);
+                }
+
+                this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+                var that = this;
+                var delta = 300 - Math.random() * 100;
+
+                if (this.isDeleting) { delta /= 2; }
+
+                if (!this.isDeleting && this.txt === fullTxt) {
+                    delta = this.period;
+                    this.isDeleting = true;
+                } else if (this.isDeleting && this.txt === '') {
+                    this.isDeleting = false;
+                    this.loopNum++;
+                    delta = 500;
+                }
+
+                setTimeout(function() {
+                that.tick();
+                }, delta);
+            };
+
+            window.onload = function() {
+                var elements = document.getElementsByClassName('txt-rotate');
+                for (var i=0; i<elements.length; i++) {
+                    var toRotate = elements[i].getAttribute('data-rotate');
+                    var period = elements[i].getAttribute('data-period');
+                    if (toRotate) {
+                      new TxtRotate(elements[i], JSON.parse(toRotate), period);
+                    }
+                }
+                // INJECT CSS
+                var css = document.createElement("style");
+                css.type = "text/css";
+                css.innerHTML = ".txt-rotate > .wrap { border-right: 0.08em solid #666 }";
+                document.body.appendChild(css);
+            };
+        </script>
     </body>
 </html>
