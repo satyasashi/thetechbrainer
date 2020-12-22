@@ -121,7 +121,7 @@ def save_blog_and_show_preview(request):
                 blog_post.blog_author = request.user
                 blog_post.save()
                 # for tags to save use 'save_m2m'
-                blogpostform.save_m2m()
+                # blogpostform.save_m2m()
                 messages.success(request, "Your blog is now saved as draft, check your drafts to publish.")
                 return redirect("blog:preview_blog", id=blog_post.id, blog_slug=blog_post.blog_slug)
             else:
@@ -155,7 +155,7 @@ def edit_blog(request, id, slug):
                     post.draft = True
                     post.save()
                     # for tags to save use 'save_m2m'
-                    form.save_m2m()
+                    # form.save_m2m()
                     messages.success(request, "Your blog is successfully updated.")
                     return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
             else:
@@ -309,18 +309,17 @@ def filter_by_author(request, id):
 
 
 def filter_by_tag(request, slug):
-    # context = {}
-    # blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
-    # if len(blogs_by_tag) > 0:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context['blogs'] = blogs_by_tag
-    #     return render(request, "blog/filter_by_tag.html", context)
-    #
-    # else:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context["no_blogs"] = True
-    #     return render(request, "blog/filter_by_tag.html", context)
-    pass
+    context = {}
+    blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
+    if len(blogs_by_tag) > 0:
+        context['tag'] = Tag.objects.get(slug=slug)
+        context['blogs'] = blogs_by_tag
+        return render(request, "blog/filter_by_tag.html", context)
+
+    else:
+        context['tag'] = Tag.objects.get(slug=slug)
+        context["no_blogs"] = True
+        return render(request, "blog/filter_by_tag.html", context)
 
 
 def get_categories(request):
