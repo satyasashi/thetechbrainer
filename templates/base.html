@@ -45,7 +45,12 @@
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/thetechbrainer.css' %}">
-        <link rel="stylesheet" href="{% static 'css/bootstrap-tagsinput.css' %}">
+        <style type="text/css">
+            .bootstrap-tagsinput {
+                display: block !important;
+            }
+        </style>
+
         {% block extra_css %}
             {# Override this in templates to add extra stylesheets #}
         {% endblock %}
@@ -106,7 +111,6 @@
         <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/notify.min.js' %}"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="{% static 'js/bootstrap-tagsinput.js' %}"></script>
         <script type="text/javascript">
           $(document).ready(function() {
             // success alerts. fadeaway.

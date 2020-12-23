@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
+from taggit.models import TagBase, GenericTaggedItemBase
 from django.contrib.auth.models import User
 from django.conf import settings
 from toolbelt.utils import (
@@ -66,6 +67,34 @@ class Category(models.Model):
         return self.category_name
 
 
+class MyCustomTag(TagBase):
+    # ... fields here
+
+    class Meta:
+        verbose_name = "Custom Tag"
+        verbose_name_plural = "Custom Tags"
+
+    def __str__(self):
+        return self.name
+
+
+class BlogTag(GenericTaggedItemBase):
+    # TaggedWhatever can also extend TaggedItemBase or a combination of
+    # both TaggedItemBase and GenericTaggedItemBase. GenericTaggedItemBase
+    # allows using the same tag for different kinds of objects, in this
+    # example Food and Drink.
+
+    # Here is where you provide your custom Tag class.
+    tag = models.ForeignKey(
+        MyCustomTag,
+        on_delete=models.CASCADE,
+        related_name="%(app_label)s_%(class)s_items",
+    )
+
+    def __str__(self):
+        return self.tag.name
+
+
 class BlogPost(models.Model):
     blog_author = models.ForeignKey(User, on_delete=models.CASCADE)
     blog_title = models.CharField(max_length=100, help_text="Keep titles short.")
@@ -76,7 +105,7 @@ class BlogPost(models.Model):
     content = RichTextUploadingField(blank=True, null=True)
 
     blog_category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    # blog_tags = TaggableManager()
+    blog_tags = TaggableManager(blank=True, through='BlogTag')
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import BlogPost, Category, BlogRequest
+from .models import BlogPost, Category, BlogRequest, MyCustomTag
 from taggit.models import Tag
 
 from django.http import JsonResponse
@@ -140,6 +140,7 @@ def edit_blog(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         post = get_object_or_404(BlogPost, pk=id)
+        
         try:
             post = BlogPost.objects.get(pk=id)
             print(post.submitted_for_moderation)
@@ -309,18 +310,17 @@ def filter_by_author(request, id):
 
 
 def filter_by_tag(request, slug):
-    # context = {}
-    # blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=tag_slug, moderator_accepted=True, published=True).order_by("-created_on")
-    # if len(blogs_by_tag) > 0:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context['blogs'] = blogs_by_tag
-    #     return render(request, "blog/filter_by_tag.html", context)
-    #
-    # else:
-    #     context['tag'] = Tag.objects.get(slug=slug)
-    #     context["no_blogs"] = True
-    #     return render(request, "blog/filter_by_tag.html", context)
-    pass
+    context = {}
+    blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=slug, moderator_accepted=True, published=True).order_by("-created_on")
+    if len(blogs_by_tag) > 0:
+        context['tag'] = MyCustomTag.objects.get(slug=slug)
+        context['blogs'] = blogs_by_tag
+        return render(request, "blog/filter_by_tag.html", context)
+
+    else:
+        context['tag'] = MyCustomTag.objects.get(slug=slug)
+        context["no_blogs"] = True
+        return render(request, "blog/filter_by_tag.html", context)
 
 
 def get_categories(request):

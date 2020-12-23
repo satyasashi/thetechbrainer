@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 <link rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+<link rel="stylesheet" href="{% static 'css/tagsinput.css' %}">
 {% endblock %}
 
 {% block home_banner %} {% endblock %}
@@ -80,6 +81,10 @@
             {{ new_blog_form.blog_category|as_crispy_field }}
           </div>
 
+          <div class="form-group">
+            {{ new_blog_form.blog_tags|as_crispy_field }}
+          </div>
+
           <div class="col-* alert alert-dark">
               <h4> <i class="fa fa-gears"></i> Actions</h4>
               <button type="submit" class="btn btn-warning" id="previewBlog"><i class="fa fa-eye"></i> Preview &amp; Submit</button>
@@ -93,28 +98,28 @@
 <div id="tags" style="display:none;"></div>
 
 {% endblock %}
-
 {% block extra_js %}
 <script type="text/javascript" src="{% static 'js/typeahead.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tagsinput.js' %}"></script>
 <script type="text/javascript">
-    // $(function() {
-    //     var tags = new Bloodhound({
-    //       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-    //       queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //       remote: {
-    //         url: "url 'blog:blog_tags'"
-    //       }
-    //     });
-    //
-    //     tags.initialize();
-    //     console.log("Initialized");
-    //     $("#id_blog_tags").tagsinput(null, {
-    //       typeaheadjs: {
-    //         name: 'tags',
-    //         source: tags.ttAdapter()
-    //       }
-    //     });
-    //
-    // });
+    $(function() {
+        var tags = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          local: ['tag1', 'sashi']
+        });
+
+        tags.initialize();
+        console.log("Initialized");
+        $("#id_blog_tags").tagsinput(null, {
+          typeaheadjs: {
+            name: 'tags',
+            source: tags.ttAdapter()
+          }
+        });
+
+    });
+
+
 </script>
 {% endblock %}
