@@ -140,7 +140,7 @@ def edit_blog(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         post = get_object_or_404(BlogPost, pk=id)
-
+        
         try:
             post = BlogPost.objects.get(pk=id)
             print(post.submitted_for_moderation)
@@ -406,8 +406,6 @@ def submit_for_moderation(request):
                 blog.preview = True
                 blog.draft = False
                 blog.submitted_for_moderation = True
-                blog.moderator_accepted = False
-                blog.published = False
                 blog.save()
                 messages.success(request, "Your blog has been submitted for moderation.")
                 return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
