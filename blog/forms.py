@@ -30,3 +30,10 @@ class BlogPostForm(forms.ModelForm):
             return category
         except Exception:
             return None
+
+    def clean_blog_tags(self):
+        blog_tags = self.cleaned_data["blog_tags"]
+        print("BLOG TAGS Cleaned Data: ", blog_tags)
+        if len(blog_tags) > 0:
+            blog_tags = blog_tags.split(",")
+            return blog_tags

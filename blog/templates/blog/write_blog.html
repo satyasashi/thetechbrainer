@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
 <link rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.min.css">
+<link rel="stylesheet" href="{% static 'css/tagsinput.css' %}">
 {% endblock %}
 
 {% block home_banner %} {% endblock %}
@@ -97,9 +98,9 @@
 <div id="tags" style="display:none;"></div>
 
 {% endblock %}
-
 {% block extra_js %}
 <script type="text/javascript" src="{% static 'js/typeahead.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/tagsinput.js' %}"></script>
 <script type="text/javascript">
     $(function() {
         var tags = new Bloodhound({
