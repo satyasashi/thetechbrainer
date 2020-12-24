@@ -191,7 +191,7 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
                         </thead>
                         <tbody>
                             {% for row in blogs_for_moderation %}
-                                <tr>
+                                <tr id="row{{row.id}}">
                                     <td>
                                         <a href="{% url 'blog:preview_blog' id=row.id blog_slug=row.blog_slug %}">
                                             <strong>{{ row.blog_title }}</strong>
@@ -604,8 +604,23 @@ background-image: linear-gradient(-90deg, #539ebb, #808FC8);
             type: "POST",
             success: function(result) {
                 if(result.status == "success") {
-                    window.location.href = "{% url 'user:index' %}";
+                    // window.location.href = "{% url 'user:index' %}";
+                    $("#row"+id).hide();
+                    $.toast({
+                      title: result.title,
+                      content: result.toast_message,
+                      type: result.response_type,
+                      delay: 3000
+                    });
                 }
+            },
+            error: function(err) {
+                $.toast({
+                  title: err.title,
+                  content: err.toast_message,
+                  type: err.response_type,
+                  delay: 3000
+                });
             }
         });
     }

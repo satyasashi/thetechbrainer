@@ -140,7 +140,7 @@ def edit_blog(request, id, slug):
     moderator_group = Group.objects.get(name='moderator')
     if request.user.groups.filter(name=author_group).exists() or request.user.groups.filter(name=moderator_group).exists():
         post = get_object_or_404(BlogPost, pk=id)
-        
+
         try:
             post = BlogPost.objects.get(pk=id)
             print(post.submitted_for_moderation)
@@ -154,6 +154,8 @@ def edit_blog(request, id, slug):
                     post = form.save(commit=False)
                     post.preview = True
                     post.draft = True
+                    post.moderator_accepted = False
+                    post.published = False
                     post.save()
                     # for tags to save use 'save_m2m'
                     form.save_m2m()
@@ -406,6 +408,10 @@ def submit_for_moderation(request):
                 blog.preview = True
                 blog.draft = False
                 blog.submitted_for_moderation = True
+
+                # set as details related to blog acceptance False
+                blog.moderator_accepted = False
+                blog.published = False
                 blog.save()
                 messages.success(request, "Your blog has been submitted for moderation.")
                 return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
@@ -452,8 +458,11 @@ def accept_and_publish(request, id):
         check_author_of_blog.published = True
         check_author_of_blog.save()
 
-        messages.success(request, "Blog has been successfully published.")
-        return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
+        return JsonResponse({
+            "status": "success",
+            "title": "Success",
+            "toast_message": "Published successfully"
+            }, status=200)
 
     if request.method == "POST" and request.is_ajax() and request.user.groups.filter(name=moderator_group).exists():
         # blog_id = request.POST.get("blog_id")
@@ -468,9 +477,24 @@ def accept_and_publish(request, id):
                 blog_post.save()
 
                 messages.success(request, "Blog has been successfully published.")
-                return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
+                return JsonResponse({
+                    "status": "success",
+                    "title": "Success",
+                    "toast_message": "Published successfully",
+                    "response_type": "success"
+                    }, status=200)
         except BlogPost.DoesNotExist:
-            return JsonResponse({"status": "failure"}, status=400)
+            return JsonResponse({
+                "status": "failure",
+                "title": "Oops",
+                "toast_message": "Something is wrong.",
+                "response_type": "error"
+                }, status=400)
     else:
         # messages.success(request, "Blog has been successfully published.")
-        return JsonResponse({"status": "failure"}, status=400)
+        return JsonResponse({
+            "status": "failure",
+            "title": "Oops",
+            "toast_message": "Something is wrong.",
+            "response_type": "error"
+            }, status=400)
