@@ -335,6 +335,19 @@ def blog_detail(request, id, slug):
         blog = get_object_or_404(BlogPost, id=id)
         if blog and blog.moderator_accepted and blog.published:
             context = {'blog': blog}
+            try:
+                prev_blog = BlogPost.objects.get(id=int(id)-1)
+            except BlogPost.DoesNotExist:
+                prev_blog = None
+
+            try:
+                next_blog = BlogPost.objects.get(id=int(id)+1)
+            except BlogPost.DoesNotExist:
+                next_blog = None
+
+            context["prev_blog"] = prev_blog
+            context["next_blog"] = next_blog
+            print("abc", prev_blog, next_blog)
             authorProfile = blog.blog_author
             likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
 

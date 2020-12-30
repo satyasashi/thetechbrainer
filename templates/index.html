@@ -52,6 +52,45 @@
                 </div>
             </div> <!-- End of left side blogs list container -->
         </div>
+        <div class="row pagination-div">
+            <div class="col-md-3 col-sm-6 mx-auto">
+                {% if blogs.has_other_pages %}
+                <ul class="pagination">
+                    {% if blogs.has_previous %}
+                        <li class="page-item">
+                            <a href="?page={{ blogs.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">
+                                <i class="arrow-left">Previous</i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><a href="#!" class="page-link"><i class="arrow-left">Previous</i></a></li>
+                    {% endif %}
+                    {% for num in blogs.paginator.page_range %}
+                        {% if blogs.number == num %}
+                            <li class="page-item active"><a href="#!" class="page-link">{{ num }}</a></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">
+                                    {{ num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if blogs.has_next %}
+                        <li class="page-item">
+                            <a href="?page={{ blogs.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">
+                                <i class="arrow-right">Next</i></a></li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a href="#!" class="page-link">
+                                <i class="arrow-right">Next</i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
       </div>
 
   </div>
