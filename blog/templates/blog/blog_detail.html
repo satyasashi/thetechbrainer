@@ -452,6 +452,42 @@
       </a>
       {% endif %}
 
+      <div class="row">
+          <div class="col-md-8 mx-auto">
+              <div class="float-left">
+                  {% if prev_blog %}
+                  <a href="{% url 'blog:blog_detail' id=prev_blog.id slug=prev_blog.blog_slug %}">
+                      <button type="button" name="prev" class="btn btn-outline-primary">
+                          <i class="fa fa-backward"></i> Previous
+                      </button>
+                  </a>
+                  {% else %}
+                  <a href="#!">
+                      <button type="button" name="prev" class="btn btn-outline-primary" disabled>
+                          <i class="fa fa-backward"></i> Previous
+                      </button>
+                  </a>
+                  {% endif %}
+              </div>
+
+              <div class="float-right">
+                  {% if next_blog %}
+                  <a href="{% url 'blog:blog_detail' id=next_blog.id slug=next_blog.blog_slug %}">
+                      <button type="button" name="next" class="btn btn-outline-primary">
+                          Next <i class="fa fa-forward"></i>
+                      </button>
+                  </a>
+                  {% else %}
+                  <a href="#!">
+                      <button type="button" name="next" class="btn btn-outline-primary" disabled>
+                          Next <i class="fa fa-forward"></i>
+                      </button>
+                  </a>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+
       {% if blog.blog_author.user.id == request.user.id and request.user.is_authenticated%}
       <div class="col-md-8 mx-auto">
         <div class="alert alert-dark">

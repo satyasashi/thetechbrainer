@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, Group
 from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
 from user.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from django.db.models import Q
 
@@ -22,7 +23,25 @@ def validate_author_exist_or_not(author_id):
 
 
 def index(request):
-    blogs = BlogPost.objects.filter(published=True, moderator_accepted=True, preview=False, draft=False)
+    blogs = BlogPost.objects.filter(
+        published=True, moderator_accepted=True,
+        preview=False, draft=False
+        )
+    query = request.GET.get('q')
+    if query:
+        blogs = BlogPost.objects.filter(
+            published=True, moderator_accepted=True,
+            preview=False, draft=False
+        )
+
+    paginator = Paginator(blogs, 6)  # 3 blogs per page.
+    page = request.GET.get('page')
+    try:
+        blogs = paginator.page(page)
+    except PageNotAnInteger:
+        blogs = paginator.page(1)
+    except EmptyPage:
+        blogs = paginator.page(paginator.num_pages)
 
     return render(request, "index.html", context={'blogs': blogs})
 

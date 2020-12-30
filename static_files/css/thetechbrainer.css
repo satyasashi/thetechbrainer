@@ -110,6 +110,10 @@ blockquote > p > cite {
      z-index: 100;
 }
 
+.pagination-div {
+    margin-top: 15px;
+}
+
 .outer-div:hover .layer-icon {
      display: block;
 }
@@ -254,6 +258,21 @@ blockquote > p > cite {
 .alert-danger, .alert-error {
   background-color: #d35454;
   border: 0px;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:disabled {
+    color: #b5b5b3;
+    border: 1px solid #ccc;
+}
+
+.btn-outline-primary:hover:enabled {
+    background-color: #007bff;
 }
 
 /* horizontal rule */
@@ -918,6 +937,10 @@ footer ul li a, footer ul li a:hover {
   .blog-body {
       width: 100%;
       font-size: 15px;
+  }
+
+  .table {
+    font-size: 12px;
   }
 
   #acceptAndPublishCheckBtn {
