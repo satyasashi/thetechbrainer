@@ -26,7 +26,7 @@ def index(request):
     blogs = BlogPost.objects.filter(
         published=True, moderator_accepted=True,
         preview=False, draft=False
-        )
+        ).order_by("-created_on")
     query = request.GET.get('q')
     if query:
         blogs = BlogPost.objects.filter(
