@@ -98,6 +98,10 @@ TEMPLATES = [
             'context_processors': [
                 'blog.processors.get_recent_posts_side_box',
                 'blog.processors.check_if_moderator_has_notifications',
+                # for Google analytics
+                'blog.processors.ga_tracking_id',
+                'blog.processors.use_ga',
+                # for Google analytics -- End
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -181,7 +185,7 @@ IMG_SMALL = (140, 98)
 
 SITE_ID = 1
 
-#AUTH_USER_MODEL = 'account.Account'
+# AUTH_USER_MODEL = 'account.Account'
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = '/'
@@ -209,6 +213,11 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+# ga tracking
+USE_GA = get_secret_key('DJANGO_USE_GA')
+
+GA_TRACKING_ID = get_secret_key("GA_TRACKING_ID")
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
