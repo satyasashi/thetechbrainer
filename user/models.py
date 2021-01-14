@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from blog.models import BlogPost
 
 
 # Create your models here.
@@ -88,16 +89,19 @@ class UserBookmarks(models.Model):
         return self.user
 
 
-# class Notifications(models.Model):
-#     """Stores User's Notifications"""
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     title = models.CharField(max_length=100)
-#     read = models.BooleanField(default=False)
-#     created_on = models.DateTimeField(auto_now_add=True)
-#
-#     class Meta:
-#         verbose_name = "Notification"
-#         verbose_name_plural = "Notifications"
-#
-#     def __str__(self):
-#         return self.user
+class Notifications(models.Model):
+    """Stores User's Notifications"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    read = models.BooleanField(default=False)
+    url = models.URLField(blank=True, null=True)
+    # blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    notify = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notify_author")
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+
+    def __str__(self):
+        return self.title

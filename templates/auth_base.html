@@ -15,15 +15,11 @@
         <!-- Font awesome -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-7HZT37TDCJ"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-7HZT37TDCJ');
-        </script>
+        {% block ga %}
+            {% if use_ga %}
+              {% include "snippets/ga.html" with ga_tracking_id=ga_tracking_id %}
+            {% endif %}
+        {% endblock ga %}
 
         <title>
             {% block title %}{% endblock %} | Thetechbrainer
