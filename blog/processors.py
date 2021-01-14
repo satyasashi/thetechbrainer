@@ -1,5 +1,4 @@
 from blog.models import BlogPost
-from user.models import Notifications
 from django.conf import settings
 
 
@@ -24,13 +23,3 @@ def ga_tracking_id(request):
 
 def use_ga(request):
     return {'use_ga': settings.USE_GA}
-
-
-def new_notifications(request):
-    if request.user.is_authenticated:
-        notifications = Notifications.objects.filter(notify=request.user)
-        unread_notifications = Notifications.objects.filter(notify=request.user, read=False)
-
-        return {"all_notifications": notifications, "unread_notifications": unread_notifications}
-    else:
-        return {}
