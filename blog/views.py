@@ -179,6 +179,15 @@ def bookmark_blogpost(request, id):
                 bookmark = UserBookmarks.objects.create(user=request.user, blog_post=blog_post)
                 bookmark.save()
                 bookmark_status = 1
+
+                # Add to notification
+                notification = Notifications.objects.create(
+                    user=request.user,
+                    title="{} has bookmarked your blog post.".format(request.user.username),
+                    url=reverse("blog:blog_detail", kwargs={"id": bookmark.blog_post.id, "slug": bookmark.blog_post.blog_slug}),
+                    notify=bookmark.blog_post.blog_author
+                    )
+                notification.save()
         except Exception as e:
             if e:
                 bookmark_status = 0

@@ -94,7 +94,7 @@ class Notifications(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     read = models.BooleanField(default=False)
-    url = models.URLField()
+    url = models.URLField(blank=True, null=True)
     # blog_post = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
     notify = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notify_author")
     created_on = models.DateTimeField(auto_now_add=True)

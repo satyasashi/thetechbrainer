@@ -55,7 +55,6 @@ def about(request):
 
 def follow(request):
     if request.is_ajax() and request.user.is_authenticated:
-        print("Authenticated user")
         author = validate_author_exist_or_not(request.POST.get('author_id'))
         author = User.objects.get(username=author)
         follows = False
@@ -73,7 +72,6 @@ def follow(request):
                         context["follow_obj"] = userfollowObj
                         context["follows"] = follows
                     else:
-                        print("Else statement")
                         userfollowObj = follow_check[0]
                         userfollowObj.status = True
                         userfollowObj.save()
@@ -82,8 +80,7 @@ def follow(request):
                         notification = Notifications.objects.create(
                             user=request.user,
                             title="{} has followed you.".format(request.user.username),
-                            url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
-                            notify=blog_post.blog_author
+                            notify=author
                             )
                         notification.save()
 
@@ -92,15 +89,13 @@ def follow(request):
                         context["follows"] = follows
 
                 else:
-                    print("Following")
                     userfollowObj = UserFollowing.objects.create(user=request.user, following=author, status=True)
                     userfollowObj.save()
                     # Add to notification
                     notification = Notifications.objects.create(
                         user=request.user,
                         title="{} has followed you.".format(request.user.username),
-                        url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
-                        notify=blog_post.blog_author
+                        notify=author
                         )
                     notification.save()
                     
@@ -110,10 +105,9 @@ def follow(request):
 
             except Exception:
                 pass
-            print("Rendering")
             return render(request, "user/ajax/components.html", context)
         else:
-            print("error")
+            pass
     else:
         return JsonResponse({"error": "Sorry something went wrong. Please try later.", "authenticated": False}, status=300)
 
