@@ -98,6 +98,7 @@ TEMPLATES = [
             'context_processors': [
                 'blog.processors.get_recent_posts_side_box',
                 'blog.processors.check_if_moderator_has_notifications',
+                'blog.processors.new_notifications',
                 # for Google analytics
                 'blog.processors.ga_tracking_id',
                 'blog.processors.use_ga',

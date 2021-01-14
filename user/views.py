@@ -6,11 +6,12 @@ from .models import Profile, UserFollowing
 from django.contrib.auth.models import User, Group
 from toolbelt.utils import use_directory_path, banner_directory_path
 from blog.models import BlogPost, Category
-from user.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation
+from user.models import UserLikes, UserBookmarks, UserFollowing, PersonalInformation, Notifications
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from django.db.models import Q
 
+from datetime import datetime
 
 def validate_author_exist_or_not(author_id):
     try:
@@ -76,6 +77,16 @@ def follow(request):
                         userfollowObj = follow_check[0]
                         userfollowObj.status = True
                         userfollowObj.save()
+
+                        # Add to notification
+                        notification = Notifications.objects.create(
+                            user=request.user,
+                            title="{} has followed you.".format(request.user.username),
+                            url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
+                            notify=blog_post.blog_author
+                            )
+                        notification.save()
+
                         follows = userfollowObj.status
                         context["follow_obj"] = userfollowObj
                         context["follows"] = follows
@@ -84,6 +95,15 @@ def follow(request):
                     print("Following")
                     userfollowObj = UserFollowing.objects.create(user=request.user, following=author, status=True)
                     userfollowObj.save()
+                    # Add to notification
+                    notification = Notifications.objects.create(
+                        user=request.user,
+                        title="{} has followed you.".format(request.user.username),
+                        url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
+                        notify=blog_post.blog_author
+                        )
+                    notification.save()
+                    
                     follows = userfollowObj.status
                     context["follow_obj"] = userfollowObj
                     context["follows"] = follows
@@ -313,3 +333,37 @@ def moderator_dashboard(request):
                 })
     except Profile.DoesNotExist:
         return redirect("user:pagenotfound")
+
+
+@login_required
+def notifications(request):
+    unread_notifications = Notifications.objects.filter(read=False, notify=request.user)
+    read_notifications = Notifications.objects.filter(read=True, notify=request.user)
+    return render(request, "user/notifications.html", context={
+        "unread_notifications": unread_notifications,
+        "read_notifications": read_notifications
+        })
+
+
+@login_required
+def mark_as_read(request):
+    if request.is_ajax() and request.method == "POST":
+        notification_id = request.POST.get("notification_id")
+        try:    
+            notification_obj = Notifications.objects.get(id=notification_id)
+
+            # set to read
+            notification_obj.read = True
+            notification_obj.save()
+            return JsonResponse({
+                "status": "success", 
+                "notification_title": notification_obj.title,
+                "url": notification_obj.url,
+                "timestamp": datetime.strftime(notification_obj.created_on, "%d %b, %Y")
+                }, status=200)
+
+        except Notifications.DoesNotExist as e:
+            return JsonResponse({"status": "failure"}, status=400)
+    else:
+        return JsonResponse({"status": "failure"}, status=400)
+

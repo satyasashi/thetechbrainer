@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static customtags crispy_forms_tags %}
+
+{% block title %} User Notifications {% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/toast.min.css' %}">
+{% endblock %}
+
+{% block home_banner %} {% endblock %}
+
+{% block content %}
+  <div class="container oc-screen interests-div">
+    <h1 class="text-center blog-category-page-heading">Notifications.</h1>
+    <p class="text-center">You'll see all your notifications here.</p>
+
+    {% if messages %}
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          {% for msg in messages %}
+          <div class="alert alert-{{msg.level_tag}} custom-messages" role="alert">
+              {{msg.message}}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row" id="checkboxes">
+      {% if unread_notifications %}
+      	{% for notification in unread_notifications %}
+			<div class="col-md-10 mx-auto unread-notification-div" id="unread{{notification.id}}">
+		      <a href="{{notification.url}}" class="float-left">
+					<p class="unread-notification-title">
+						{{notification.title}}
+					</p>
+		      </a>
+		      <div class="float-right" id="markasread{{notification.id}}">
+				<a href="#!" class="mark-as-read" id="{{notification.id}}">
+					<i class="fa fa-check-circle-o"></i><small> Mark As Read</small>
+				</a>
+				{{notification.created_on|date:"M d, Y"}}
+		      </div>
+			</div>
+      	{% endfor %}
+      {% endif %}
+
+      {% if read_notifications %}
+		{% for notification in read_notifications %}
+		<div class="col-md-10 mx-auto read-notification-div" id="read{{notification.id}}">
+		  <a href="{{notification.url}}" class="float-left">
+			<p class="read-notification-title">{{notification.title}}</p>
+		  </a>
+		  <div class="float-right">
+			<p class="pt-1 mb-0">
+				{{notification.created_on|date:"M d, Y"}}
+			</p>
+		  </div>
+		</div>
+		{% endfor %}
+	{% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script type="text/javascript">
+	$(".mark-as-read").on("click", function() {
+		nId = this.id;
+		$.ajax({
+			url: "{% url 'user:mark_as_read' %}",
+			data: {"csrfmiddlewaretoken": "{{csrf_token}}", "notification_id": nId},
+			type: "POST",
+			dataType: "json",
+			success: function(result) {
+				if(result) {
+					$(".mark-as-read#"+nId).hide();
+					$("#unread"+nId).removeClass("unread-notification-div").addClass("read-notification-div");
+				}
+			}
+		});
+	});
+</script>
+{% endblock %}
