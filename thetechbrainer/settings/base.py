@@ -98,10 +98,6 @@ TEMPLATES = [
             'context_processors': [
                 'blog.processors.get_recent_posts_side_box',
                 'blog.processors.check_if_moderator_has_notifications',
-                # for Google analytics
-                'blog.processors.ga_tracking_id',
-                'blog.processors.use_ga',
-                # for Google analytics -- End
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',

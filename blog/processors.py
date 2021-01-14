@@ -1,5 +1,4 @@
 from blog.models import BlogPost
-from django.conf import settings
 
 
 def get_recent_posts_side_box(request):
@@ -15,11 +14,3 @@ def check_if_moderator_has_notifications(request):
         return {"author_waiting_for_publish": True}
     else:
         return {"author_waiting_for_publish": False}
-
-
-def ga_tracking_id(request):
-    return {'ga_tracking_id': settings.GA_TRACKING_ID}
-
-
-def use_ga(request):
-    return {'use_ga': settings.USE_GA}
