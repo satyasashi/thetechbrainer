@@ -27,24 +27,30 @@
         {% if request.user.is_authenticated %}
           <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+
               {% if author_waiting_for_publish and request.user|has_group:"moderator" %}
               <i class="moderator-notification" data-toggle="tooltip" data-placement="bottom" title="{% if author_waiting_for_publish %}New Notification{% endif %}"></i>
               {% endif %}
+
               {% if unread_notifications %}
               <i class="blog-notification" data-toggle="tooltip" data-placement="bottom" title="{% if new_notifications %}New Notification{% endif %}"></i>
               {% endif %}
+
             {{request.user.username|title}}
           </a>
           <div class="dropdown-menu">
               {% if request.user.is_authenticated %}
                 {% if all_notifications %}
                 <a class="dropdown-item new_notifications" href="{% url 'user:notifications' %}">
+                  
                   <i class="fa fa-bell"></i>&nbsp;View Notifications
                   {% if unread_notifications %}
                   <i class="blog-notification" data-toggle="tooltip" data-placement="bottom" title="{% if new_notifications %}New Notification{% endif %}"></i>
                   {% endif %}
+
                 </a>
                 {% endif %}
+
                 {% if request.user|has_group:"moderator" %}
                 <a class="dropdown-item" href="{% url 'user:moderator_dashboard' %}">
                     <i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;Dashboard
