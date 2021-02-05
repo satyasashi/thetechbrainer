@@ -493,14 +493,16 @@ def awaiting_moderation_blog_detail(request, id, slug):
 def accept_and_publish(request, id):
     moderator_group = Group.objects.get(name='moderator')
     # check if author of blog is moderator.
-    check_author_of_blog = BlogPost.objects.get(id=id)
-    if check_author_of_blog.blog_author.groups.filter(name=moderator_group).exists():
-        check_author_of_blog.preview = False
-        check_author_of_blog.draft = False
-        check_author_of_blog.moderator_accepted = True
-        check_author_of_blog.submitted_for_moderation = True
-        check_author_of_blog.published = True
-        check_author_of_blog.save()
+    blog_post = BlogPost.objects.get(id=id)
+    if blog_post.blog_author.groups.filter(name=moderator_group).exists():
+        blog_post.preview = False
+        blog_post.draft = False
+        blog_post.moderator_accepted = True
+        blog_post.submitted_for_moderation = True
+        if blog_post.published is False:
+            blog_post.created_on = datetime.datetime.now()
+        blog_post.published = True
+        blog_post.save()
 
         return JsonResponse({
             "status": "success",
@@ -517,6 +519,8 @@ def accept_and_publish(request, id):
                 blog_post.draft = False
                 blog_post.moderator_accepted = True
                 blog_post.submitted_for_moderation = True
+                if blog_post.published is False:
+                    blog_post.created_on = datetime.datetime.now()
                 blog_post.published = True
                 blog_post.save()
 
