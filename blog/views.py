@@ -122,7 +122,7 @@ def save_blog_and_show_preview(request):
                 messages.success(request, "Your blog is now saved as draft, check your drafts to publish.")
                 return redirect("blog:preview_blog", id=blog_post.id, blog_slug=blog_post.blog_slug)
             else:
-                messages.errors(request, "Something went wrong. Please make sure all fields are valid.")
+                messages.error(request, "Something went wrong. Please make sure all fields are valid.")
                 return redirect("blog:write_new_blog")
         else:
             return redirect("blog:write_new_blog")
