@@ -286,7 +286,6 @@ def unfollow_author(request):
                 check_if_no_followers = True if len(UserFollowing.objects.filter(user=request.user)) > 0 else False
                 return JsonResponse({"status": "success", "is_still_following": check_if_no_followers,  "title": "Success!", "toast_message": "Successfully Unfollowed Author", "response_type": "success"}, status=200)
         except Exception as e:
-            print(e)
             return JsonResponse({"title": "Oops!", "toast_message": "Something went wrong. Please try later.", "response_type": "failure"}, status=400)
     else:
         return JsonResponse({"title": "Oops!", "toast_message": "Something went wrong. Please try later.", "response_type": "failure"}, status=400)
