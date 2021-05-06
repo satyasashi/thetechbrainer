@@ -2,12 +2,78 @@
 
 {% load i18n crispy_forms_tags %}
 
+{% load account socialaccount %}
+
 {% block title %}{% trans "Sign In" %}{% endblock %}
+
+{% block extra_css %}
+<style type="text/css">
+  /* add appropriate colors to fb, twitter and google buttons */
+  .fb {
+    background-color: #3B5998;
+    color: white;
+  }
+
+  .twitter {
+    background-color: #55ACEE;
+    color: white;
+  }
+
+  .google {
+    background-color: #dd4b39;
+    color: white;
+  }
+
+  .fb:hover {
+    background-color: #324e8a;
+    color: #ccc;
+  }
+
+  .twitter:hover {
+    background-color: #489fe0;
+    color: #ccc;
+  }
+
+  .google:hover {
+    background-color: #d1402e;
+    color: #ccc;
+  }
+
+  #socialLoginIcons {
+    list-style: none;
+  }
+
+  #socialLoginIcons > li {
+    padding: 10px 0px;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container oc-screen">
-  <div class="col-md-12">
-    <div class="col-md-6 col-sm-8 col-10 mx-auto">
+  <div class="row">
+    <div class="col-md-6 col-12 center">
+      <div style="width: 50%; margin:0 auto;">
+        <ul class="list-group" id="socialLoginIcons">
+        <li class="list-item">
+          <a href="#" class="fb btn">
+            <i class="fa fa-facebook fa-fw"></i> Login with Facebook
+          </a>
+        </li>
+        <li class="list-item">
+          <a href="#" class="twitter btn">
+            <i class="fa fa-twitter fa-fw"></i> Login with Twitter
+          </a>
+        </li>
+        <li class="list-item">
+          <a href="/accounts/google/login/?process=login" class="google btn">
+            <i class="fa fa-google fa-fw"> </i> Login with Google+
+          </a>
+        </li>
+      </ul>
+      </div>
+    </div>
+    <div class="col-md-6 col-12">
       <h1>{% trans "Sign In" %}</h1>
       {% if messages %}
 
