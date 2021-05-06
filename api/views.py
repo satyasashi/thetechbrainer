@@ -19,4 +19,4 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
 	"""Retreive specific item or Destroy specific item"""
 	queryset = BlogPost.objects.all()
 	serializer_class = PostSerializer
-	permission_classes = [IsAuthorOrReadOnly]
+	permission_classes = [IsAuthorOrReadOnly, permissions.IsAuthenticatedOrReadOnly]

@@ -21,8 +21,9 @@ class PostSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
 			'blog_title', 
 			'blog_subtitle', 
 			'banner_image', 
-			'banner_image_source', 
+			'banner_image_source',
+			'content',
 			'blog_category', 
-			'blog_tags', 
+			'blog_tags',
 			'published'
 			)
