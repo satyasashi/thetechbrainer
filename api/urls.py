@@ -6,7 +6,7 @@ app_name = "api"
 
 urlpatterns = [
     path('', PostList.as_view(), name="api_bloglist"),
-    path('<int:pk>/', PostDetail.as_view(), name="api_blogdetail"),
+    path('post/<int:pk>/', PostDetail.as_view(), name="api_blogdetail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

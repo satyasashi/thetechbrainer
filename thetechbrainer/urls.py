@@ -25,7 +25,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('user.urls')),
     path('blog/', include('blog.urls')),
-    path('api/', include('api.urls')),
+    path('api/v1.0/', include('api.urls')),
     path('ckeditor/', include(
         'ckeditor_uploader.urls')),
     path('api-auth/', include('rest_framework.urls')),
