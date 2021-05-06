@@ -67,11 +67,16 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_framework',
     'crispy_forms',
+    'taggit_serializer',
+
     # 'thumbnails',
     'ckeditor',
     'ckeditor_uploader',
     'taggit',
     # 'blacklist'
+
+    # DRF API
+    'api',
 
     # providers
     # 'allauth.socialaccount.providers.google',
@@ -213,6 +218,16 @@ AUTHENTICATION_BACKENDS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
+
+
+# DRF API Related Stuff
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 LANGUAGE_CODE = 'en-us'
 

@@ -110,6 +110,10 @@ blockquote > p > cite {
      z-index: 100;
 }
 
+.pagination-div {
+    margin-top: 15px;
+}
+
 .outer-div:hover .layer-icon {
      display: block;
 }
@@ -254,6 +258,21 @@ blockquote > p > cite {
 .alert-danger, .alert-error {
   background-color: #d35454;
   border: 0px;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:disabled {
+    color: #b5b5b3;
+    border: 1px solid #ccc;
+}
+
+.btn-outline-primary:hover:enabled {
+    background-color: #007bff;
 }
 
 /* horizontal rule */
@@ -472,6 +491,39 @@ blockquote > p > cite {
     color: #fff;
 }
 
+.new_notifications, .new_notifications:hover {
+  background-color: #dce2fc;
+}
+
+.mark-as-read {
+  text-decoration: none;
+}
+
+.unread-notification-div {
+  background-color: #f2f2f2;
+}
+
+.unread-notification-div > a, .read-notification-div > a {
+  text-decoration: none;
+}
+
+.unread-notification-title, .read-notification-title {
+  color: #3e8ead;
+  font-size: 14px;
+  padding: 4px;
+  margin: 0px;
+}
+
+.old-notifications-div {
+  margin-top: 15px;
+}
+
+.read-notification-div {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border: 1px solid #f7f7f7;
+}
+
 .dropdown-menu {
     border-radius: 0px !important;
     min-width: 15rem !important;
@@ -611,6 +663,29 @@ blockquote > p > cite {
     width: 10px;
     cursor: pointer;
     background-color: #799aed;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.blog-notification-nav-button {
+    position: absolute;
+    top:0;
+    left:0;
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #ff0000;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.blog-notification {
+    margin-left: 5px;
+    height: 10px;
+    width: 10px;
+    cursor: pointer;
+    background-color: #ff0000;
     border-radius: 50%;
     display: inline-block;
 }
@@ -888,11 +963,11 @@ footer ul li a, footer ul li a:hover {
   }
 
   .banner-heading {
-      font-size: 25px;
+      font-size: 20px;
   }
 
   .banner-subtitle {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .banner-desc {
@@ -918,6 +993,10 @@ footer ul li a, footer ul li a:hover {
   .blog-body {
       width: 100%;
       font-size: 15px;
+  }
+
+  .table {
+    font-size: 12px;
   }
 
   #acceptAndPublishCheckBtn {

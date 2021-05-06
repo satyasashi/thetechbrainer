@@ -100,7 +100,7 @@ class BlogPost(models.Model):
     blog_title = models.CharField(max_length=100, help_text="Keep titles short.")
     blog_subtitle = models.CharField(max_length=150, help_text="Short line for subtitle.")
     blog_slug = models.SlugField(blank=True, max_length=500, help_text="Slug will be automatically generated.")
-    banner_image = models.ImageField()
+    banner_image = models.ImageField(blank=True)
     banner_image_source = models.CharField(max_length=50, default="")
     content = RichTextUploadingField(blank=True, null=True)
 
@@ -117,6 +117,7 @@ class BlogPost(models.Model):
 
     class Meta:
         db_table = "blog_post"
+        ordering = ['-id']
         unique_together = ("id", "blog_slug")
 
     def filename(self):
