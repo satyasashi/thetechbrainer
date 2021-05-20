@@ -138,11 +138,9 @@ class BlogPost(models.Model):
         img_thumbnail_path = get_user_directory_thumbnail_path(self.blog_author.id, self.banner_image)
         try:
             img.save(img_thumbnail_path)
-            print("Image Thumbnail saved")
         except FileNotFoundError:
             os.makedirs(settings.MEDIA_ROOT+"/user_{}/banners/thumbnails/".format(self.blog_author.id))
             img.save(img_thumbnail_path)
-            print("Created thumbnails folder.")
 
     def __str__(self):
         return self.blog_title
