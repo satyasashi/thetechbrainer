@@ -43,6 +43,21 @@ href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.
 
 <div class="container oc-screen newblog-container">
   <div class="row">
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
     <div class="col-md-8 mx-auto">
       <h1 class="text-center">Edit Blog Post</h1>
       <form method="post" name="editPostForm" action="{% url 'blog:edit_blog_post' id=post.id slug=post.blog_slug %}" id="editPostForm" enctype="multipart/form-data">
@@ -74,7 +89,7 @@ href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.2/build/styles/dracula.
             </div>
 
             <div class="form-group">
-              {{ edit_form.blog_tags|as_crispy_field }}
+              <input type="text" name="blog_tags" class="form-control" data-role="tagsinput" required id="id_blog_tags" value="{{edit_form.blog_tags.value|get_tags}}">
             </div>
 
             <div class="col-* alert alert-dark">
