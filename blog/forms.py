@@ -33,7 +33,30 @@ class BlogPostForm(forms.ModelForm):
 
     def clean_blog_tags(self):
         blog_tags = self.cleaned_data["blog_tags"]
-        print("BLOG TAGS Cleaned Data: ", blog_tags)
+        if len(blog_tags) > 0:
+            blog_tags = blog_tags.split(",")
+            return blog_tags
+
+
+class BlogEditForm(BlogPostForm):
+    class Meta:
+        model = BlogPost
+        widgets = {
+        'banner_image': forms.ClearableFileInput(attrs={'class': 'save'}),
+        }
+        exclude = ('blog_author', 'blog_slug', 'created_on', 'updated_on', 'moderator_accepted', 'published', 'draft', 'preview')
+
+
+    def clean_blog_category(self):
+        category = self.cleaned_data["blog_category"]
+        try:
+            category = Category.objects.get(id=category)
+            return category
+        except Exception:
+            return None
+
+    def clean_blog_tags(self):
+        blog_tags = self.cleaned_data["blog_tags"]
         if len(blog_tags) > 0:
             blog_tags = blog_tags.split(",")
             return blog_tags

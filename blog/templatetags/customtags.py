@@ -24,3 +24,9 @@ def follows_author(user, author):
 
     except UserFollowing.DoesNotExist:
         return False
+
+
+@register.filter(name="get_tags")
+def get_tags(tags):
+	good_tags = [t.name for t in tags]
+	return ",".join(good_tags)

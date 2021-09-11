@@ -10,7 +10,7 @@ from django.contrib.auth.models import User, Group
 from django.utils.text import slugify
 from django.urls import reverse
 
-from .forms import BlogPostForm
+from .forms import BlogPostForm, BlogEditForm
 
 import re
 import json
@@ -90,7 +90,7 @@ def write_new_blog(request):
 
         context = {
             "new_blog_form": new_blog_form,
-            "user_profile": userProfile,
+            "user_profile": userProfile
         }
 
         return render(request, "blog/write_blog.html", context)
@@ -144,7 +144,7 @@ def edit_blog(request, id, slug):
 
         if post.blog_author == request.user:
             if request.method == "POST":
-                form = BlogPostForm(request.POST, request.FILES, instance=post)
+                form = BlogEditForm(request.POST, request.FILES, instance=post)
                 if form.is_valid():
                     post = form.save(commit=False)
                     post.preview = True
@@ -156,8 +156,11 @@ def edit_blog(request, id, slug):
                     form.save_m2m()
                     messages.success(request, "Your blog is successfully updated.")
                     return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+                else:
+                    return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
+                    
             else:
-                edit_form = BlogPostForm(instance=post)
+                edit_form = BlogEditForm(instance=post)
                 return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
         else:
             return redirect("user:pagenotfound")
