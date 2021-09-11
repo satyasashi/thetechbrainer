@@ -104,10 +104,11 @@ TEMPLATES = [
             'context_processors': [
                 'blog.processors.get_recent_posts_side_box',
                 'blog.processors.check_if_moderator_has_notifications',
+                'blog.processors.current_date',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
@@ -205,7 +206,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
-ACCOUNT_USERNAME_BLACKLIST = ["admin", "root", "test", "administrator", "moderator", "editor", "author"]
+ACCOUNT_USERNAME_BLACKLIST = ["admin", "root", "test",
+                              "administrator", "moderator", "editor", "author"]
 ACCOUNT_USERNAME_MIN_LENGTH = 2
 
 
@@ -248,7 +250,7 @@ TAGGIT_TAGS_FROM_STRING = "blog.utils.comma_splitter"
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'static_files')
+    os.path.join(BASE_DIR, 'static_files')
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
