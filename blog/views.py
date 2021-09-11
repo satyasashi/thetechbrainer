@@ -1,20 +1,20 @@
+import re
+import json
+import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import BlogPost, Category, BlogRequest, MyCustomTag
-from taggit.models import Tag
 
 from django.http import JsonResponse
-from user.models import Profile, UserBookmarks, UserFollowing, UserLikes, Notifications
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.utils.text import slugify
 from django.urls import reverse
+from taggit.models import Tag
 
+from .models import BlogPost, Category, BlogRequest, MyCustomTag
 from .forms import BlogPostForm, BlogEditForm
-
-import re
-import json
-import datetime
+from user.models import Profile, UserBookmarks, UserFollowing, UserLikes, Notifications
 
 
 # views here
@@ -32,7 +32,8 @@ def blog_search(request):
                 messages.error(request, "No Speacial Characters Are Allowed.")
                 return render(request, "blog/search-results.html", context={"messages": messages})
             else:
-                blogs = BlogPost.objects.filter(blog_title__icontains=search_text)
+                blogs = BlogPost.objects.filter(
+                    blog_title__icontains=search_text)
                 if len(blogs) > 0:
                     context['blogs'] = blogs
                 else:
@@ -53,7 +54,8 @@ def preview_blog(request, id, blog_slug):
     if (request.user.groups.filter(name=author_group).exists()) or (request.user.groups.filter(name=moderator_group).exists()):
         if id and blog_slug:
             try:
-                preview_blog = BlogPost.objects.get(id=id, blog_slug=blog_slug, preview=True)
+                preview_blog = BlogPost.objects.get(
+                    id=id, blog_slug=blog_slug, preview=True)
                 context = {"blog": preview_blog}
 
                 if preview_blog.submitted_for_moderation is True:
@@ -119,10 +121,12 @@ def save_blog_and_show_preview(request):
                 blog_post.save()
                 # for tags to save use 'save_m2m'
                 blogpostform.save_m2m()
-                messages.success(request, "Your blog is now saved as draft, check your drafts to publish.")
+                messages.success(
+                    request, "Your blog is now saved as draft, check your drafts to publish.")
                 return redirect("blog:preview_blog", id=blog_post.id, blog_slug=blog_post.blog_slug)
             else:
-                messages.error(request, "Something went wrong. Please make sure all fields are valid.")
+                messages.error(
+                    request, "Something went wrong. Please make sure all fields are valid.")
                 return redirect("blog:write_new_blog")
         else:
             return redirect("blog:write_new_blog")
@@ -154,11 +158,12 @@ def edit_blog(request, id, slug):
                     post.save()
                     # for tags to save use 'save_m2m'
                     form.save_m2m()
-                    messages.success(request, "Your blog is successfully updated.")
+                    messages.success(
+                        request, "Your blog is successfully updated.")
                     return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
                 else:
                     return redirect("blog:preview_blog", id=post.id, blog_slug=post.blog_slug)
-                    
+
             else:
                 edit_form = BlogEditForm(instance=post)
                 return render(request, "blog/edit_blog.html", context={"edit_form": edit_form, "post": post})
@@ -174,22 +179,26 @@ def bookmark_blogpost(request, id):
         bookmark_status = 0
 
         try:
-            bookmark_check = UserBookmarks.objects.filter(user=request.user, blog_post=blog_post)
+            bookmark_check = UserBookmarks.objects.filter(
+                user=request.user, blog_post=blog_post)
             if len(bookmark_check) > 0:
                 bookmark_status = 0
                 bookmark_check.delete()
             else:
-                bookmark = UserBookmarks.objects.create(user=request.user, blog_post=blog_post)
+                bookmark = UserBookmarks.objects.create(
+                    user=request.user, blog_post=blog_post)
                 bookmark.save()
                 bookmark_status = 1
 
                 # Add to notification
                 notification = Notifications.objects.create(
                     user=request.user,
-                    title="{} has bookmarked your blog post.".format(request.user.username),
-                    url=reverse("blog:blog_detail", kwargs={"id": bookmark.blog_post.id, "slug": bookmark.blog_post.blog_slug}),
+                    title="{} has bookmarked your blog post.".format(
+                        request.user.username),
+                    url=reverse("blog:blog_detail", kwargs={
+                                "id": bookmark.blog_post.id, "slug": bookmark.blog_post.blog_slug}),
                     notify=bookmark.blog_post.blog_author
-                    )
+                )
                 notification.save()
         except Exception as e:
             if e:
@@ -206,7 +215,8 @@ def like_blogpost(request, id):
         blog_post = BlogPost.objects.get(id=id)
 
         try:
-            like_check = UserLikes.objects.filter(user=request.user, blog=blog_post)
+            like_check = UserLikes.objects.filter(
+                user=request.user, blog=blog_post)
             like_status = False
             likes_count = None
 
@@ -216,7 +226,8 @@ def like_blogpost(request, id):
                 if like_check[0].status is True:
                     like_check[0].status = False
                     like_check[0].save()
-                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
+                    likes_count = UserLikes.objects.filter(
+                        blog=blog_post, status=True).count()
                     like_status = like_check[0].status
                 else:
                     like_check[0].status = True
@@ -224,48 +235,56 @@ def like_blogpost(request, id):
                     try:
                         notification = Notifications.objects.get(
                             user=request.user,
-                            url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
+                            url=reverse("blog:blog_detail", kwargs={
+                                        "id": blog_post.id, "slug": blog_post.blog_slug}),
                             notify=blog_post.blog_author
                         )
                         notification.read = False
                         notification.created_on = datetime.datetime.now()
                         notification.save()
-                    
+
                     except Notifications.DoesNotExist as e:
                         notification = Notifications.objects.create(
                             user=request.user,
-                            title="{} has liked your post.".format(request.user.username.title()),
-                            url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
+                            title="{} has liked your post.".format(
+                                request.user.username.title()),
+                            url=reverse("blog:blog_detail", kwargs={
+                                        "id": blog_post.id, "slug": blog_post.blog_slug}),
                             notify=blog_post.blog_author
-                            )
+                        )
                         notification.save()
 
-                    likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
+                    likes_count = UserLikes.objects.filter(
+                        blog=blog_post, status=True).count()
                     like_status = like_check[0].status
             else:
                 # Else create new record as User liked it.
-                like_obj = UserLikes.objects.create(user=request.user, blog=blog_post, status=True)
+                like_obj = UserLikes.objects.create(
+                    user=request.user, blog=blog_post, status=True)
                 like_obj.save()
-                likes_count = UserLikes.objects.filter(blog=blog_post, status=True).count()
+                likes_count = UserLikes.objects.filter(
+                    blog=blog_post, status=True).count()
                 like_status = like_obj.status
 
                 # Add to notification
                 notification = Notifications.objects.create(
                     user=request.user,
-                    title="{} has liked your post.".format(request.user.username),
-                    url=reverse("blog:blog_detail", kwargs={"id": blog_post.id, "slug": blog_post.blog_slug}),
+                    title="{} has liked your post.".format(
+                        request.user.username),
+                    url=reverse("blog:blog_detail", kwargs={
+                                "id": blog_post.id, "slug": blog_post.blog_slug}),
                     notify=blog_post.blog_author
-                    )
+                )
                 notification.save()
 
             return JsonResponse({
-                    "success": True,
-                    "status": like_status,
-                    "likes_count": likes_count,
-                    "title": "Success",
-                    "toast_message": "Updated Your Likes",
-                    "response_type": "success"
-                    }, status=200)
+                "success": True,
+                "status": like_status,
+                "likes_count": likes_count,
+                "title": "Success",
+                "toast_message": "Updated Your Likes",
+                "response_type": "success"
+            }, status=200)
         except Exception:
             return JsonResponse({"error": "Sorry something went wrong. Please try later."}, status=300)
     else:
@@ -292,7 +311,8 @@ def blog_request(request, category_id):
         # then redirect user to home page with success message.
         try:
             category = Category.objects.get(id=category_id)
-            check_blogreq_exists = BlogRequest.objects.filter(user=request.user, blog_category=category)
+            check_blogreq_exists = BlogRequest.objects.filter(
+                user=request.user, blog_category=category)
 
             # If record exist, update timestamp. Else create record.
             if len(check_blogreq_exists) > 0:
@@ -320,7 +340,8 @@ def blog_request(request, category_id):
 
 def filter_by_category(request, category_slug):
     context = {}
-    blogs_by_category = BlogPost.objects.filter(blog_category__category_slug=category_slug, moderator_accepted=True, published=True).order_by("-created_on")
+    blogs_by_category = BlogPost.objects.filter(
+        blog_category__category_slug=category_slug, moderator_accepted=True, published=True).order_by("-created_on")
 
     if len(blogs_by_category) > 0:
         context['category'] = blogs_by_category[0].blog_category
@@ -338,7 +359,8 @@ def filter_by_category(request, category_slug):
 
 
 def filter_by_author(request, id):
-    blogs_by_author = BlogPost.objects.filter(blog_author__id=id, moderator_accepted=True, published=True).order_by("-created_on")
+    blogs_by_author = BlogPost.objects.filter(
+        blog_author__id=id, moderator_accepted=True, published=True).order_by("-created_on")
     if len(blogs_by_author) > 0:
         return render(request, "blog/filter_by_author.html", context={"blogs": blogs_by_author, "author": blogs_by_author[0].blog_author})
     else:
@@ -348,7 +370,8 @@ def filter_by_author(request, id):
 
 def filter_by_tag(request, slug):
     context = {}
-    blogs_by_tag = BlogPost.objects.filter(blog_tags__slug=slug, moderator_accepted=True, published=True).order_by("-created_on")
+    blogs_by_tag = BlogPost.objects.filter(
+        blog_tags__slug=slug, moderator_accepted=True, published=True).order_by("-created_on")
     if len(blogs_by_tag) > 0:
         context['tag'] = MyCustomTag.objects.get(slug=slug)
         context['blogs'] = blogs_by_tag
@@ -383,12 +406,15 @@ def blog_detail(request, id, slug):
             context["prev_blog"] = prev_blog
             context["next_blog"] = next_blog
             authorProfile = blog.blog_author
-            likes_count = UserLikes.objects.filter(blog=blog, status=True).count()
+            likes_count = UserLikes.objects.filter(
+                blog=blog, status=True).count()
 
             if request.user.is_authenticated:
-                bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
+                bookmark = UserBookmarks.objects.filter(
+                    user=request.user, blog_post=blog)
                 like = UserLikes.objects.filter(user=request.user, blog=blog)
-                follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
+                follows_author = UserFollowing.objects.filter(
+                    user=request.user, following=authorProfile)
 
                 if len(follows_author) > 0 and follows_author[0].status is True:
                     context['follows_author'] = 1
@@ -460,7 +486,8 @@ def submit_for_moderation(request):
                 blog.moderator_accepted = False
                 blog.published = False
                 blog.save()
-                messages.success(request, "Your blog has been submitted for moderation.")
+                messages.success(
+                    request, "Your blog has been submitted for moderation.")
                 return JsonResponse({"status": "success", "redirect_to": "/"}, status=200)
             else:
                 return redirect("user:pagenotfound")
@@ -478,9 +505,12 @@ def awaiting_moderation_blog_detail(request, id, slug):
                 context = {'blog': blog, 'submitted_for_moderation': True}
                 authorProfile = blog.blog_author
                 if request.user.is_authenticated:
-                    bookmark = UserBookmarks.objects.filter(user=request.user, blog_post=blog)
-                    like = UserLikes.objects.filter(user=request.user, blog=blog)
-                    follows_author = UserFollowing.objects.filter(user=request.user, following=authorProfile)
+                    bookmark = UserBookmarks.objects.filter(
+                        user=request.user, blog_post=blog)
+                    like = UserLikes.objects.filter(
+                        user=request.user, blog=blog)
+                    follows_author = UserFollowing.objects.filter(
+                        user=request.user, following=authorProfile)
 
                     return render(request, "blog/preview_blog.html", context)
 
@@ -511,12 +541,13 @@ def accept_and_publish(request, id):
             "status": "success",
             "title": "Success",
             "toast_message": "Published successfully"
-            }, status=200)
+        }, status=200)
 
     if request.method == "POST" and request.is_ajax() and request.user.groups.filter(name=moderator_group).exists():
         # blog_id = request.POST.get("blog_id")
         try:
-            blog_post = BlogPost.objects.get(id=id, submitted_for_moderation=True, moderator_accepted=False)
+            blog_post = BlogPost.objects.get(
+                id=id, submitted_for_moderation=True, moderator_accepted=False)
             if blog_post:
                 blog_post.preview = False
                 blog_post.draft = False
@@ -527,20 +558,21 @@ def accept_and_publish(request, id):
                 blog_post.published = True
                 blog_post.save()
 
-                messages.success(request, "Blog has been successfully published.")
+                messages.success(
+                    request, "Blog has been successfully published.")
                 return JsonResponse({
                     "status": "success",
                     "title": "Success",
                     "toast_message": "Published successfully",
                     "response_type": "success"
-                    }, status=200)
+                }, status=200)
         except BlogPost.DoesNotExist:
             return JsonResponse({
                 "status": "failure",
                 "title": "Oops",
                 "toast_message": "Something is wrong.",
                 "response_type": "error"
-                }, status=400)
+            }, status=400)
     else:
         # messages.success(request, "Blog has been successfully published.")
         return JsonResponse({
@@ -548,4 +580,4 @@ def accept_and_publish(request, id):
             "title": "Oops",
             "toast_message": "Something is wrong.",
             "response_type": "error"
-            }, status=400)
+        }, status=400)

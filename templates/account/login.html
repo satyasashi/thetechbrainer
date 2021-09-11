@@ -1,8 +1,6 @@
 {% extends "auth_base.html" %}
 
-{% load i18n crispy_forms_tags %}
-
-{% load account socialaccount %}
+{% load i18n static crispy_forms_tags account socialaccount %}
 
 {% block title %}{% trans "Sign In" %}{% endblock %}
 
@@ -20,8 +18,10 @@
   }
 
   .google {
-    background-color: #dd4b39;
-    color: white;
+      background-color: #0186F9;
+      color: #fff;
+      padding:0;
+      margin: 0;
   }
 
   .fb:hover {
@@ -34,11 +34,6 @@
     color: #ccc;
   }
 
-  .google:hover {
-    background-color: #d1402e;
-    color: #ccc;
-  }
-
   #socialLoginIcons {
     list-style: none;
   }
@@ -46,35 +41,31 @@
   #socialLoginIcons > li {
     padding: 10px 0px;
   }
+
+  .signup a {
+      text-decoration: none;
+  }
+
+  .orSection {
+      width: 100%; 
+      text-align: center; 
+      border-bottom: 1px solid #ccc; 
+      line-height: 0.1em;
+      margin: 10px 0 20px; 
+  }
+
+  .orSection span {
+      background:#F7F7F7; 
+      padding:0 10px; 
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container oc-screen">
   <div class="row">
-    <div class="col-md-6 col-12 center">
-      <div style="width: 50%; margin:0 auto;">
-        <ul class="list-group" id="socialLoginIcons">
-        <li class="list-item">
-          <a href="#" class="fb btn">
-            <i class="fa fa-facebook fa-fw"></i> Login with Facebook
-          </a>
-        </li>
-        <li class="list-item">
-          <a href="#" class="twitter btn">
-            <i class="fa fa-twitter fa-fw"></i> Login with Twitter
-          </a>
-        </li>
-        <li class="list-item">
-          <a href="/accounts/google/login/?process=login" class="google btn">
-            <i class="fa fa-google fa-fw"> </i> Login with Google+
-          </a>
-        </li>
-      </ul>
-      </div>
-    </div>
-    <div class="col-md-6 col-12">
-      <h1>{% trans "Sign In" %}</h1>
+    <div class="col-md-4 col-12 mx-auto">
+      <h1>{% trans "Login" %}</h1>
       {% if messages %}
 
           {% for msg in messages %}
@@ -106,7 +97,7 @@
 
         <div id="div_id_login" class="form-group">
             <label for="id_login" class=" requiredField">
-                Login <span class="asteriskField">*</span>
+                Username or Email <span class="asteriskField">*</span>
             </label>
             <div class="">
                 <input type="text" name="login" placeholder="Username or e-mail" autofocus="autofocus" class="textinput textInput form-control" required="" id="id_login">
@@ -128,6 +119,18 @@
         <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
       </form>
       <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      <div style="margin-top: 10px;">
+        Don't have an account? <a href="{% url 'account_login' %}">Login</a>
+      </div>
+      <div class="col-md-12" style="margin-top: 30px;">
+        <p class="orSection"><span style="padding-top: 10px; font-weight: bold;">OR</span></p>
+      </div>
+      <a href="/accounts/google/login/?process=login" style="text-decoration: none; font-weight: bold;">
+        <div class="col-md-12 google">
+          <img src="{% static 'img/google_logo.jpg' %}" height="50" width="50" alt="Google-Logo"> <span
+            style="margin-left: 10px;">Sign up with Google</span>
+        </div>
+      </a>
     </div>
   </div>
 </div>
