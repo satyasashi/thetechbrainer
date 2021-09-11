@@ -1,14 +1,71 @@
 {% extends "auth_base.html" %}
 
-{% load i18n crispy_forms_tags %}
+{% load i18n static crispy_forms_tags account socialaccount %}
 
 {% block title %}{% trans "Sign In" %}{% endblock %}
 
+{% block extra_css %}
+<style type="text/css">
+  /* add appropriate colors to fb, twitter and google buttons */
+  .fb {
+    background-color: #3B5998;
+    color: white;
+  }
+
+  .twitter {
+    background-color: #55ACEE;
+    color: white;
+  }
+
+  .google {
+      background-color: #0186F9;
+      color: #fff;
+      padding:0;
+      margin: 0;
+  }
+
+  .fb:hover {
+    background-color: #324e8a;
+    color: #ccc;
+  }
+
+  .twitter:hover {
+    background-color: #489fe0;
+    color: #ccc;
+  }
+
+  #socialLoginIcons {
+    list-style: none;
+  }
+
+  #socialLoginIcons > li {
+    padding: 10px 0px;
+  }
+
+  .signup a {
+      text-decoration: none;
+  }
+
+  .orSection {
+      width: 100%; 
+      text-align: center; 
+      border-bottom: 1px solid #ccc; 
+      line-height: 0.1em;
+      margin: 10px 0 20px; 
+  }
+
+  .orSection span {
+      background:#F7F7F7; 
+      padding:0 10px; 
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container oc-screen">
-  <div class="col-md-12">
-    <div class="col-md-6 col-sm-8 col-10 mx-auto">
-      <h1>{% trans "Sign In" %}</h1>
+  <div class="row">
+    <div class="col-md-4 col-12 mx-auto">
+      <h1>{% trans "Login" %}</h1>
       {% if messages %}
 
           {% for msg in messages %}
@@ -40,7 +97,7 @@
 
         <div id="div_id_login" class="form-group">
             <label for="id_login" class=" requiredField">
-                Login <span class="asteriskField">*</span>
+                Username or Email <span class="asteriskField">*</span>
             </label>
             <div class="">
                 <input type="text" name="login" placeholder="Username or e-mail" autofocus="autofocus" class="textinput textInput form-control" required="" id="id_login">
@@ -62,6 +119,18 @@
         <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
       </form>
       <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      <div style="margin-top: 10px;">
+        Don't have an account? <a href="{% url 'account_login' %}">Login</a>
+      </div>
+      <div class="col-md-12" style="margin-top: 30px;">
+        <p class="orSection"><span style="padding-top: 10px; font-weight: bold;">OR</span></p>
+      </div>
+      <a href="/accounts/google/login/?process=login" style="text-decoration: none; font-weight: bold;">
+        <div class="col-md-12 google">
+          <img src="{% static 'img/google_logo.jpg' %}" height="50" width="50" alt="Google-Logo"> <span
+            style="margin-left: 10px;">Sign up with Google</span>
+        </div>
+      </a>
     </div>
   </div>
 </div>

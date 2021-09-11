@@ -65,6 +65,10 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+
+    # providers
+    'allauth.socialaccount.providers.google',
+
     'rest_framework',
     'crispy_forms',
     'taggit_serializer',
@@ -77,9 +81,6 @@ INSTALLED_APPS = [
 
     # DRF API
     'api',
-
-    # providers
-    # 'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -186,7 +187,7 @@ CKEDITOR_CONFIGS = {
 
 IMG_SMALL = (140, 98)
 
-SITE_ID = 1
+SITE_ID = 2
 
 #AUTH_USER_MODEL = 'account.Account'
 
